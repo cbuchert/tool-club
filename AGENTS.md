@@ -28,16 +28,16 @@ does not need today.
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend + routing | SvelteKit |
-| Database + Auth + Storage | Supabase (PostgreSQL, Auth, Storage) |
-| Hosting | Vercel |
-| CI/CD | GitHub Actions |
-| E2E tests | Playwright |
-| DB tests | pgTAP (via `supabase test db`) |
-| Markdown content | mdsvex |
-| CSS | Tailwind CSS v4 with `--tc-*` design tokens |
+| Layer                     | Technology                                  |
+| ------------------------- | ------------------------------------------- |
+| Frontend + routing        | SvelteKit                                   |
+| Database + Auth + Storage | Supabase (PostgreSQL, Auth, Storage)        |
+| Hosting                   | Vercel                                      |
+| CI/CD                     | GitHub Actions                              |
+| E2E tests                 | Playwright                                  |
+| DB tests                  | pgTAP (via `supabase test db`)              |
+| Markdown content          | mdsvex                                      |
+| CSS                       | Tailwind CSS v4 with `--tc-*` design tokens |
 
 All decisions are documented in `ARCHITECTURE.md`. Do not introduce new dependencies
 or architectural patterns without updating that file.
@@ -164,4 +164,3 @@ Never push a Vercel deploy that is ahead of the database schema.
   for clarification.
 - Do not silently resolve conflicts between this file, ARCHITECTURE.md, and SPEC.md.
   Surface them.
-

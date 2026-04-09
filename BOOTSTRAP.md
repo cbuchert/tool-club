@@ -6,6 +6,7 @@ moving to the next. Do not skip steps. Do not batch steps that have verification
 gates.
 
 Before you begin, read these documents in order. They are authoritative:
+
 - `AGENTS.md` — your operating rules
 - `ARCHITECTURE.md` — stack decisions, data model, routing, CI/CD
 - `SPEC.md` — product behavior and feature definitions
@@ -29,14 +30,14 @@ Before you begin, read these documents in order. They are authoritative:
 ## Phase 0 — Preflight
 
 - [ ] Verify prerequisites are installed: `node >= 20`, `pnpm`, `docker`, `supabase`
-  CLI, `git`
+      CLI, `git`
 - [ ] Confirm Docker Desktop is running (required for local Supabase)
 - [ ] Confirm the user has a hosted Supabase project created and has the project ref,
-  URL, anon key, and service role key available
+      URL, anon key, and service role key available
 - [ ] Confirm the user has a Vercel account and the Vercel CLI is authenticated
-  (`vercel whoami`)
+      (`vercel whoami`)
 - [ ] Confirm the user has a GitHub account and a new empty public repository created
-  for this project
+      for this project
 
 ---
 
@@ -76,30 +77,37 @@ Before you begin, read these documents in order. They are authoritative:
   ```
   Replace `adapter-auto` with `adapter-vercel` in `svelte.config.js`.
 - [ ] Install and configure **Tailwind CSS v4**:
+
   ```
   pnpm add -D tailwindcss @tailwindcss/vite
   ```
+
   Add the Vite plugin to `vite.config.ts` — do NOT use the PostCSS approach from v3:
+
   ```ts
   import tailwindcss from '@tailwindcss/vite';
   export default defineConfig({ plugins: [tailwindcss(), sveltekit()] });
   ```
+
   Create `src/app.css` with:
+
   ```css
-  @import "tailwindcss";
+  @import 'tailwindcss';
 
   @theme {
-    /* Paste full token block from ARCHITECTURE.md design system section */
+  	/* Paste full token block from ARCHITECTURE.md design system section */
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      /* Paste dark token overrides from ARCHITECTURE.md */
-    }
+  	:root {
+  		/* Paste dark token overrides from ARCHITECTURE.md */
+  	}
   }
   ```
+
   Import `src/app.css` in `src/routes/+layout.svelte`.
   Do not create `tailwind.config.js` — v4 is configured entirely in CSS.
+
 - [ ] Install and configure **mdsvex**:
   ```
   pnpm add -D mdsvex
@@ -108,7 +116,7 @@ Before you begin, read these documents in order. They are authoritative:
   `['.svelte', '.md']`.
 - [ ] Verify SvelteKit runs: `pnpm dev` — confirm dev server starts with no errors
 - [ ] Verify a Tailwind utility class (`class="bg-white"`) renders correctly on the
-  scaffold page — confirms the Vite plugin is wired up
+      scaffold page — confirms the Vite plugin is wired up
 - [ ] `git add -A && git commit -m "chore: scaffold sveltekit with vercel adapter, tailwind v4, and mdsvex"`
 
 ---
@@ -132,9 +140,9 @@ Before you begin, read these documents in order. They are authoritative:
 - [ ] Create `supabase/tests/` directory (pgTAP test files will live here)
 - [ ] Create `supabase/seeds/` directory
 - [ ] Create `supabase/seeds/test_users.sql` — insert two users with fixed UUIDs:
-  one with `role = 'member'`, one with `role = 'admin'`. These UUIDs are used in
-  all pgTAP tests. Commit these UUIDs to `ARCHITECTURE.md` under a "Test fixtures"
-  section.
+      one with `role = 'member'`, one with `role = 'admin'`. These UUIDs are used in
+      all pgTAP tests. Commit these UUIDs to `ARCHITECTURE.md` under a "Test fixtures"
+      section.
 - [ ] Verify Supabase Studio is accessible at `localhost:54323`
 - [ ] `git add -A && git commit -m "chore: initialize supabase, add test user seeds"`
 
@@ -147,16 +155,16 @@ Before you begin, read these documents in order. They are authoritative:
   pnpm add @t3-oss/env-core zod
   ```
 - [ ] Create `src/lib/env.ts` that validates all environment variables at build time
-  using Zod. Required variables (reference `ARCHITECTURE.md` env var table):
+      using Zod. Required variables (reference `ARCHITECTURE.md` env var table):
   - `PUBLIC_SUPABASE_URL` (string, URL)
   - `PUBLIC_SUPABASE_ANON_KEY` (string, min 1)
   - `SUPABASE_SERVICE_ROLE_KEY` (string, min 1) — server only
   - `SUPABASE_JWT_SECRET` (string, min 1) — server only
 - [ ] Create `.env.local` with local Supabase values (from `supabase start` output).
-  This file is gitignored.
+      This file is gitignored.
 - [ ] Create `.env.example` with all variable names and empty values. Commit this file.
 - [ ] Verify `pnpm build` fails with a clear error if a required env var is missing
-  (test by temporarily removing one from `.env.local`)
+      (test by temporarily removing one from `.env.local`)
 - [ ] `git add -A && git commit -m "chore: env schema validation with zod"`
 
 ---
@@ -212,7 +220,7 @@ Before you begin, read these documents in order. They are authoritative:
   pnpm add -D prettier-plugin-svelte
   ```
 - [ ] Verify ESLint and Prettier agree: `pnpm lint` and `pnpm format` should both
-  pass with no errors on the scaffolded files
+      pass with no errors on the scaffolded files
 - [ ] Configure editor settings in `.vscode/settings.json`:
   - `"editor.formatOnSave": true`
   - `"editor.defaultFormatter": "esbenp.prettier-vscode"`
@@ -225,15 +233,15 @@ Before you begin, read these documents in order. They are authoritative:
 ## Phase 7 — Testing infrastructure
 
 - [ ] Verify Vitest config in `vite.config.ts` (scaffolded by create-svelte if Vitest
-  was selected). Confirm `pnpm test:unit` runs.
+      was selected). Confirm `pnpm test:unit` runs.
 - [ ] Install **Faker** for seed data generation:
   ```
   pnpm add -D @faker-js/faker
   ```
 - [ ] Create `supabase/seeds/dev_data.ts` — a Node script that generates realistic
-  seed data using Faker and inserts it via the Supabase client. Covers: members,
-  events (draft + published + past), suggestions, votes, comments, one recap with
-  photos.
+      seed data using Faker and inserts it via the Supabase client. Covers: members,
+      events (draft + published + past), suggestions, votes, comments, one recap with
+      photos.
   - Run with: `pnpm seed`
   - Add `"seed": "tsx supabase/seeds/dev_data.ts"` to `package.json` scripts
 - [ ] Install `tsx` for running TypeScript scripts directly:
@@ -241,7 +249,7 @@ Before you begin, read these documents in order. They are authoritative:
   pnpm add -D tsx
   ```
 - [ ] Verify Playwright config (`playwright.config.ts`) is present and targets
-  `localhost:5173` (SvelteKit dev server)
+      `localhost:5173` (SvelteKit dev server)
 - [ ] Create `tests/smoke.test.ts` — a single Playwright test that:
   - Navigates to `localhost:5173`
   - Asserts the page title contains "Tool Club"
@@ -280,10 +288,10 @@ Before you begin, read these documents in order. They are authoritative:
   pnpm add hono
   ```
 - [ ] Create `src/lib/server/hono.ts` — a base Hono app instance configured for
-  use in SvelteKit `+server.ts` routes. This will be used for the RSS, iCal, and
-  public feed endpoints.
+      use in SvelteKit `+server.ts` routes. This will be used for the RSS, iCal, and
+      public feed endpoints.
 - [ ] Create a stub `src/routes/feed/public/+server.ts` that mounts the Hono app
-  and returns a placeholder XML response with `Content-Type: application/rss+xml`
+      and returns a placeholder XML response with `Content-Type: application/rss+xml`
 - [ ] Write a Playwright test that:
   - Fetches `/feed/public`
   - Asserts response status 200
@@ -306,7 +314,7 @@ Before you begin, read these documents in order. They are authoritative:
   - `src/lib/schemas/photo.ts` — Photo
   - `src/lib/schemas/feed_token.ts` — FeedToken
 - [ ] Schemas must match the data model in `ARCHITECTURE.md`. If you find a
-  discrepancy, stop and surface it — do not silently resolve it.
+      discrepancy, stop and surface it — do not silently resolve it.
 - [ ] Write Vitest tests for each schema:
   - At minimum: one valid parse test, one invalid parse test per schema
   - **Red before green**
@@ -323,7 +331,7 @@ in this repo to interact with live services.
 - [ ] Install **GitHub MCP** — for creating issues, PRs, and reading repo state
 - [ ] Install **Supabase MCP** — for querying the local and hosted Supabase project
 - [ ] Install **Playwright MCP** (Chrome DevTools) — for browser automation and
-  E2E test authoring
+      E2E test authoring
 - [ ] Install **Vercel MCP** — for deployment status and project management
 - [ ] Install **Fetch MCP** — for making HTTP requests to running services
 
@@ -393,7 +401,7 @@ setup in a `MCP.md` file in the repo root.
 - [ ] Verify the workflow file is valid YAML (no syntax errors)
 - [ ] Push to main and confirm GitHub Actions runs
 - [ ] Confirm `deploy-vercel` is blocked when `test-db` or `test-unit` fails
-  (test by introducing a deliberate failing test, then reverting)
+      (test by introducing a deliberate failing test, then reverting)
 - [ ] `git add -A && git commit -m "chore: github actions ci/cd pipeline"`
 
 ---
@@ -407,7 +415,7 @@ Run the full stack locally and confirm everything works together:
 - [ ] `pnpm dev` — SvelteKit dev server starts, landing page loads
 - [ ] `pnpm test:unit` — all Vitest tests pass
 - [ ] `supabase test db` — all pgTAP tests pass (only test_users seed exists at
-  this point — that's expected)
+      this point — that's expected)
 - [ ] `pnpm test:e2e` — Playwright smoke test and feed test pass
 - [ ] `pnpm lint` — no ESLint errors
 - [ ] `pnpm build` — production build succeeds
@@ -428,4 +436,3 @@ When the checklist is complete:
    - Any packages added beyond the spec (justify each)
    - Any steps that were skipped and why
 3. The next agent picks up from `TODO.md` section 2 (Database schema and RLS)
-

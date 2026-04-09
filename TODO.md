@@ -30,8 +30,8 @@ Add notes inline when a task reveals decisions that affect other tasks.
 - [ ] Create `.env.example` with variable names and no values (committed)
 - [ ] Configure Vercel project, connect to GitHub repo
 - [ ] Add secrets to GitHub Actions: `SUPABASE_ACCESS_TOKEN`, `PUBLIC_SUPABASE_URL`,
-  `PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`,
-  `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+      `PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`,
+      `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
 ## 1. CI/CD pipeline
 
@@ -73,18 +73,18 @@ Add notes inline when a task reveals decisions that affect other tasks.
 ## 3. SvelteKit foundation
 
 - [ ] Create `src/app.css` with Tailwind import and full `@theme` token block
-  (reference ARCHITECTURE.md design system section for all token values)
+      (reference ARCHITECTURE.md design system section for all token values)
 - [ ] Import font links (Fraunces, DM Mono) in `src/app.html`
 - [ ] Create `src/lib/server/db.ts` — Supabase server client (service role +
-  per-request anon client)
+      per-request anon client)
 - [ ] Create `src/hooks.server.ts` — session validation, `locals.session`,
-  `locals.user`
+      `locals.user`
 - [ ] Create root `+layout.server.ts` — load session, redirect unauthenticated
-  users to `/signin` (except public routes)
+      users to `/signin` (except public routes)
 - [ ] Create root `+layout.svelte` — shell, sidebar nav, mobile nav; import
-  `src/app.css`
+      `src/app.css`
 - [ ] Define public routes list (landing, signin, auth/callback, join/[token],
-  feed/public)
+      feed/public)
 
 ## 4. Auth routes
 
@@ -182,4 +182,3 @@ Write tests after the feature is built and working locally.
 - [ ] Seed production database with initial admin user
 - [ ] Test invite flow end to end in production
 - [ ] Set up custom domain on Vercel (if applicable)
-

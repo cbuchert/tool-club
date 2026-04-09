@@ -73,6 +73,7 @@ Do not reveal whether an email is registered to an anonymous visitor.
 ### Account deletion
 
 When a member deletes their account:
+
 - `users` row is anonymized: `display_name` set to "Former member", `email` and
   `avatar_url` nulled out, row is retained.
 - All content (events hosted, suggestions, comments, recaps) remains attributed to
@@ -88,6 +89,7 @@ them to ask an admin to reassign the host.
 ### Suspension
 
 Admins can suspend a member. A suspended member:
+
 - Cannot sign in (Supabase Auth account is disabled).
 - Their feed tokens are invalidated.
 - Their content remains visible.
@@ -114,20 +116,20 @@ Members who RSVPed are not automatically notified — notification is out of sco
 
 ### Event fields
 
-| Field | Notes |
-|---|---|
-| Title | Required |
-| Date + start time | Required |
-| End time | Optional |
-| Host | Required. A member name. Not a foreign key to users — freeform text to allow external hosts. |
-| Host user | Optional FK to users. Set when the host is a member. Enables the "host can write recap" rule. |
-| Venue name | Optional |
-| Address | Optional |
-| Capacity | Optional. If set, RSVPs are capped at this number. |
-| Body | Markdown. Rendered on the event detail page. |
-| Links | A list of label+URL pairs. Optional. |
-| Status | draft / published / past |
-| Promoted from | Optional FK to suggestions. Set when an event is created from a suggestion. |
+| Field             | Notes                                                                                         |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| Title             | Required                                                                                      |
+| Date + start time | Required                                                                                      |
+| End time          | Optional                                                                                      |
+| Host              | Required. A member name. Not a foreign key to users — freeform text to allow external hosts.  |
+| Host user         | Optional FK to users. Set when the host is a member. Enables the "host can write recap" rule. |
+| Venue name        | Optional                                                                                      |
+| Address           | Optional                                                                                      |
+| Capacity          | Optional. If set, RSVPs are capped at this number.                                            |
+| Body              | Markdown. Rendered on the event detail page.                                                  |
+| Links             | A list of label+URL pairs. Optional.                                                          |
+| Status            | draft / published / past                                                                      |
+| Promoted from     | Optional FK to suggestions. Set when an event is created from a suggestion.                   |
 
 ### RSVPs
 
@@ -175,14 +177,14 @@ open → planned
 
 ### Fields
 
-| Field | Notes |
-|---|---|
-| Title | Required |
-| Body | Markdown. The pitch. Required. |
-| Nominated host | Freeform text. Who the proposer thinks should run it. |
-| Voting closes at | A date. After this date, voting is locked. |
-| Status | open / planned / closed |
-| Promoted to event | FK to events. Set when status becomes planned. |
+| Field             | Notes                                                 |
+| ----------------- | ----------------------------------------------------- |
+| Title             | Required                                              |
+| Body              | Markdown. The pitch. Required.                        |
+| Nominated host    | Freeform text. Who the proposer thinks should run it. |
+| Voting closes at  | A date. After this date, voting is locked.            |
+| Status            | open / planned / closed                               |
+| Promoted to event | FK to events. Set when status becomes planned.        |
 
 ### Voting
 
@@ -203,6 +205,7 @@ open → planned
 ### Promote to event
 
 When an admin promotes a suggestion to an event:
+
 1. A new event is created in `draft` status, pre-filled from the suggestion fields.
 2. `suggestions.status` is set to `planned`, `suggestions.promoted_to_event` is set.
 3. The suggestion detail shows a banner linking to the event.
@@ -267,6 +270,7 @@ background. The color is deterministic based on user ID (not random on each rend
 ### Invites
 
 The account page shows:
+
 - A button to generate an invite link (disabled if one is pending).
 - The member's invite history: who joined via their link, and any pending invite
   with its expiry date and a revoke action.
@@ -285,6 +289,7 @@ confirmation step that explains what breaks.
 ### Landing page
 
 Content lives in `content/landing.md`. Rendered by mdsvex. Includes:
+
 - A brief description of Tool Club.
 - Contact email.
 - A link to the public RSS feed.
@@ -312,4 +317,3 @@ accommodate them unless they fall out naturally.
 - Mobile push notifications
 - Photo ordering or galleries beyond a simple grid
 - Multiple admins managing concurrent drafts (no conflict resolution in v1)
-

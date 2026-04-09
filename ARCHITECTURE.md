@@ -27,29 +27,35 @@ graph LR
 ## Stack decisions
 
 ### SvelteKit
+
 Chosen to build Svelte fluency through a real project. All routing, SSR, and server
 logic lives here. No separate backend framework.
 
 ### Supabase
+
 Single vendor for database (PostgreSQL), auth (magic link), and file storage.
 Chosen over separate services (e.g. PlanetScale + Clerk + S3) to minimize integration
 surface. Local development runs the full stack via `supabase start` (Docker required).
 
 ### Vercel
+
 Hosts the SvelteKit app via `@sveltejs/adapter-vercel`. Cron jobs run as Vercel
 Functions with cron triggers. The SvelteKit adapter handles SSR, edge functions,
 and static assets.
 
 ### Supabase Auth (not Clerk or Auth.js)
+
 Magic-link auth is a first-class Supabase Auth feature. Session is in the same system
 as all data, enabling Row Level Security policies that reference `auth.uid()` directly.
 No JWT bridging between vendors.
 
 ### mdsvex
+
 Markdown content (landing page, about page) is processed by mdsvex at build time.
 Content lives in `content/` as `.md` files. No CMS.
 
 ### Tailwind CSS v4
+
 Tailwind v4 is used for styling. The v4 integration model differs significantly from
 v3 — do not apply v3 patterns:
 
@@ -71,18 +77,19 @@ v3 — do not apply v3 patterns:
 
 All secrets are environment variables. Never hardcode.
 
-| Variable | Used in | Purpose |
-|---|---|---|
-| `PUBLIC_SUPABASE_URL` | Client + server | Supabase project URL |
-| `PUBLIC_SUPABASE_ANON_KEY` | Client + server | Supabase anon key (safe to expose) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Bypass RLS for admin/cron operations |
-| `SUPABASE_JWT_SECRET` | Server only | Verify JWTs in hooks |
-| `VERCEL_TOKEN` | CI only | Vercel deploy from GitHub Actions |
+| Variable                    | Used in         | Purpose                              |
+| --------------------------- | --------------- | ------------------------------------ |
+| `PUBLIC_SUPABASE_URL`       | Client + server | Supabase project URL                 |
+| `PUBLIC_SUPABASE_ANON_KEY`  | Client + server | Supabase anon key (safe to expose)   |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only     | Bypass RLS for admin/cron operations |
+| `SUPABASE_JWT_SECRET`       | Server only     | Verify JWTs in hooks                 |
+| `VERCEL_TOKEN`              | CI only         | Vercel deploy from GitHub Actions    |
 
 `PUBLIC_` prefix makes variables available client-side in SvelteKit. Non-prefixed
 variables are server-only.
 
 The service role key bypasses RLS. It is used only in:
+
 - Cron job functions
 - Admin-only server actions (with a secondary role check in application code)
 
@@ -261,18 +268,18 @@ graph TD
 
 ### RLS policy summary
 
-| Table | anon | member | admin |
-|---|---|---|---|
-| users | none | select (active members) | all |
-| events | none | select where status=published | all |
-| rsvps | none | select yes-responses; insert/update own | all |
-| suggestions | none | select all; insert own | all |
-| votes | none | select all; insert/delete own | all |
-| comments | none | select all; insert own | all |
-| recaps | none | select all | all |
-| photos | none | select public; insert own | all |
-| invites | none | insert own; select own | all |
-| feed_tokens | none | select/update own | all |
+| Table       | anon | member                                  | admin |
+| ----------- | ---- | --------------------------------------- | ----- |
+| users       | none | select (active members)                 | all   |
+| events      | none | select where status=published           | all   |
+| rsvps       | none | select yes-responses; insert/update own | all   |
+| suggestions | none | select all; insert own                  | all   |
+| votes       | none | select all; insert/delete own           | all   |
+| comments    | none | select all; insert own                  | all   |
+| recaps      | none | select all                              | all   |
+| photos      | none | select public; insert own               | all   |
+| invites     | none | insert own; select own                  | all   |
+| feed_tokens | none | select/update own                       | all   |
 
 "no" RSVP responses are readable only by admins and the RSVP owner.
 
@@ -422,10 +429,10 @@ appropriate `Content-Type` headers (`application/rss+xml`, `text/calendar`).
 
 Cron jobs run as Vercel Functions with cron triggers, configured in `vercel.json`.
 
-| Job | Schedule | Action |
-|---|---|---|
+| Job                | Schedule   | Action                                                                       |
+| ------------------ | ---------- | ---------------------------------------------------------------------------- |
 | `mark-past-events` | Every hour | Set `events.status = 'past'` where `starts_at < now() - interval '24 hours'` |
-| `expire-invites` | Daily | Hard-delete invites where `expires_at < now()` and `redeemed_at is null` |
+| `expire-invites`   | Daily      | Hard-delete invites where `expires_at < now()` and `redeemed_at is null`     |
 
 Cron functions use the Supabase service role key. They are not reachable by members.
 
@@ -505,35 +512,35 @@ in component `<style>` blocks.
 
 ```css
 /* src/app.css */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --color-tc-bg: #ffffff;
-  --color-tc-surface: #f5f4f0;
-  --color-tc-border: rgba(0, 0, 0, 0.1);
-  --color-tc-border-mid: rgba(0, 0, 0, 0.2);
-  --color-tc-text: #1a1a18;
-  --color-tc-muted: #5f5e5a;
-  --color-tc-hint: #888780;
-  --color-tc-accent: #3b6d11;
-  --color-tc-accent-bg: #eaf3de;
-  --color-tc-accent-text: #27500a;
-  --color-tc-accent-border: #97c459;
-  --color-tc-danger: #a32d2d;
-  --color-tc-danger-bg: #fcebeb;
-  --color-tc-danger-border: #f09595;
+	--color-tc-bg: #ffffff;
+	--color-tc-surface: #f5f4f0;
+	--color-tc-border: rgba(0, 0, 0, 0.1);
+	--color-tc-border-mid: rgba(0, 0, 0, 0.2);
+	--color-tc-text: #1a1a18;
+	--color-tc-muted: #5f5e5a;
+	--color-tc-hint: #888780;
+	--color-tc-accent: #3b6d11;
+	--color-tc-accent-bg: #eaf3de;
+	--color-tc-accent-text: #27500a;
+	--color-tc-accent-border: #97c459;
+	--color-tc-danger: #a32d2d;
+	--color-tc-danger-bg: #fcebeb;
+	--color-tc-danger-border: #f09595;
 
-  --font-display: 'Fraunces', serif;
-  --font-mono: 'DM Mono', monospace;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--font-display: 'Fraunces', serif;
+	--font-mono: 'DM Mono', monospace;
+	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-tc-bg: #1c1c1a;
-    --color-tc-surface: #242422;
-    /* ... remaining dark tokens ... */
-  }
+	:root {
+		--color-tc-bg: #1c1c1a;
+		--color-tc-surface: #242422;
+		/* ... remaining dark tokens ... */
+	}
 }
 ```
 
@@ -542,21 +549,21 @@ with Tailwind's color system). Do not hardcode color values in components — us
 
 Core token reference:
 
-| Token | Purpose |
-|---|---|
-| `tc-bg` | Page background |
-| `tc-surface` | Elevated surface (sidebar, cards) |
-| `tc-border` | Subtle border |
-| `tc-border-mid` | Stronger border, inputs |
-| `tc-text` | Primary text |
-| `tc-muted` | Secondary text |
-| `tc-hint` | Tertiary text, labels |
-| `tc-accent` | Primary action color (green) |
-| `tc-accent-bg / -text / -border` | Accent surface variants |
-| `tc-danger / -bg / -border` | Destructive action |
+| Token                            | Purpose                           |
+| -------------------------------- | --------------------------------- |
+| `tc-bg`                          | Page background                   |
+| `tc-surface`                     | Elevated surface (sidebar, cards) |
+| `tc-border`                      | Subtle border                     |
+| `tc-border-mid`                  | Stronger border, inputs           |
+| `tc-text`                        | Primary text                      |
+| `tc-muted`                       | Secondary text                    |
+| `tc-hint`                        | Tertiary text, labels             |
+| `tc-accent`                      | Primary action color (green)      |
+| `tc-accent-bg / -text / -border` | Accent surface variants           |
+| `tc-danger / -bg / -border`      | Destructive action                |
 
 Typography:
+
 - `font-display`: Fraunces (serif, headings)
 - `font-mono`: DM Mono (labels, metadata, monospace UI)
 - `font-sans`: System sans-serif (body, inputs)
-
