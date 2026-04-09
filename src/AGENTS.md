@@ -315,6 +315,19 @@ Prefer `expect(locator).toBeVisible()` over `waitForLoadState('networkidle')` â€
 `networkidle` is a brittle signal that can trigger early or late depending on
 background polling.
 
+### Sharing constants between test files
+
+Playwright raises "should not import test file" if a test file imports from
+another test file. Put any shared constants (e.g. auth file paths) in a plain
+`.ts` module (no `test`/`setup` calls) and import from there. See
+`tests/auth.paths.ts` for the pattern.
+
+### `getByLabel` with nested `<span>` children
+
+`getByLabel('Title')` fails when the label contains nested elements like
+`<span class="text-danger">*</span>`. Use `getByPlaceholder` or `locator('#id')`
+instead â€” both are stable and avoid the text-matching ambiguity.
+
 ### No-browser tests (API / cron endpoints)
 
 Not all Playwright tests need a browser. For pure HTTP endpoints (e.g. cron jobs),

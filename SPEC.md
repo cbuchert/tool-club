@@ -91,9 +91,13 @@ them to ask an admin to reassign the host.
 Admins can suspend a member. A suspended member:
 
 - Cannot sign in (Supabase Auth account is disabled).
-- Their feed tokens are invalidated.
+- Their feed token is deleted immediately so RSS/iCal feeds stop working.
 - Their content remains visible.
 - Can be reinstated by an admin.
+
+When reinstated, the feed token is **not** recreated automatically. The member
+must generate a new one from their account page. This is intentional — the old
+token may have been shared with unauthorized parties.
 
 ---
 
@@ -222,6 +226,12 @@ The suggestions list renders three sections in order:
 3. **Closed** — visible by default; labelled "N closed" with a "Hide ↑ / Show ↓"
    toggle. Closed suggestions are shown rather than hidden because they represent
    institutional memory — members may want to reference why an idea was shelved.
+
+### Propose form
+
+The nominated host (`host_name`) is optional. Submitting without one is valid. The
+schema must use `.optional()` — the form omits the field from `FormData` when blank,
+so the server receives `undefined`, not `''`.
 
 ### Promote to event
 

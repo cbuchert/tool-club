@@ -177,14 +177,19 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 Write tests after the feature is built and working locally.
 
-- [ ] Auth: sign in → magic link → session established
-- [ ] Auth: invite flow end to end (new member creation)
-- [ ] Auth: expired invite shows correct error
-- [ ] Events: member sees published events, not drafts
-- [ ] Events: RSVP yes → count increments → RSVP no → count decrements
-- [ ] Events: capacity enforcement (going button disabled when full)
-- [ ] Suggestions: vote toggle
-- [ ] Suggestions: propose → appears in list
+- [x] Auth: sign in → magic link → session established
+- [x] Auth: invite flow end to end (new member creation)
+- [x] Auth: expired invite shows correct error
+- [x] Events: member sees published events, not drafts
+- [x] Events: RSVP yes → count increments → RSVP no → count decrements
+- [x] Events: capacity enforcement (going button disabled when full)
+- [x] Suggestions: vote toggle
+- [x] Suggestions: propose → appears in list
+      Also fixed: proposalSchema.host_name was z.string() not .optional(),
+      causing server-side validation to reject submissions with no host.
+      Also added: storageState auth setup (auth.setup.ts), custom fixtures
+      (fixtures.ts), screenshot/trace on failure in playwright.config.ts,
+      data-testid="vote-count" and data-testid="attendees" for stable selectors.
 - [x] Feed: private RSS requires valid token (26 E2E tests)
 - [x] Feed: public RSS returns no member data (26 E2E tests)
 - [x] Admin: publish a draft event → visible to members
