@@ -75,18 +75,19 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 3. SvelteKit foundation
 
-- [ ] Create `src/app.css` with Tailwind import and full `@theme` token block
-      (reference ARCHITECTURE.md design system section for all token values)
-- [ ] Import font links (Fraunces, DM Mono) in `src/app.html`
-- [ ] Create `src/lib/server/db.ts` — Supabase server client (service role +
+- [x] Create `src/app.css` with Tailwind import and full `@theme` token block
+      (info/warn/purple/radii tokens added to match prototype)
+- [x] Import font links (Fraunces, DM Mono) in `src/app.html`
+- [x] Create `src/lib/server/db.ts` — Supabase server client (service role +
       per-request anon client)
-- [ ] Create `src/hooks.server.ts` — session validation, `locals.session`,
-      `locals.user`
-- [ ] Create root `+layout.server.ts` — load session, redirect unauthenticated
-      users to `/signin` (except public routes)
-- [ ] Create root `+layout.svelte` — shell, sidebar nav, mobile nav; import
-      `src/app.css`
-- [ ] Define public routes list (landing, signin, auth/callback, join/[token],
+- [x] Create `src/hooks.server.ts` — session validation, `locals.session`,
+      `locals.user` (uses `getUser()` not `getSession()` for server-side verification)
+- [x] Create root `+layout.server.ts` — load session, redirect unauthenticated
+      users to `/signin` (except public routes); fetches `public.users` profile
+      for display name and role
+- [x] Create root `+layout.svelte` — shell, sidebar nav, mobile nav; import
+      `src/app.css`; public routes bypass shell
+- [x] Define public routes list (landing, signin, auth/callback, join/[token],
       feed/public)
 
 ## 4. Auth routes

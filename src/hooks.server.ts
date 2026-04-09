@@ -5,16 +5,18 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const supabase = createServerClient(event);
 	event.locals.supabase = supabase;
 
+	// getUser() makes a network request to verify the token server-side.
+	// Never use getSession() here — it reads the cookie without validation
+	// and can be spoofed by a client supplying a crafted JWT.
 	const {
-		data: { session },
-	} = await supabase.auth.getSession();
+		data: { user },
+	} = await supabase.auth.getUser();
 
-	event.locals.session = session;
-	event.locals.user = session?.user ?? null;
+	event.locals.user = user;
+	event.locals.session = user ? (await supabase.auth.getSession()).data.session : null;
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
-			// Required for Supabase to pass auth headers through SSR
 			return name === 'content-range' || name === 'x-supabase-api-version';
 		},
 	});
