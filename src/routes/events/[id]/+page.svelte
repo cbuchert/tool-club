@@ -124,7 +124,13 @@
 				<span class="text-tc-text">
 					{data.event.location_name}
 					{#if data.event.address}
-						<span class="block text-tc-muted">{data.event.address}</span>
+						<a
+							href="https://maps.google.com/?q={encodeURIComponent(data.event.address)}"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="block text-tc-muted underline underline-offset-2 hover:text-tc-accent-text transition-colors"
+							>{data.event.address}</a
+						>
 					{/if}
 				</span>
 			</div>
