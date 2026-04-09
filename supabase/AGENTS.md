@@ -60,6 +60,25 @@ supabase/
 - Policy naming: `{table}_{role}_{action}` — e.g. `events_member_select`,
   `invites_admin_all`.
 
+## Running pgTAP tests
+
+pgTAP tests **must be run against a clean reset**, not against a seeded DB.
+The `pnpm seed` dev data uses the same UUIDs as the pgTAP fixture users; running
+tests against seeded data causes unique-constraint conflicts.
+
+```bash
+# Correct workflow
+pnpm exec supabase db reset   # drops + recreates schema + runs test_users.sql only
+pnpm exec supabase test db    # all 67 tests pass
+
+# Restore dev data after testing
+pnpm seed
+```
+
+Do not run `pnpm exec supabase test db` without the preceding `db reset` — it will
+produce false failures in `rls_feed_tokens` and `rls_users` due to seed data
+conflicts.
+
 ## pgTAP test conventions
 
 - One test file per table: `tests/rls_{table}.test.sql`.
