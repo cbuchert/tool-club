@@ -101,7 +101,9 @@
 					? 'bg-tc-accent-bg [border-color:var(--tc-accent-border)] text-tc-accent-text'
 					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}">▲</button
 			>
-			<span class="font-mono text-xs font-medium text-tc-text">{data.voteCount}</span>
+			<span data-testid="vote-count" class="font-mono text-xs font-medium text-tc-text"
+				>{data.voteCount}</span
+			>
 		</div>
 
 		<div class="min-w-0 flex-1">

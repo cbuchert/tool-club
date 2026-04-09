@@ -61,6 +61,11 @@ test.afterAll(async () => {
 		admin.auth.admin.updateUserById(MEMBER_ID, { ban_duration: 'none' }),
 		admin.from('users').update({ is_suspended: false }).eq('id', MEMBER_ID),
 	]);
+	// Suspending a member deletes their feed token (so feeds stop immediately).
+	// Recreate it after reinstatement so subsequent test runs have a valid token.
+	await admin
+		.from('feed_tokens')
+		.upsert({ user_id: MEMBER_ID, token: 'e2e-member-feed-token' }, { onConflict: 'user_id' });
 });
 
 // ── Access control ────────────────────────────────────────────────────────────

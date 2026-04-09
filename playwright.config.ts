@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
 	webServer: {
@@ -7,7 +7,6 @@ export default defineConfig({
 		reuseExistingServer: !process.env.CI,
 	},
 	testDir: 'tests',
-	testMatch: '**/*.{test,spec,e2e}.{ts,js}',
 	use: {
 		baseURL: 'http://localhost:5173',
 		// How long Playwright waits for each action (click, fill, etc.) to
@@ -17,6 +16,10 @@ export default defineConfig({
 		// How long page.goto() and other navigation actions wait for the
 		// page to load. 30s is comfortable for local + CI.
 		navigationTimeout: 30_000,
+		// Capture a screenshot on test failure — attached to the HTML report.
+		screenshot: 'only-on-failure',
+		// Record a trace on the first retry so CI failures are debuggable.
+		trace: 'on-first-retry',
 	},
 	// Per-assertion retry window. Web-first assertions (toBeVisible, toHaveText,
 	// toHaveURL, etc.) automatically retry until this timeout is reached.
@@ -30,4 +33,18 @@ export default defineConfig({
 	// Retry once in CI to absorb transient flakes (network hiccups, cold starts).
 	// Zero retries locally so failures are obvious during development.
 	retries: process.env.CI ? 1 : 0,
+	projects: [
+		// Authenticate once as admin + member; save storage state to disk.
+		// All other projects declare this as a dependency so tests start
+		// already authenticated without repeating the magic-link flow.
+		{
+			name: 'setup',
+			testMatch: /auth\.setup\.ts/,
+		},
+		{
+			name: 'chromium',
+			use: { ...devices['Desktop Chrome'] },
+			dependencies: ['setup'],
+		},
+	],
 });

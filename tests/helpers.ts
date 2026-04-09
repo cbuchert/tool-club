@@ -34,7 +34,12 @@ export async function deleteAllMail() {
 	await fetch(`${MAILPIT}/api/v1/messages`, { method: 'DELETE' });
 }
 
-async function getMagicLink(toEmail: string): Promise<string> {
+/**
+ * Polls Mailpit until a magic-link email arrives for `toEmail`, then returns
+ * the raw Supabase verify URL. Exported so auth tests can assert intermediate
+ * UI states before navigating to the link.
+ */
+export async function getMagicLink(toEmail: string): Promise<string> {
 	for (let i = 0; i < 20; i++) {
 		await new Promise((r) => setTimeout(r, 500));
 		const { messages } = (await fetch(`${MAILPIT}/api/v1/messages`).then((r) => r.json())) as {

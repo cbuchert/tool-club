@@ -201,7 +201,7 @@
 		</div>
 
 		{#if data.goingUsers.length > 0}
-			<div class="flex flex-wrap gap-2.5">
+			<div data-testid="attendees" class="flex flex-wrap gap-2.5">
 				{#each data.goingUsers as member (member.id)}
 					<div class="flex items-center gap-1.5 text-xs text-tc-muted">
 						<Avatar name={member.display_name} size="sm" />
