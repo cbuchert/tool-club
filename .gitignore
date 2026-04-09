@@ -25,6 +25,7 @@ vite.config.ts.timestamp-*
 # Playwright
 test-results
 .playwright-mcp
+*.png
 
 # Supabase
 supabase/.temp/
