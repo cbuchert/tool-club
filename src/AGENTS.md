@@ -17,7 +17,9 @@ src/
 │   ├── schemas/       # Zod form schemas — shared by TanStack Form + server actions
 │   ├── utils/         # Shared pure utilities with unit tests (no server imports)
 │   └── temporal.ts    # Temporal polyfill re-export + date helpers
-├── routes/            # SvelteKit file-based routes
+├── routes/
+│   ├── cron/          # Vercel cron job endpoints (GET, service-role, CRON_SECRET-guarded)
+│   └── ...            # All other SvelteKit file-based routes
 ├── app.css            # Tailwind import, @theme tokens, :root --tc-* aliases, html base styles
 ├── app.html           # HTML shell — font <link> tags live here
 └── app.d.ts           # TypeScript ambient types for locals, PageData, etc.
@@ -35,7 +37,8 @@ src/
 - `+page.server.ts` form actions for all mutations. No client-side fetch to API
   routes for form submissions.
 - `+server.ts` only for: RSS/iCal feed endpoints, auth callback (`/auth/callback`),
-  sign-out (`/signout`), and any endpoint consumed by a non-browser client.
+  sign-out (`/signout`), Vercel cron jobs (`/cron/*`), and any endpoint consumed
+  by a non-browser client.
 - `$lib/server/` is server-only. SvelteKit will error if you import it in a
   `+page.ts` or component.
 
@@ -312,6 +315,13 @@ Prefer `expect(locator).toBeVisible()` over `waitForLoadState('networkidle')` �
 `networkidle` is a brittle signal that can trigger early or late depending on
 background polling.
 
+### No-browser tests (API / cron endpoints)
+
+Not all Playwright tests need a browser. For pure HTTP endpoints (e.g. cron jobs),
+use `fetch` + `adminClient()` directly — no `page` fixture required. Set up DB
+state in `beforeAll`, call the endpoint once, then assert DB state in individual
+`test()` blocks. See `tests/cron.test.ts` for the pattern.
+
 ---
 
 ## Commit discipline
@@ -331,3 +341,7 @@ expensive. Examples of correct scope:
 - The validated env schema currently requires:
   - `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY` (client + server)
   - `SUPABASE_SERVICE_ROLE_KEY` (server only)
+- **Exception — `CRON_SECRET`:** cron handlers read `process.env.CRON_SECRET`
+  directly at request time (not through `env.ts`). This is intentional: the var
+  is optional in local dev (the auth check is skipped when absent), so adding it
+  to the Zod schema would break local builds. Do not move it to `env.ts`.
