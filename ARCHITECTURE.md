@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — Tool Club
 
-Last updated: 2026-04-08
+Last updated: 2026-04-09
 Status: Authoritative. Update this file when any architectural decision changes.
 
 ---
@@ -82,8 +82,10 @@ All secrets are environment variables. Never hardcode.
 | `PUBLIC_SUPABASE_URL`       | Client + server | Supabase project URL                 |
 | `PUBLIC_SUPABASE_ANON_KEY`  | Client + server | Supabase anon key (safe to expose)   |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server only     | Bypass RLS for admin/cron operations |
-| `SUPABASE_JWT_SECRET`       | Server only     | Verify JWTs in hooks                 |
 | `VERCEL_TOKEN`              | CI only         | Vercel deploy from GitHub Actions    |
+
+Note: `SUPABASE_JWT_SECRET` is not used. The app uses `@supabase/ssr` and never
+verifies JWTs directly. The hosted project uses ECC P-256 asymmetric signing keys.
 
 `PUBLIC_` prefix makes variables available client-side in SvelteKit. Non-prefixed
 variables are server-only.
@@ -107,17 +109,20 @@ erDiagram
     text email
     text avatar_url
     text role
+    uuid invited_by FK
     timestamptz created_at
     timestamptz updated_at
   }
   invites {
     uuid id PK
+    text token
     uuid invited_by FK
     text email
     uuid redeemed_by FK
     timestamptz expires_at
     timestamptz redeemed_at
     timestamptz created_at
+    timestamptz updated_at
   }
   events {
     uuid id PK
@@ -128,9 +133,11 @@ erDiagram
     text location_name
     text address
     text body_md
+    jsonb links
     int capacity
+    text host_name
     uuid host_id FK
-    uuid promoted_from FK
+    uuid promoted_from_id FK
     timestamptz created_at
     timestamptz updated_at
   }
@@ -145,11 +152,12 @@ erDiagram
   suggestions {
     uuid id PK
     uuid author_id FK
-    uuid host_id FK
+    text host_name
     text title
     text body_md
     text status
     timestamptz voting_closes_at
+    uuid promoted_to_event_id FK
     timestamptz created_at
     timestamptz updated_at
   }
@@ -158,13 +166,15 @@ erDiagram
     uuid suggestion_id FK
     uuid user_id FK
     timestamptz created_at
+    timestamptz updated_at
   }
   comments {
     uuid id PK
-    uuid user_id FK
     uuid suggestion_id FK
+    uuid user_id FK
     text body
     timestamptz created_at
+    timestamptz updated_at
   }
   recaps {
     uuid id PK
@@ -181,52 +191,78 @@ erDiagram
     text storage_path
     bool is_public
     timestamptz created_at
+    timestamptz updated_at
   }
   feed_tokens {
     uuid id PK
     uuid user_id FK
     text token
     timestamptz created_at
+    timestamptz updated_at
   }
 
   users ||--o{ invites : "invited_by"
   users ||--o{ invites : "redeemed_by"
-  users ||--o{ events : "hosts"
+  users o|--o{ users : "invited_by"
+  users |o--o{ events : "host (member)"
   users ||--o{ rsvps : "makes"
   users ||--o{ suggestions : "authors"
-  users ||--o{ suggestions : "hosts"
   users ||--o{ votes : "casts"
   users ||--o{ comments : "writes"
   users ||--o{ recaps : "authors"
   users ||--o{ photos : "uploads"
-  users ||--|| feed_tokens : "has"
+  users ||--o| feed_tokens : "has"
   events ||--o{ rsvps : "receives"
   events ||--o| recaps : "has"
   events }o--o| suggestions : "promoted_from"
   recaps ||--o{ photos : "contains"
   suggestions ||--o{ votes : "receives"
   suggestions ||--o{ comments : "receives"
+  suggestions }o--o| events : "promoted_to"
 ```
 
 ### Key field notes
 
 **users.role**: `member` or `admin`. Admins are set directly in the database. There
-is no self-service role elevation.
+is no self-service role elevation. RLS prevents members from updating their own role.
+
+**users.invited_by**: FK to users. Set at account creation time. Preserved even if
+the inviter later deletes their account (the inviter row is anonymized, not deleted).
+
+**events.host_name**: Required freeform text. Allows external (non-member) hosts.
+
+**events.host_id**: Optional FK to users. Set when the host is a member. Enables the
+"host can write recap" rule. Queried with a left join — `host_name` is the display
+value, `host_id` is for permission checks.
+
+**events.links**: `jsonb` array of `{label: string, url: string}` objects. Nullable,
+defaults to `[]`.
 
 **events.status**: `draft` | `published` | `past`. Drafts are not visible to members.
 `past` is set by a cron job when `starts_at` is more than 24 hours ago.
+
+**events.promoted_from_id**: FK to suggestions. Set when an event is created from a
+suggestion. Paired with `suggestions.promoted_to_event_id` — both are set atomically
+in the promote action.
+
+**suggestions.host_name**: Freeform text. The member who proposed the suggestion
+nominates a host by name. Not a FK — the nominee may or may not be a member.
+
+**suggestions.promoted_to_event_id**: FK to events. Set when status becomes `planned`.
+Paired with `events.promoted_from_id`.
 
 **suggestions.status**: `open` | `planned` | `closed`. `planned` means it was promoted
 to an event. Admin sets status.
 
 **rsvps.response**: `yes` | `no`. No "maybe." Members can change their RSVP until
-the event starts.
+the event starts. One RSVP per (event, user) pair — enforced by unique constraint.
 
-**invites**: Single-use, expire after 30 days. `redeemed_by` is null until used.
-Revoking an invite hard-deletes the row.
+**invites.token**: Random string generated by the application. Forms the invite URL.
+Single-use, expires after 30 days. `redeemed_by` is null until used. Revoking
+hard-deletes the row.
 
-**feed_tokens**: One per user. Regenerating creates a new row and deletes the old one.
-Token is a random string, not a JWT.
+**feed_tokens**: One per user (unique constraint on user_id). Regenerating deletes
+the old row and inserts a new one. Token is a random string, not a JWT.
 
 **photos.is_public**: Controls whether a photo appears in the public RSS feed.
 Toggled by the event host after upload.
@@ -456,18 +492,26 @@ Photos are stored in Supabase Storage. Bucket: `recap-photos`.
 ```mermaid
 graph TD
   Push["git push to main"] --> TestDB["job: test-db"]
+  Push --> TestUnit["job: test-unit"]
   TestDB --> StartLocal["supabase db start (Docker)"]
   StartLocal --> RunPgTAP["supabase test db (pgTAP)"]
-  RunPgTAP --> PushMigrations["supabase db push --linked"]
-  PushMigrations --> DeployVercel["job: deploy-vercel (needs: test-db)"]
-  DeployVercel --> VercelProd["Vercel production deploy"]
+  RunPgTAP --> LinkProject["supabase link --project-ref"]
+  LinkProject --> PushMigrations["supabase db push"]
+  TestDB --> Gate["job: deploy-vercel (needs: test-db, test-unit)"]
+  TestUnit --> Gate
+  Gate --> Pull["vercel pull --environment=production"]
+  Pull --> Build["vercel build --prod"]
+  Build --> Deploy["vercel deploy --prebuilt --prod"]
 
   RunPgTAP -->|fail| Block["Deploy blocked"]
   PushMigrations -->|fail| Block
+  TestUnit -->|fail| Block
 ```
 
-The `needs: test-db` dependency in GitHub Actions is the hard enforcement gate.
-Vercel never receives a deploy trigger if migrations or RLS tests fail.
+The `needs: [test-db, test-unit]` dependency in GitHub Actions is the hard enforcement
+gate. Vercel never receives a deploy trigger if pgTAP tests, unit tests, or migrations
+fail. Vercel build env vars are stored in the Vercel project dashboard and pulled via
+`vercel pull` — they are not duplicated as GitHub secrets.
 
 ---
 

@@ -6,7 +6,7 @@
 -- admin UUID:  00000000-0000-0000-0000-000000000002
 
 -- Insert into auth.users so RLS policies (which reference auth.uid()) work correctly.
-INSERT INTO auth.users (
+insert into auth.users (
   id,
   email,
   encrypted_password,
@@ -17,14 +17,12 @@ INSERT INTO auth.users (
   raw_user_meta_data,
   is_super_admin,
   role
-) VALUES
+) values
   (
     '00000000-0000-0000-0000-000000000001',
     'member@test.toolclub',
     crypt('testpassword', gen_salt('bf')),
-    now(),
-    now(),
-    now(),
+    now(), now(), now(),
     '{"provider":"email","providers":["email"]}',
     '{}',
     false,
@@ -34,12 +32,26 @@ INSERT INTO auth.users (
     '00000000-0000-0000-0000-000000000002',
     'admin@test.toolclub',
     crypt('testpassword', gen_salt('bf')),
-    now(),
-    now(),
-    now(),
+    now(), now(), now(),
     '{"provider":"email","providers":["email"]}',
     '{}',
     false,
     'authenticated'
   )
-ON CONFLICT (id) DO NOTHING;
+on conflict (id) do nothing;
+
+-- Insert matching public.users rows so is_admin() and RLS policies work.
+insert into public.users (id, display_name, email, role) values
+  (
+    '00000000-0000-0000-0000-000000000001',
+    'Test Member',
+    'member@test.toolclub',
+    'member'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000002',
+    'Test Admin',
+    'admin@test.toolclub',
+    'admin'
+  )
+on conflict (id) do nothing;
