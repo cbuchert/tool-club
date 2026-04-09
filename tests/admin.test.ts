@@ -8,8 +8,13 @@
  * Plus access control and member management smoke tests.
  *
  * Requires: local Supabase running + `pnpm seed` applied.
+ *
+ * Timeouts: all assertions use the global expect.timeout (10s) configured in
+ * playwright.config.ts — no inline { timeout } overrides needed.
+ * waitForLoadState('networkidle') is replaced with assertions against
+ * specific visible content, which is more reliable and self-documenting.
  */
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
 	signInAs,
 	deleteAllMail,
@@ -25,7 +30,6 @@ import {
 let draftEventId: string;
 let draftEventTitle: string;
 let openSuggestionId: string;
-let openSuggestionTitle: string;
 
 test.beforeAll(async () => {
 	const admin = adminClient();
@@ -48,7 +52,6 @@ test.beforeAll(async () => {
 		.maybeSingle();
 	if (!suggestion) throw new Error('No open suggestion found. Run `pnpm seed` before admin tests.');
 	openSuggestionId = suggestion.id;
-	openSuggestionTitle = suggestion.title;
 });
 
 test.afterAll(async () => {
@@ -77,24 +80,25 @@ test('admin can publish a draft event and member sees it in /events', async ({ b
 	await signInAs(adminPage, ADMIN_EMAIL);
 
 	await adminPage.goto(`${BASE}/admin/events/${draftEventId}`);
-	await adminPage.waitForLoadState('networkidle');
+	// Wait for the form to be ready — status select is a reliable anchor
+	await expect(adminPage.locator('select[name="status"]')).toBeVisible();
+
 	await adminPage.selectOption('select[name="status"]', 'published');
 	await adminPage.getByRole('button', { name: 'Save' }).click();
-	await expect(adminPage.locator('[data-testid="save-success"]')).toBeVisible({ timeout: 5000 });
+	await expect(adminPage.locator('[data-testid="save-success"]')).toBeVisible();
 	await adminCtx.close();
 
-	// Member can now see the event
+	// Member can now see the event in /events
 	await deleteAllMail();
 	const memberCtx = await browser.newContext();
 	const memberPage = await memberCtx.newPage();
 	await signInAs(memberPage, MEMBER_EMAIL);
 
 	await memberPage.goto(`${BASE}/events`);
-	await memberPage.waitForLoadState('networkidle');
-	await expect(memberPage.locator(`text="${draftEventTitle}"`)).toBeVisible({ timeout: 5000 });
+	await expect(memberPage.getByText(draftEventTitle)).toBeVisible();
 	await memberCtx.close();
 
-	// Restore draft status
+	// Restore draft status so subsequent runs still have a draft to test with
 	await adminClient().from('events').update({ status: 'draft' }).eq('id', draftEventId);
 });
 
@@ -104,23 +108,20 @@ test('admin can promote an open suggestion to a draft event', async ({ page }) =
 	await signInAs(page, ADMIN_EMAIL);
 
 	await page.goto(`${BASE}/suggestions/${openSuggestionId}`);
-	await page.waitForLoadState('networkidle');
-
-	// Admin controls visible
 	await expect(page.locator('button[data-action="promote"]')).toBeVisible();
 
-	// Promote
 	await page.locator('button[data-action="promote"]').click();
-	await expect(page).toHaveURL(/\/admin\/events\/[a-f0-9-]+$/, { timeout: 8000 });
+	// Redirect to admin event edit page
+	await expect(page).toHaveURL(/\/admin\/events\/[a-f0-9-]+$/);
 
 	const eventId = page.url().split('/').pop()!;
 
 	// New event is a draft
 	await expect(page.locator('select[name="status"]')).toHaveValue('draft');
 
-	// Suggestion shows promoted banner
+	// Suggestion shows the promoted banner linking to the event
 	await page.goto(`${BASE}/suggestions/${openSuggestionId}`);
-	await expect(page.locator('[data-testid="promoted-banner"]')).toBeVisible({ timeout: 5000 });
+	await expect(page.locator('[data-testid="promoted-banner"]')).toBeVisible();
 
 	// Cleanup
 	const admin = adminClient();
@@ -136,20 +137,17 @@ test('admin can promote an open suggestion to a draft event', async ({ page }) =
 test('admin can suspend and reinstate a member', async ({ page }) => {
 	await signInAs(page, ADMIN_EMAIL);
 	await page.goto(`${BASE}/admin/members`);
-	await page.waitForLoadState('networkidle');
 
 	const memberRow = page.locator(`[data-member-id="${MEMBER_ID}"]`);
 	await expect(memberRow).toBeVisible();
 
 	// Suspend
 	await memberRow.locator('button[data-action="suspend"]').click();
-	await expect(memberRow.locator('[data-testid="suspended-badge"]')).toBeVisible({
-		timeout: 5000,
-	});
+	await expect(memberRow.locator('[data-testid="suspended-badge"]')).toBeVisible();
 
 	// Reinstate
 	await memberRow.locator('button[data-action="reinstate"]').click();
-	await expect(memberRow.locator('button[data-action="suspend"]')).toBeVisible({ timeout: 5000 });
+	await expect(memberRow.locator('button[data-action="suspend"]')).toBeVisible();
 });
 
 // ── Suggestion close / reopen ─────────────────────────────────────────────────
@@ -157,11 +155,11 @@ test('admin can suspend and reinstate a member', async ({ page }) => {
 test('admin can close and reopen voting on a suggestion', async ({ page }) => {
 	await signInAs(page, ADMIN_EMAIL);
 	await page.goto(`${BASE}/suggestions/${openSuggestionId}`);
-	await page.waitForLoadState('networkidle');
+	await expect(page.locator('button[data-action="close"]')).toBeVisible();
 
 	await page.locator('button[data-action="close"]').click();
-	await expect(page.locator('button[data-action="reopen"]')).toBeVisible({ timeout: 5000 });
+	await expect(page.locator('button[data-action="reopen"]')).toBeVisible();
 
 	await page.locator('button[data-action="reopen"]').click();
-	await expect(page.locator('button[data-action="close"]')).toBeVisible({ timeout: 5000 });
+	await expect(page.locator('button[data-action="close"]')).toBeVisible();
 });
