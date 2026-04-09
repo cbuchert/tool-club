@@ -567,10 +567,25 @@ Cron functions use the Supabase service role key. They are not reachable by memb
 
 ## File storage
 
-Photos are stored in Supabase Storage. Bucket: `recap-photos`.
+Two storage buckets are defined in `supabase/config.toml`:
+
+### `avatars` (public)
+
+User profile photos. Max 2 MB. Accepted types: JPEG, PNG, WebP.
+
+- Upload is server-side only (form action in `/account`).
+- Storage path: `{user_id}/avatar.{ext}`
+- Public bucket — served via `getPublicUrl()`. URL is cache-busted with
+  `?v={timestamp}` after each upload so browsers pick up the new image.
+- On account deletion all three extension variants are removed:
+  `{user_id}/avatar.jpg`, `{user_id}/avatar.png`, `{user_id}/avatar.webp`.
+
+### `recap-photos` (private)
+
+Event recap photos. Max 5 MB. Accepted types: JPEG, PNG, WebP, GIF.
 
 - Upload is performed server-side in a form action, not directly from the browser.
-- Storage path: `{event_id}/{photo_id}_{filename}`
+- Storage path: `{event_id}/{photo_uuid}.{ext}`
 - Public photos are served via Supabase's public URL. Private photos require a
   signed URL generated server-side.
 - The `photos.is_public` flag is toggled by the event host. Toggling re-renders
