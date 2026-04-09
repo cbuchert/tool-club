@@ -1,5 +1,5 @@
 import { createEnv } from '@t3-oss/env-core';
-import { SUPABASE_SERVICE_ROLE_KEY, SUPABASE_JWT_SECRET } from '$env/static/private';
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import { z } from 'zod';
 
@@ -13,12 +13,10 @@ export const env = createEnv({
 	},
 	server: {
 		SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-		SUPABASE_JWT_SECRET: z.string().min(32),
 	},
 	runtimeEnv: {
 		PUBLIC_SUPABASE_URL,
 		PUBLIC_SUPABASE_ANON_KEY,
 		SUPABASE_SERVICE_ROLE_KEY,
-		SUPABASE_JWT_SECRET,
 	},
 });
