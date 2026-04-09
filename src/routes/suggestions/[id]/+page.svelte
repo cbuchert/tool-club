@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -18,7 +19,7 @@
 			body: new FormData(),
 		});
 		const result = deserialize(await res.text());
-		await applyAction(result);
+		if (result.type !== 'failure') await invalidateAll();
 		submitting = false;
 	}
 
@@ -37,7 +38,7 @@
 			commentError = (result.data?.error as string) ?? 'Something went wrong.';
 		} else {
 			commentBody = '';
-			await applyAction(result);
+			await invalidateAll();
 		}
 		submitting = false;
 	}
@@ -50,7 +51,7 @@
 			body: fd,
 		});
 		const result = deserialize(await res.text());
-		await applyAction(result);
+		if (result.type !== 'failure') await invalidateAll();
 	}
 </script>
 

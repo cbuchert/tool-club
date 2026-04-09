@@ -116,6 +116,24 @@ const response = await fetch('?/default', { method: 'POST', body: formData });
 await applyAction(deserialize(await response.text()));
 ```
 
+## Page data refresh after mutations
+
+After a successful action via bare `fetch` + `deserialize`, use `invalidateAll()`
+from `$app/navigation` to re-run all load functions and update page data. Do NOT
+use `applyAction` for this — it is designed for `use:enhance` forms and behaves
+unreliably with bare fetch in Svelte 5 reactive branches.
+
+```typescript
+import { invalidateAll } from '$app/navigation';
+
+const res = await fetch(`/events/${id}?/rsvp`, { method: 'POST', body: fd });
+const result = deserialize(await res.text());
+if (result.type === 'failure') error = result.data?.error;
+else await invalidateAll(); // re-runs load, updates data reactive variable
+```
+
+`applyAction` is only appropriate inside `use:enhance` callbacks.
+
 ## Form conventions
 
 - **TanStack Form** (`@tanstack/svelte-form`) handles client-side field validation and
