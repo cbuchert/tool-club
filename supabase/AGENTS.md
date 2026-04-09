@@ -128,13 +128,26 @@ Do not add test fixture setup to seed files. Seeds are for dev convenience only.
 
 ## Storage
 
-Bucket: `recap-photos` (defined in `config.toml` under `[storage.buckets.recap-photos]`).
-Private by default. Max 5 MB. Accepted types: JPEG, PNG, WebP, GIF.
+Two buckets are defined in `config.toml`:
+
+### `avatars` — public, 2 MB, JPEG/PNG/WebP
+
+User profile photos. One file per user: `{user_id}/avatar.{ext}`.
+
+- Uploads are server-side only (account page action).
+- Use `createAdminClient()` for uploads (upsert: true overwrites any existing avatar).
+- Public bucket — served via `getPublicUrl(path)`. Append `?v={Date.now()}` to bust
+  browser cache after upload.
+- On account deletion, remove all three extension variants explicitly:
+  `{user_id}/avatar.jpg`, `{user_id}/avatar.png`, `{user_id}/avatar.webp`.
+
+### `recap-photos` — private, 5 MB, JPEG/PNG/WebP/GIF
+
+Event recap photos. Path convention: `{event_id}/{photo_uuid}.{ext}`.
 
 - Photo uploads are server-side only — never upload directly from the browser.
 - Use `createAdminClient()` for uploads (service role bypasses storage RLS).
 - Public photos → `getPublicUrl(path)`. Private photos → `createSignedUrl(path, 3600)`.
-- Storage path convention: `{event_id}/{photo_uuid}.{ext}`
 
 ## Running tests locally
 
