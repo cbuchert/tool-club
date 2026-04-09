@@ -1,0 +1,19 @@
+{
+	"name": "tool-club",
+	"version": "0.0.1",
+	"private": true,
+	"packageManager": "pnpm@latest",
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"test": "pnpm run test:unit --run && pnpm run test:e2e",
+		"test:unit": "vitest",
+		"test:e2e": "playwright test",
+		"lint": "eslint . && prettier --check .",
+		"format": "prettier --write ."
+	}
+}
