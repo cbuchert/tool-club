@@ -127,20 +127,23 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 8. Feed endpoints
 
-- [ ] `/feed/rss` — authenticated RSS, token validation
-- [ ] `/feed/ical` — authenticated iCal, token validation
-- [ ] `/feed/public` — public RSS, no auth
-- [ ] Token regeneration form action
+- [x] `/feed/rss` — authenticated RSS, token validation, Cache-Control: private
+- [x] `/feed/ical/toolclub.ics` — authenticated iCal, .ics URL for calendar app compatibility
+- [x] `/feed/public` — public RSS, titles + dates only, no auth
+- [x] Token regeneration form action (on account page, with confirmation dialog)
+- [x] 26 Playwright E2E tests covering token protection and content contract
 
 ## 9. Account
 
-- [ ] `/account` — display name edit, avatar upload, invite section, feed links
-- [ ] Display name update action
-- [ ] Avatar upload action (Supabase Storage)
-- [ ] Invite generation action (one pending max enforcement)
-- [ ] Invite revoke action
-- [ ] Feed token regeneration action
-- [ ] Account deletion action (see SPEC.md for anonymization rules + host blocker)
+- [x] `/account` — display name inline edit, invite section, feed links, danger zone
+- [x] Display name update action
+- [ ] Avatar upload action (Supabase Storage — needs `avatars` bucket)
+- [x] Invite generation action (one pending max enforcement)
+- [x] Invite revoke action
+- [x] Feed token regeneration action
+- [x] Account deletion action — sign out first, then anonymize public.users,
+      then sever auth identity (email → deleted+{uuid}@toolclub.invalid).
+      Blocker: cannot delete if hosting any upcoming event.
 
 ## 10. Admin
 
@@ -177,8 +180,8 @@ Write tests after the feature is built and working locally.
 - [ ] Events: capacity enforcement (going button disabled when full)
 - [ ] Suggestions: vote toggle
 - [ ] Suggestions: propose → appears in list
-- [ ] Feed: private RSS requires valid token
-- [ ] Feed: public RSS returns no member data
+- [x] Feed: private RSS requires valid token (26 E2E tests)
+- [x] Feed: public RSS returns no member data (26 E2E tests)
 - [ ] Admin: publish a draft event → visible to members
 - [ ] Admin: promote suggestion → event created in draft
 
