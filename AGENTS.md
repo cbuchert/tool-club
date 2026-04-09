@@ -70,7 +70,8 @@ These apply everywhere and override any other guidance:
 - **Never trust client-supplied user IDs.** Always derive identity from the session.
 - **No separate API server.** SvelteKit form actions and server routes are the backend.
 - **No component library.** Tailwind + `$lib/components/` is the UI system.
-- **No client-side state management libraries.** Svelte stores for cross-component
-  state only where truly necessary.
+- **No client-side state management libraries** beyond what's already adopted.
+  Current exceptions: `@tanstack/svelte-form` for form state/validation.
+  Svelte stores for cross-component state only where truly necessary.
 - **No secrets in code.** Environment variables only.
 - **Write working code.** No pseudocode or skeleton implementations.

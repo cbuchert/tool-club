@@ -1,5 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import { createAdminClient } from '$lib/server/db';
+import { joinSchema } from '$lib/schemas/forms';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -33,12 +34,15 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions: Actions = {
 	default: async ({ request, params, url, cookies }) => {
 		const data = await request.formData();
-		const email = data.get('email')?.toString().trim() ?? '';
-		const display_name = data.get('display_name')?.toString().trim() ?? '';
-
-		if (!email) return fail(400, { error: 'Email is required.', email, display_name });
-		if (!display_name)
-			return fail(400, { error: 'Display name is required.', email, display_name });
+		const parsed = joinSchema.safeParse({
+			email: data.get('email')?.toString().trim() ?? '',
+			display_name: data.get('display_name')?.toString().trim() ?? '',
+		});
+		if (!parsed.success) {
+			const first = parsed.error.errors[0];
+			return fail(400, { error: first.message });
+		}
+		const { email, display_name } = parsed.data;
 
 		const admin = createAdminClient();
 

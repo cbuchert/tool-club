@@ -62,6 +62,20 @@ src/
 - The prototype (`docs/prototype.html`) uses `px` and flat CSS classes — treat it
   as visual reference only. Translate design intent into Tailwind utilities.
 
+## Form conventions
+
+- **TanStack Form** (`@tanstack/svelte-form`) handles client-side field validation and
+  form state. Create forms with `createForm()` and use Zod schemas as validators via
+  Standard Schema integration.
+- **SvelteKit actions** (`+page.server.ts`) handle server-side validation and mutations.
+  Always re-validate on the server — never trust client-side validation alone.
+- **Submission flow**: TanStack's `onSubmit` posts via `fetch` to the SvelteKit action,
+  then calls `applyAction(deserialize(await response.text()))` to update page state.
+- **Do not use** `use:enhance` on TanStack-managed forms — they handle submission
+  themselves. `use:enhance` is only for forms without TanStack Form.
+- Zod schemas in `src/lib/schemas/` are shared between client validation (TanStack)
+  and server validation (actions). Define the schema once, use it in both places.
+
 ## Component conventions
 
 - Shared UI primitives live in `$lib/components/`.

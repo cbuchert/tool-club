@@ -1,14 +1,36 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, deserialize } from '$app/forms';
+	import { createForm } from '@tanstack/svelte-form';
+	import { signinSchema } from '$lib/schemas/forms';
 	import AuthShell from '$lib/components/AuthShell.svelte';
 
-	let { form, data } = $props();
-	let loading = $state(false);
+	let { data } = $props();
+
+	// Sent state is managed locally — the action returns { sent, email }
+	let sent = $state<{ email: string } | null>(null);
 
 	const errorMessages: Record<string, string> = {
 		no_account: 'No account found for that email. You need an invite to join Tool Club.',
 		auth_failed: 'Sign-in failed. Please try again.',
 	};
+
+	const form = createForm(() => ({
+		defaultValues: { email: '' },
+		validators: { onSubmit: signinSchema },
+		onSubmit: async ({ value }) => {
+			const formData = new FormData();
+			formData.set('email', value.email);
+
+			const response = await fetch('?/default', { method: 'POST', body: formData });
+			const result = deserialize(await response.text());
+
+			if (result.type === 'success' && result.data?.sent) {
+				sent = { email: value.email };
+			} else {
+				await applyAction(result);
+			}
+		},
+	}));
 </script>
 
 <svelte:head>
@@ -17,7 +39,7 @@
 
 <AuthShell>
 	<div class="w-full max-w-sm [border:0.5px_solid_var(--tc-border)] rounded-lg p-7 bg-tc-bg">
-		{#if form?.sent}
+		{#if sent}
 			<!-- ── Check your email ── -->
 			<div
 				class="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-tc-accent-bg"
@@ -46,14 +68,14 @@
 				Check your email
 			</h1>
 			<p class="text-center text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
-				We sent a sign-in link to <strong class="font-medium text-tc-text">{form.email}</strong>.
+				We sent a sign-in link to <strong class="font-medium text-tc-text">{sent.email}</strong>.
 			</p>
-			<a
-				href="/signin"
-				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
+			<button
+				onclick={() => (sent = null)}
+				class="block w-full text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
 			>
 				← Use a different email
-			</a>
+			</button>
 		{:else}
 			<!-- ── Sign-in form ── -->
 			{#if data.error}
@@ -72,37 +94,53 @@
 			</p>
 
 			<form
-				method="POST"
-				use:enhance={() => {
-					loading = true;
-					return async ({ update }) => {
-						await update();
-						loading = false;
-					};
+				onsubmit={(e) => {
+					e.preventDefault();
+					form.handleSubmit();
 				}}
 			>
-				<label
-					for="email"
-					class="block font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
+				<form.Field name="email">
+					{#snippet children(field)}
+						<label
+							for="email"
+							class="block font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
+						>
+							Email address
+						</label>
+						<input
+							id="email"
+							type="email"
+							name="email"
+							autocomplete="email"
+							placeholder="you@example.com"
+							value={field.state.value}
+							oninput={(e) => field.handleChange(e.currentTarget.value)}
+							onblur={field.handleBlur}
+							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
+						/>
+						{#if field.state.meta.isTouched && field.state.meta.errors.length}
+							<p class="mb-3 text-[0.75rem] text-tc-danger">
+								{field.state.meta.errors[0]?.message ?? field.state.meta.errors[0]}
+							</p>
+						{:else}
+							<div class="mb-4"></div>
+						{/if}
+					{/snippet}
+				</form.Field>
+
+				<form.Subscribe
+					selector={(s) => ({ canSubmit: s.canSubmit, isSubmitting: s.isSubmitting })}
 				>
-					Email address
-				</label>
-				<input
-					id="email"
-					name="email"
-					type="email"
-					required
-					autocomplete="email"
-					placeholder="you@example.com"
-					class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-4"
-				/>
-				<button
-					type="submit"
-					disabled={loading}
-					class="w-full rounded-md bg-tc-accent px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50 disabled:cursor-not-allowed"
-				>
-					{loading ? 'Sending…' : 'Send sign-in link'}
-				</button>
+					{#snippet children(state)}
+						<button
+							type="submit"
+							disabled={!state.canSubmit || state.isSubmitting}
+							class="w-full rounded-md bg-tc-accent px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{state.isSubmitting ? 'Sending…' : 'Send sign-in link'}
+						</button>
+					{/snippet}
+				</form.Subscribe>
 			</form>
 
 			<a

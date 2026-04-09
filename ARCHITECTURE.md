@@ -49,6 +49,23 @@ Magic-link auth is a first-class Supabase Auth feature. Session is in the same s
 as all data, enabling Row Level Security policies that reference `auth.uid()` directly.
 No JWT bridging between vendors.
 
+### TanStack Form (`@tanstack/svelte-form`)
+
+Used for client-side form state management and field-level validation. Integrates with
+Zod via the Standard Schema spec. The pattern is:
+
+- TanStack Form validates fields on the client (onChange/onBlur, before submission)
+- On `handleSubmit`, the validated values are posted to a SvelteKit form action via
+  `fetch` + `deserialize`/`applyAction` from `$app/forms`
+- The SvelteKit action re-validates server-side and performs the mutation
+
+This means forms require JavaScript. Progressive enhancement (no-JS fallback) is not
+supported for mutating actions. This is an acceptable trade-off for Tool Club's
+invite-only, small-group audience.
+
+Zod schemas in `src/lib/schemas/` serve double duty: used by TanStack Form for
+client-side validation and by the server action for server-side validation.
+
 ### mdsvex
 
 Markdown content (landing page, about page) is processed by mdsvex at build time.
