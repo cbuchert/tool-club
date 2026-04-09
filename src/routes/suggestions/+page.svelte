@@ -9,7 +9,14 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let submitting = $state<string | null>(null); // suggestion id being voted on
+	let submitting = $state<string | null>(null);
+	let showClosed = $state(false);
+
+	// Closed suggestions are hidden by default — progressive disclosure
+	const visible = $derived(
+		showClosed ? data.suggestions : data.suggestions.filter((s) => s.status !== 'closed')
+	);
+	const closedCount = $derived(data.suggestions.filter((s) => s.status === 'closed').length);
 
 	async function toggleVote(id: string) {
 		submitting = id;
@@ -61,7 +68,7 @@
 			{data.openCount} open · newest first
 		</p>
 
-		{#each data.suggestions as s (s.id)}
+		{#each visible as s (s.id)}
 			<div
 				class="mb-2.5 flex items-start gap-3 rounded-lg [border:0.5px_solid_var(--tc-border)] bg-tc-bg p-4 transition-colors hover:[border-color:var(--tc-border-mid)]"
 			>
@@ -99,5 +106,19 @@
 				</div>
 			</div>
 		{/each}
+
+		<!-- Progressive disclosure for closed suggestions -->
+		{#if closedCount > 0}
+			<button
+				onclick={() => (showClosed = !showClosed)}
+				class="mt-1 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint transition-colors hover:text-tc-muted"
+			>
+				{#if showClosed}
+					Hide closed
+				{:else}
+					{closedCount} closed {closedCount === 1 ? 'suggestion' : 'suggestions'} ↓
+				{/if}
+			</button>
+		{/if}
 	{/if}
 </div>
