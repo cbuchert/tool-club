@@ -137,7 +137,7 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 - [x] `/account` — display name inline edit, invite section, feed links, danger zone
 - [x] Display name update action
-- [ ] Avatar upload action (Supabase Storage — needs `avatars` bucket)
+- [x] Avatar upload action (Supabase Storage — `avatars` bucket, public, 2 MB limit, JPEG/PNG/WebP)
 - [x] Invite generation action (one pending max enforcement)
 - [x] Invite revoke action
 - [x] Feed token regeneration action
