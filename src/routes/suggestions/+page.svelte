@@ -58,7 +58,7 @@
 		</p>
 	{:else}
 		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
-			{data.openCount} open · sorted by votes
+			{data.openCount} open · newest first
 		</p>
 
 		{#each data.suggestions as s (s.id)}

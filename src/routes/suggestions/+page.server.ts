@@ -48,20 +48,20 @@ export const load: PageServerLoad = async ({ locals }) => {
 		);
 	}
 
-	const suggestions = (rawSuggestions ?? [])
-		.map((s) => ({
-			id: s.id,
-			title: s.title,
-			status: s.status as 'open' | 'planned' | 'closed',
-			host_name: s.host_name as string | null,
-			voting_closes_at: s.voting_closes_at as string | null,
-			author_name: (s.users as { display_name: string } | null)?.display_name ?? 'Member',
-			vote_count: voteCountBySuggestion.get(s.id) ?? 0,
-			comment_count: commentCountBySuggestion.get(s.id) ?? 0,
-			voted: myVotedIds.has(s.id),
-			voting_open: isVotingOpen(s.status, s.voting_closes_at as string | null),
-		}))
-		.sort((a, b) => b.vote_count - a.vote_count);
+	const suggestions = (rawSuggestions ?? []).map((s) => ({
+		id: s.id,
+		title: s.title,
+		status: s.status as 'open' | 'planned' | 'closed',
+		host_name: s.host_name as string | null,
+		voting_closes_at: s.voting_closes_at as string | null,
+		author_name: (s.users as { display_name: string } | null)?.display_name ?? 'Member',
+		vote_count: voteCountBySuggestion.get(s.id) ?? 0,
+		comment_count: commentCountBySuggestion.get(s.id) ?? 0,
+		voted: myVotedIds.has(s.id),
+		voting_open: isVotingOpen(s.status, s.voting_closes_at as string | null),
+	}));
+	// Sort by created_at descending (newest first) — stable ordering that doesn't
+	// jump around when vote counts change. Vote count is visible but not the sort key.
 
 	const openCount = suggestions.filter((s) => s.status === 'open').length;
 
