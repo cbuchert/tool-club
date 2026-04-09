@@ -1,5 +1,87 @@
 @import 'tailwindcss';
 
+/* ── Prose utility ───────────────────────────────────────────────────────────
+   Applied to containers that render server-side markdown ({@html ...}).
+   Uses Tailwind v4 @utility so `prose` is available as a utility class.
+   Targets inner HTML elements that marked() produces — we can't add classes
+   to those directly.                                                         */
+@utility prose {
+	font-size: 0.8125rem;
+	line-height: 1.7;
+	color: var(--tc-muted);
+
+	p {
+		margin-bottom: 0.75rem;
+	}
+	p:last-child {
+		margin-bottom: 0;
+	}
+	h1,
+	h2,
+	h3 {
+		color: var(--tc-text);
+		font-weight: 500;
+		margin-top: 1rem;
+		margin-bottom: 0.25rem;
+	}
+	h1 {
+		font-size: 1rem;
+	}
+	h2 {
+		font-size: 0.9375rem;
+	}
+	h3 {
+		font-size: 0.875rem;
+	}
+	ul {
+		padding-left: 1rem;
+		list-style-type: disc;
+		margin-bottom: 0.75rem;
+	}
+	ol {
+		padding-left: 1rem;
+		list-style-type: decimal;
+		margin-bottom: 0.75rem;
+	}
+	li {
+		margin-bottom: 0.25rem;
+	}
+	strong {
+		font-weight: 500;
+		color: var(--tc-text);
+	}
+	a {
+		color: var(--tc-accent-text);
+		text-decoration: underline;
+		text-underline-offset: 0.125rem;
+	}
+	code {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		background: var(--tc-surface);
+		padding: 0.125rem 0.25rem;
+		border-radius: 0.25rem;
+	}
+	pre {
+		background: var(--tc-surface);
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		overflow-x: auto;
+		margin-bottom: 0.75rem;
+	}
+	pre code {
+		background: none;
+		padding: 0;
+		font-size: 0.75rem;
+	}
+	blockquote {
+		border-left: 0.1875rem solid var(--tc-border-mid);
+		padding-left: 0.75rem;
+		color: var(--tc-hint);
+		margin-bottom: 0.75rem;
+	}
+}
+
 /* Short-form aliases — lets component <style> blocks use var(--tc-bg)
    instead of var(--color-tc-bg), matching prototype conventions. */
 :root {

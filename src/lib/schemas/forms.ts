@@ -13,6 +13,10 @@ export const rsvpSchema = z.object({
 	response: z.enum(['yes', 'no']),
 });
 
+export const recapSchema = z.object({
+	body_md: z.string().min(1, 'Please write something for the recap.').max(10000),
+});
+
 export const proposalSchema = z.object({
 	title: z.string().min(1, 'Title is required.').max(200),
 	body_md: z.string().min(1, 'Please describe your idea.'),

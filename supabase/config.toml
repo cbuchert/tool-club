@@ -379,6 +379,13 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# ── Storage buckets ──────────────────────────────────────────────────────────
+
+[storage.buckets.recap-photos]
+public = false
+file_size_limit = "5MB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+
 [analytics]
 enabled = true
 port = 54327

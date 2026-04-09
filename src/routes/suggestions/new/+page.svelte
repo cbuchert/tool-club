@@ -93,12 +93,12 @@
 
 		<form.Field name="body_md">
 			{#snippet children(field)}
-				<label
-					for="body_md"
-					class="block font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
-				>
-					Description <span class="text-tc-danger">*</span>
-				</label>
+				<div class="flex items-baseline justify-between mb-1.5">
+					<label for="body_md" class="font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint">
+						Description <span class="text-tc-danger">*</span>
+					</label>
+					<span class="font-mono text-[0.6rem] text-tc-hint">Markdown supported</span>
+				</div>
 				<textarea
 					id="body_md"
 					name="body_md"

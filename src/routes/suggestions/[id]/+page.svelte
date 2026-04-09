@@ -127,9 +127,7 @@
 
 	<!-- ── Body ── -->
 	{#if data.suggestion.bodyHtml}
-		<div
-			class="mb-6 text-[0.8125rem] text-tc-muted leading-[1.7] [&_p+p]:mt-3 [&_h2]:mt-4 [&_h2]:font-medium [&_h2]:text-tc-text"
-		>
+		<div class="prose mb-6">
 			{@html data.suggestion.bodyHtml}
 		</div>
 	{/if}
