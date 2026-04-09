@@ -135,9 +135,53 @@ await applyAction(deserialize(await response.text()));
 ## Component conventions
 
 - Shared UI primitives live in `$lib/components/`.
-- If a layout pattern appears in 2+ pages, extract it as a component.
+- **If a pattern appears in 2+ pages, extract it as a component.** Do not copy-paste
+  Tailwind class strings across routes — a change to the pattern should be one edit.
 - Components use Svelte 5 runes syntax (`$props()`, `$derived()`, `$state()`).
 - No `export let` prop syntax — use `$props()`.
+
+Current components (add to this list when you create a new one):
+
+| Component   | Purpose                                                                             |
+| ----------- | ----------------------------------------------------------------------------------- |
+| `AuthShell` | Centered full-height wrapper with "Tool Club" wordmark                              |
+| `Avatar`    | Initials circle — `name` + `size` (sm/md/lg)                                        |
+| `Badge`     | Status pill — `variant` (going/open/full/planned/past/closed/no) + optional `label` |
+| `Topbar`    | Sticky page header — `left` snippet required, `right` optional                      |
+
+## Markdown rendering
+
+Server-rendered markdown (from `marked()`) is injected with `{@html}`. Apply the
+`prose` Tailwind utility to the container to style the inner HTML elements:
+
+```svelte
+<div class="prose">
+	{@html bodyHtml}
+</div>
+```
+
+`prose` is defined as a `@utility` in `src/app.css`. It styles `p`, `h1–h3`,
+`ul`, `ol`, `li`, `strong`, `a`, `code`, `pre`, `blockquote` using `--tc-*` tokens.
+Do not use `@tailwindcss/typography` — the custom utility is intentional.
+
+Always add a "Markdown supported" hint near markdown-accepting textareas:
+
+```svelte
+<div class="flex items-baseline justify-between mb-1.5">
+	<label ...>Body</label>
+	<span class="font-mono text-[0.6rem] text-tc-hint">Markdown supported</span>
+</div>
+```
+
+## Commit discipline
+
+One logical change per commit. If a commit message needs "and" to describe what it
+does, split the commit. Batch commits hide regressions and make targeted reverts
+expensive. Examples of correct scope:
+
+- `feat: extract Avatar component` ← one component
+- `refactor: wire Avatar into events pages` ← one set of pages
+- `fix: mobile nav flex-direction bug` ← one bug
 
 ## Environment variables
 

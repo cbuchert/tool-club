@@ -66,8 +66,8 @@ supabase/
   - admin: `00000000-0000-0000-0000-000000000002`
 - `seeds/dev_data.ts` is a Faker-based script for realistic local dev data.
   Run with `pnpm seed`. Uses the Supabase JS client (requires local stack running).
-  **Note:** this file is a stub from the bootstrap phase and has not been updated
-  for the current schema. Update it before relying on it for dev seeding.
+  Covers: 2 users, 6 events (published/draft/past), RSVPs, 1 recap + photos,
+  6 suggestions (open/planned/closed), votes, comments, feed tokens.
 - Seeds load in glob order (`seeds/*.sql`). The test_users seed runs before
   dev_data because SQL files sort before `.ts` — but dev_data.ts is a script,
   not a SQL seed, so there is no conflict.
@@ -125,6 +125,16 @@ each `begin;...rollback;` transaction. Tests pass whether or not the dev seed
 has been applied (`on conflict do nothing` handles both cases).
 
 Do not add test fixture setup to seed files. Seeds are for dev convenience only.
+
+## Storage
+
+Bucket: `recap-photos` (defined in `config.toml` under `[storage.buckets.recap-photos]`).
+Private by default. Max 5 MB. Accepted types: JPEG, PNG, WebP, GIF.
+
+- Photo uploads are server-side only — never upload directly from the browser.
+- Use `createAdminClient()` for uploads (service role bypasses storage RLS).
+- Public photos → `getPublicUrl(path)`. Private photos → `createSignedUrl(path, 3600)`.
+- Storage path convention: `{event_id}/{photo_uuid}.{ext}`
 
 ## Running tests locally
 

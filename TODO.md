@@ -60,8 +60,8 @@ Add notes inline when a task reveals decisions that affect other tasks.
 - [x] Write RLS policies (reference permission table in ARCHITECTURE.md)
 - [x] Create `supabase/seeds/test_users.sql` — dev convenience seed for auth testing
       (pgTAP tests are self-contained; they do not depend on this seed)
-- [ ] Create `supabase/seeds/dev_data.ts` with realistic Faker dev seed data
-      (stub exists from bootstrap but not updated for current schema — see supabase/AGENTS.md)
+- [x] Create `supabase/seeds/dev_data.ts` with realistic Faker dev seed data
+      (6 events / 6 suggestions across all states / recaps / photos / votes / comments)
 - [x] Write pgTAP tests for every RLS policy (67 tests, all passing)
   - [x] `tests/rls_users.test.sql`
   - [x] `tests/rls_events.test.sql`
@@ -112,18 +112,18 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 6. Suggestions
 
-- [ ] `/suggestions` — list sorted by vote count, status sections
-- [ ] `/suggestions/[id]` — detail, vote toggle, comments
-- [ ] Vote form action (toggle)
-- [ ] Comment form action (post, delete own)
-- [ ] Propose suggestion form and action
+- [x] `/suggestions` — list sorted by votes, all status states, meta line (author/host/closes/comments)
+- [x] `/suggestions/[id]` — detail, vote toggle, comments, promoted-event banner
+- [x] Vote form action (toggle — RLS enforces one-vote-per-user)
+- [x] Comment form action (post, delete own; admin can delete any)
+- [x] Propose suggestion form and action (TanStack Form + Zod, redirects on success)
 
 ## 7. Recaps and photos
 
-- [ ] Recap write form action (host or admin only)
-- [ ] Photo upload form action (any member, server-side to Supabase Storage)
-- [ ] Photo visibility toggle action (host or admin only)
-- [ ] Signed URL generation for private photos
+- [x] Recap write form action (host or admin only, past events with no existing recap)
+- [x] Photo upload form action (any member, server-side to Supabase Storage `recap-photos` bucket)
+- [x] Photo visibility toggle action (host or admin only)
+- [x] Signed URL generation for private photos (1-hour expiry)
 
 ## 8. Feed endpoints
 

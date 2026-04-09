@@ -79,3 +79,5 @@ These apply everywhere and override any other guidance:
   Svelte stores for cross-component state only where truly necessary.
 - **No secrets in code.** Environment variables only.
 - **Write working code.** No pseudocode or skeleton implementations.
+- **Microcommits.** One logical change per commit. Do not batch unrelated work.
+  If a commit message needs "and" to describe what it does, split it.
