@@ -205,16 +205,24 @@
 	<section>
 		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">Invites</p>
 
+		{#if inviteError}
+			<p class="mb-2 text-xs text-tc-danger">{inviteError}</p>
+		{/if}
+
 		{#if data.pendingInvite}
-			<!-- Pending invite -->
+			<!-- Pending invite — copy + revoke -->
 			<div
-				class="mb-3 flex items-center justify-between rounded-md [border:0.5px_solid_var(--tc-border)] px-3 py-2.5 text-[0.8125rem]"
+				class="mb-3 flex items-center justify-between rounded-md [border:0.5px_solid_var(--tc-border)] px-3 py-2.5"
 			>
 				<div class="min-w-0">
 					<p class="font-mono text-[0.6875rem] text-tc-hint mb-0.5">Pending invite</p>
 					<p class="truncate text-tc-text font-mono text-xs">{data.pendingInviteUrl}</p>
 					<p class="text-xs text-tc-muted mt-0.5">
-						Expires {new Date(data.pendingInvite.expires_at).toLocaleDateString('en-US', {
+						Sent {new Date(data.pendingInvite.created_at).toLocaleDateString('en-US', {
+							month: 'short',
+							day: 'numeric',
+						})}
+						· Expires {new Date(data.pendingInvite.expires_at).toLocaleDateString('en-US', {
 							month: 'short',
 							day: 'numeric',
 						})}
@@ -239,9 +247,6 @@
 				</div>
 			</div>
 		{:else}
-			{#if inviteError}
-				<p class="mb-2 text-xs text-tc-danger">{inviteError}</p>
-			{/if}
 			<button
 				onclick={generateInvite}
 				disabled={inviteGenerating}
@@ -251,22 +256,72 @@
 			</button>
 		{/if}
 
+		<!-- Invite history: members who joined via this user's invites -->
 		{#if data.recruited.length > 0}
-			<div class="mt-4">
+			<div class="mt-5">
 				<p class="mb-2 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
-					People you've invited
+					Your invite history
 				</p>
-				<div class="space-y-1.5">
+				<div
+					class="rounded-md [border:0.5px_solid_var(--tc-border)] divide-y [--tw-divide-opacity:1]"
+					style="--divide-color: var(--tc-border)"
+				>
 					{#each data.recruited as member (member.id)}
-						<div class="flex items-center gap-2 text-sm text-tc-muted">
-							<Avatar name={member.display_name} size="sm" />
-							{member.display_name}
+						<div
+							class="flex items-center justify-between px-3 py-2.5 [border-bottom:0.5px_solid_var(--tc-border)] last:border-b-0"
+						>
+							<div class="flex items-center gap-2">
+								<Avatar name={member.display_name} size="sm" />
+								<span class="text-sm text-tc-text">{member.display_name}</span>
+							</div>
+							<span
+								class="font-mono text-[0.625rem] rounded-full px-2 py-0.5 bg-tc-accent-bg text-tc-accent-text [border:0.5px_solid_var(--tc-accent-border)]"
+							>
+								Joined {new Date(member.created_at).toLocaleDateString('en-US', {
+									month: 'short',
+									day: 'numeric',
+								})}
+							</span>
 						</div>
 					{/each}
 				</div>
 			</div>
 		{/if}
 	</section>
+
+	<!-- ── Network ── -->
+	{#if data.recruited.length > 0}
+		<section>
+			<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+				Your network
+			</p>
+			<div class="space-y-4">
+				{#each data.recruited as member (member.id)}
+					{@const theirRecruits = data.secondLevel.filter((s) => s.invited_by === member.id)}
+					<div>
+						<div class="flex items-center gap-2 mb-1.5">
+							<Avatar name={member.display_name} size="sm" />
+							<span class="text-sm font-medium text-tc-text">{member.display_name}</span>
+						</div>
+						<div class="ml-5 pl-3 [border-left:0.5px_solid_var(--tc-border)]">
+							{#if theirRecruits.length > 0}
+								<div class="space-y-1.5">
+									{#each theirRecruits as recruit (recruit.id)}
+										<div class="flex items-center gap-2">
+											<Avatar name={recruit.display_name} size="sm" />
+											<span class="text-xs text-tc-muted">{recruit.display_name}</span>
+										</div>
+									{/each}
+								</div>
+							{:else}
+								<p class="text-xs text-tc-hint">Nobody invited yet</p>
+							{/if}
+						</div>
+					</div>
+				{/each}
+			</div>
+		</section>
+	{/if}
 
 	<!-- ── Feed ── -->
 	<section>

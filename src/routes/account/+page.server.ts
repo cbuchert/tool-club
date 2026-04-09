@@ -18,14 +18,18 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		// Pending = unredeemed + not expired
 		supabase
 			.from('invites')
-			.select('id, token, email, expires_at')
+			.select('id, token, email, expires_at, created_at')
 			.eq('invited_by', user!.id)
 			.is('redeemed_by', null)
 			.gt('expires_at', new Date().toISOString())
 			.maybeSingle(),
 
-		// Members this user invited who have joined
-		supabase.from('users').select('id, display_name').eq('invited_by', user!.id),
+		// Members this user directly invited who have joined
+		supabase
+			.from('users')
+			.select('id, display_name, created_at')
+			.eq('invited_by', user!.id)
+			.order('created_at', { ascending: true }),
 
 		supabase.from('feed_tokens').select('token').eq('user_id', user!.id).maybeSingle(),
 
@@ -37,6 +41,16 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			.in('status', ['draft', 'published']),
 	]);
 
+	// Second-level network: people invited by the members this user recruited
+	const recruitedIds = (recruited ?? []).map((r) => r.id);
+	const { data: secondLevel } = recruitedIds.length
+		? await supabase
+				.from('users')
+				.select('id, display_name, invited_by')
+				.in('invited_by', recruitedIds)
+				.order('created_at', { ascending: true })
+		: { data: [] };
+
 	const token = feedToken?.token ?? null;
 	const origin = url.origin;
 
@@ -45,6 +59,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		pendingInvite: pendingInvite ?? null,
 		pendingInviteUrl: pendingInvite ? `${origin}/join/${pendingInvite.token}` : null,
 		recruited: recruited ?? [],
+		secondLevel: secondLevel ?? [],
 		feedToken: token,
 		rssUrl: token ? `${origin}/feed/rss?token=${token}` : null,
 		// .ics extension in the URL is intentional — calendar apps and curl infer
