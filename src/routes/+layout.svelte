@@ -39,10 +39,7 @@
 {#if isShell}
 	<!-- ── Sidebar (desktop) ── -->
 	<nav class="sidebar">
-		<div class="logo">
-			Tool Club
-			<span>making things together</span>
-		</div>
+		<div class="logo">Tool Club</div>
 
 		{#each navItems as item (item.href)}
 			<a href={item.href} class="nav-item" class:active={active(item.href)}>
@@ -115,15 +112,6 @@
 		padding: 0 1rem 1.25rem;
 		border-bottom: 0.5px solid var(--tc-border);
 		margin-bottom: 0.75rem;
-	}
-
-	.logo span {
-		display: block;
-		font-style: italic;
-		font-weight: 300;
-		font-size: 0.8125rem;
-		color: var(--tc-muted);
-		margin-top: 0.125rem;
 	}
 
 	.nav-item {
