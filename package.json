@@ -17,8 +17,9 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "pnpm run test:unit -- --run && pnpm run test:e2e",
+		"test:db": "supabase test db",
 		"test:e2e": "playwright test",
+		"test": "pnpm run test:unit -- --run && pnpm run test:db && pnpm run test:e2e",
 		"seed": "tsx supabase/seeds/dev_data.ts",
 		"push:emails": "tsx scripts/push-email-templates.ts"
 	},

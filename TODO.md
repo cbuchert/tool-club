@@ -215,6 +215,9 @@ These were not in the original TODO but are now done.
 - [ ] Verify mobile layout (sidebar hidden, mobile nav shown at ≤640px)
 - [ ] Verify all pgTAP tests pass against hosted Supabase
 - [ ] Verify Playwright tests pass in CI
+      Note: E2E tests are not yet in the CI workflow (deploy.yml only gates on
+      test-db + test-unit). Adding E2E to CI requires starting Supabase + the
+      dev server in the runner — doable but non-trivial. Known gap.
 - [ ] Seed production database with initial admin user
 - [ ] Test invite flow end to end in production
 - [ ] Set up custom domain on Vercel (if applicable)
