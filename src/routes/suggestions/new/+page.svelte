@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { createForm } from '@tanstack/svelte-form';
 	import { proposalSchema } from '$lib/schemas/forms';
 	import Topbar from '$lib/components/Topbar.svelte';
@@ -20,8 +21,11 @@
 			const result = deserialize(await res.text());
 			if (result.type === 'failure') {
 				serverError = (result.data?.error as string) ?? 'Something went wrong.';
-			} else {
-				await applyAction(result);
+			} else if (result.type === 'redirect') {
+				// Per src/AGENTS.md: do not call applyAction inside TanStack Form's
+				// onSubmit — it triggers reactive re-renders that cause
+				// lifecycle_outside_component. Navigate manually instead.
+				goto(result.location);
 			}
 		},
 	}));
