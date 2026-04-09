@@ -91,43 +91,43 @@
 
 	/* ── Sidebar ────────────────────────────────────────────── */
 	.sidebar {
-		width: 200px;
+		width: 12.5rem;
 		flex-shrink: 0;
 		display: flex;
 		flex-direction: column;
-		padding: 20px 0;
-		background: var(--color-tc-surface);
-		border-right: 0.5px solid var(--color-tc-border);
+		padding: 1.25rem 0;
+		background: var(--tc-surface);
+		border-right: 0.5px solid var(--tc-border);
 		overflow-y: auto;
 	}
 
 	.logo {
 		font-family: var(--font-display);
-		font-size: 18px;
+		font-size: 1.125rem;
 		font-weight: 500;
-		letter-spacing: -0.3px;
-		color: var(--color-tc-text);
-		padding: 0 16px 20px;
-		border-bottom: 0.5px solid var(--color-tc-border);
-		margin-bottom: 12px;
+		letter-spacing: -0.02em;
+		color: var(--tc-text);
+		padding: 0 1rem 1.25rem;
+		border-bottom: 0.5px solid var(--tc-border);
+		margin-bottom: 0.75rem;
 	}
 
 	.logo span {
 		display: block;
 		font-style: italic;
 		font-weight: 300;
-		font-size: 13px;
-		color: var(--color-tc-muted);
-		margin-top: 2px;
+		font-size: 0.8125rem;
+		color: var(--tc-muted);
+		margin-top: 0.125rem;
 	}
 
 	.nav-item {
 		display: flex;
 		align-items: center;
-		gap: 10px;
-		padding: 8px 16px;
-		font-size: 13px;
-		color: var(--color-tc-muted);
+		gap: 0.625rem;
+		padding: 0.5rem 1rem;
+		font-size: 0.8125rem;
+		color: var(--tc-muted);
 		text-decoration: none;
 		transition:
 			background 0.1s,
@@ -135,65 +135,65 @@
 	}
 
 	.nav-item:hover {
-		background: var(--color-tc-bg);
-		color: var(--color-tc-text);
+		background: var(--tc-bg);
+		color: var(--tc-text);
 	}
 
 	.nav-item.active {
-		background: var(--color-tc-bg);
-		color: var(--color-tc-text);
+		background: var(--tc-bg);
+		color: var(--tc-text);
 		font-weight: 500;
 	}
 
 	.nav-item.active .dot {
-		background: var(--color-tc-accent);
+		background: var(--tc-accent);
 	}
 
 	.dot {
-		width: 6px;
-		height: 6px;
+		width: 0.375rem;
+		height: 0.375rem;
 		border-radius: 50%;
-		background: var(--color-tc-border-mid);
+		background: var(--tc-border-mid);
 		flex-shrink: 0;
 		transition: background 0.1s;
 	}
 
 	.admin-item {
-		margin-top: 8px;
-		border-top: 0.5px solid var(--color-tc-border);
-		padding-top: 16px;
-		font-size: 12px;
-		color: var(--color-tc-accent-text);
+		margin-top: 0.5rem;
+		border-top: 0.5px solid var(--tc-border);
+		padding-top: 1rem;
+		font-size: 0.75rem;
+		color: var(--tc-accent-text);
 	}
 
 	.admin-item .dot {
-		background: var(--color-tc-accent-border);
+		background: var(--tc-accent-border);
 	}
 
 	.sidebar-bottom {
 		margin-top: auto;
-		padding: 14px 16px 4px;
-		border-top: 0.5px solid var(--color-tc-border);
+		padding: 0.875rem 1rem 0.25rem;
+		border-top: 0.5px solid var(--tc-border);
 	}
 
 	.user-label {
-		font-size: 11px;
-		color: var(--color-tc-hint);
+		font-size: 0.6875rem;
+		color: var(--tc-hint);
 		font-family: var(--font-mono);
-		margin-bottom: 2px;
+		margin-bottom: 0.125rem;
 	}
 
 	.user-name {
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 500;
-		color: var(--color-tc-text);
+		color: var(--tc-text);
 	}
 
 	/* ── Main ───────────────────────────────────────────────── */
 	.main {
 		flex: 1;
 		overflow-y: auto;
-		background: var(--color-tc-bg);
+		background: var(--tc-bg);
 		display: flex;
 		flex-direction: column;
 	}
@@ -203,8 +203,8 @@
 		display: none;
 		position: sticky;
 		bottom: 0;
-		background: var(--color-tc-bg);
-		border-top: 0.5px solid var(--color-tc-border);
+		background: var(--tc-bg);
+		border-top: 0.5px solid var(--tc-border);
 		z-index: 20;
 	}
 
@@ -217,24 +217,24 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 10px 4px 8px;
-		font-size: 10px;
+		padding: 0.625rem 0.25rem 0.5rem;
+		font-size: 0.625rem;
 		font-family: var(--font-mono);
-		color: var(--color-tc-muted);
+		color: var(--tc-muted);
 		text-decoration: none;
-		border-top: 2px solid transparent;
+		border-top: 0.125rem solid transparent;
 		transition:
 			color 0.1s,
 			border-color 0.1s;
 	}
 
 	.mobile-nav-item.active {
-		color: var(--color-tc-accent-text);
-		border-top-color: var(--color-tc-accent);
+		color: var(--tc-accent-text);
+		border-top-color: var(--tc-accent);
 	}
 
 	/* ── Responsive ─────────────────────────────────────────── */
-	@media (max-width: 640px) {
+	@media (max-width: 40rem) {
 		.shell {
 			height: 100svh;
 		}

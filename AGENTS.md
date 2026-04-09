@@ -94,6 +94,32 @@ and surface the conflict rather than resolving it silently.
 
 ---
 
+## CSS and styling conventions
+
+- **Always use Tailwind utility classes** for styling. Do not write raw CSS in
+  `app.css` for component-level patterns — that belongs in components.
+- **`src/app.css` contains only:**
+  1. `@import 'tailwindcss'`
+  2. The `@theme` block with design tokens
+  3. The `:root` short-form `--tc-*` aliases for use in scoped style blocks
+  4. An explicit `html { font-size: 16px; }` declaration
+- **Scoped `<style>` blocks** are acceptable inside Svelte components for styles
+  that cannot be expressed cleanly with utility classes (e.g. complex transitions,
+  pseudo-element tricks, third-party overrides). All values in scoped styles must
+  use `rem`, not `px`. Use the `--tc-*` aliases for token references.
+- **Never add global CSS classes** to `app.css` for UI patterns. If a pattern
+  recurs across multiple components, extract a Svelte component in `$lib/components/`.
+- **All size values use `rem`**, assuming a 16px root. `px` is only acceptable for
+  hairline borders (e.g. `0.5px solid`) where `rem` would not render correctly.
+- **Design tokens** are in `@theme` as `--color-tc-*`, `--font-*`, `--radius-*`.
+  Short-form `--tc-*` aliases in `:root` let scoped styles skip the `color-` prefix.
+  Tailwind utilities (`bg-tc-bg`, `text-tc-muted`, etc.) are generated from the theme.
+- **The prototype** (`docs/prototype.html`) uses raw `px` values and flat CSS classes.
+  Treat it as a visual reference only — translate its design intent into Tailwind
+  utilities and proper components, not a direct port of its CSS.
+
+---
+
 ## SvelteKit conventions
 
 - `+page.server.ts` for all load functions that touch the database or need auth.

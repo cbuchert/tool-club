@@ -1,5 +1,33 @@
 @import 'tailwindcss';
 
+/* Short-form aliases — lets component <style> blocks use var(--tc-bg)
+   instead of var(--color-tc-bg), matching prototype conventions. */
+:root {
+	--tc-bg: var(--color-tc-bg);
+	--tc-surface: var(--color-tc-surface);
+	--tc-border: var(--color-tc-border);
+	--tc-border-mid: var(--color-tc-border-mid);
+	--tc-text: var(--color-tc-text);
+	--tc-muted: var(--color-tc-muted);
+	--tc-hint: var(--color-tc-hint);
+	--tc-accent: var(--color-tc-accent);
+	--tc-accent-bg: var(--color-tc-accent-bg);
+	--tc-accent-text: var(--color-tc-accent-text);
+	--tc-accent-border: var(--color-tc-accent-border);
+	--tc-danger: var(--color-tc-danger);
+	--tc-danger-bg: var(--color-tc-danger-bg);
+	--tc-danger-border: var(--color-tc-danger-border);
+	--tc-info-bg: var(--color-tc-info-bg);
+	--tc-info-text: var(--color-tc-info-text);
+	--tc-info-border: var(--color-tc-info-border);
+	--tc-warn-bg: var(--color-tc-warn-bg);
+	--tc-warn-text: var(--color-tc-warn-text);
+	--tc-warn-border: var(--color-tc-warn-border);
+	--tc-purple-bg: var(--color-tc-purple-bg);
+	--tc-purple-text: var(--color-tc-purple-text);
+	--tc-purple-border: var(--color-tc-purple-border);
+}
+
 @theme {
 	--color-tc-bg: #ffffff;
 	--color-tc-surface: #f5f4f0;
@@ -28,8 +56,8 @@
 	--color-tc-purple-text: #3c3489;
 	--color-tc-purple-border: #afa9ec;
 
-	--radius-md: 8px;
-	--radius-lg: 12px;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
 
 	--font-display: 'Fraunces', serif;
 	--font-mono: 'DM Mono', monospace;
@@ -37,6 +65,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
+	html {
+		font-size: 16px;
+	}
+
 	:root {
 		--color-tc-bg: #1c1c1a;
 		--color-tc-surface: #242422;
