@@ -191,6 +191,75 @@ Always add a "Markdown supported" hint near markdown-accepting textareas:
 </div>
 ```
 
+## Utils
+
+`src/lib/utils/` contains pure, server-import-free utilities:
+
+| File             | Purpose                                                                     |
+| ---------------- | --------------------------------------------------------------------------- |
+| `events.ts`      | `cardDay`, `cardMonth`, `cardMeta`, `initials` — event card display helpers |
+| `suggestions.ts` | `isVotingOpen`, `formatVotingCloses` — suggestion state/display helpers     |
+| `datetime.ts`    | Admin event form datetime helpers — see below                               |
+
+### `datetime.ts` — admin event form conventions
+
+`EVENT_TIMEZONE = 'America/Denver'` is hardcoded as the community's local timezone
+(Salt Lake City). All event start/end times are stored in UTC and displayed in Denver
+time.
+
+HTML `<input type="datetime-local">` values have no timezone info. The helpers
+`toDatetimeLocal(utcTs)` and `fromDatetimeLocal(localStr)` convert between UTC and
+the Denver timezone for the admin event form.
+
+The `links` field is stored as `jsonb` (`{label, url}[]`). In the admin form it is
+edited as a textarea with one `Label | URL` per line. `linksToText` and `parseLinks`
+handle serialization/deserialization.
+
+---
+
+## E2E tests
+
+E2E tests live in `tests/`. The shared helper module is `tests/helpers.ts`.
+
+### `tests/helpers.ts`
+
+Exports:
+
+| Export                  | Purpose                                                                                                                                                                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `signInAs(page, email)` | Signs in via the real `/signin` form → Mailpit magic link. **Must use the real form** so the server sets the PKCE `code_verifier` cookie — navigating directly to a generated link without this cookie will fail `exchangeCodeForSession`. |
+| `deleteAllMail()`       | Clears Mailpit via `DELETE /api/v1/messages` before triggering an OTP.                                                                                                                                                                     |
+| `adminClient()`         | Supabase client with service role key — for DB setup/teardown in tests.                                                                                                                                                                    |
+| `BASE`                  | `http://localhost:5173`                                                                                                                                                                                                                    |
+| `MAILPIT`               | `http://127.0.0.1:54324`                                                                                                                                                                                                                   |
+| `MEMBER_ID`             | Fixed UUID from `supabase/seeds/test_users.sql` for the test member.                                                                                                                                                                       |
+| `ADMIN_ID`              | Fixed UUID for the test admin.                                                                                                                                                                                                             |
+| `MEMBER_EMAIL`          | `member@test.toolclub`                                                                                                                                                                                                                     |
+| `ADMIN_EMAIL`           | `admin@test.toolclub`                                                                                                                                                                                                                      |
+
+**Mailpit API note:** The `/api/v1/message/{id}/body.html` endpoint returns empty
+locally. Read the magic link from the full message JSON at `/api/v1/message/{id}`
+(`.HTML` field contains the anchor href).
+
+### Playwright config (`playwright.config.ts`)
+
+Global timeouts are configured once and override all defaults — no inline
+`{ timeout: N }` overrides are needed in test files:
+
+| Setting              | Value      | Why                                                      |
+| -------------------- | ---------- | -------------------------------------------------------- |
+| `expect.timeout`     | 10 s       | Web-first assertions auto-retry until this expires       |
+| `actionTimeout`      | 15 s       | Covers slow CI machines for click/fill/check             |
+| `navigationTimeout`  | 30 s       | page.goto() and redirects                                |
+| `timeout` (per test) | 60 s       | Wall-clock guard against infinite hangs                  |
+| `retries`            | CI ? 1 : 0 | Absorbs one transient CI flake; zero locally for clarity |
+
+Prefer `expect(locator).toBeVisible()` over `waitForLoadState('networkidle')` —
+`networkidle` is a brittle signal that can trigger early or late depending on
+background polling.
+
+---
+
 ## Commit discipline
 
 One logical change per commit. If a commit message needs "and" to describe what it
