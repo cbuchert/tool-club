@@ -13,6 +13,10 @@ export const rsvpSchema = z.object({
 	response: z.enum(['yes', 'no']),
 });
 
+export const displayNameSchema = z.object({
+	display_name: z.string().min(1, 'Display name is required.').max(100),
+});
+
 export const recapSchema = z.object({
 	body_md: z.string().min(1, 'Please write something for the recap.').max(10000),
 });
