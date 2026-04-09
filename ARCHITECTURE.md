@@ -407,21 +407,25 @@ src/routes/
 │       ├── +page.server.ts  ✓ Load event + RSVP state, rsvp action
 │       └── +page.svelte     ✓
 ├── suggestions/
-│   ├── +page.server.ts        Sorted by votes, status sections
-│   ├── +page.svelte
+│   ├── +page.server.ts      ✓ Sorted by votes, status sections
+│   ├── +page.svelte         ✓
+│   ├── new/
+│   │   ├── +page.server.ts  ✓ Propose suggestion form action
+│   │   └── +page.svelte     ✓
 │   └── [id]/
-│       ├── +page.server.ts    Vote toggle, comment actions
-│       └── +page.svelte
+│       ├── +page.server.ts  ✓ Vote toggle, comment actions
+│       └── +page.svelte     ✓
 ├── feed/
 │   ├── rss/
-│   │   └── +server.ts         Private RSS (token auth)
+│   │   └── +server.ts       ✓ Private RSS (token auth)
 │   ├── ical/
-│   │   └── +server.ts         Private iCal (token auth)
+│   │   └── toolclub.ics/
+│   │       └── +server.ts   ✓ Private iCal (token auth, .ics URL for calendar app compat)
 │   └── public/
-│       └── +server.ts       ✓ Public RSS (stub — returns empty channel, built in section 8)
+│       └── +server.ts       ✓ Public RSS (titles + dates only, no auth)
 ├── account/
-│   ├── +page.server.ts        Display name, avatar, invites, feed tokens
-│   └── +page.svelte
+│   ├── +page.server.ts      ✓ Display name, avatar upload, invites, feed tokens, deletion
+│   └── +page.svelte         ✓
 └── admin/
     ├── +layout.server.ts      Admin role guard
     ├── events/
