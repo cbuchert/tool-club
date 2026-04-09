@@ -164,6 +164,7 @@ erDiagram
     text email
     text avatar_url
     text role
+    bool is_suspended
     uuid invited_by FK
     timestamptz created_at
     timestamptz updated_at
@@ -427,20 +428,26 @@ src/routes/
 │   ├── +page.server.ts      ✓ Display name, avatar upload, invites, feed tokens, deletion
 │   └── +page.svelte         ✓
 └── admin/
-    ├── +layout.server.ts      Admin role guard
+    ├── +layout.server.ts      ✓ Admin role guard (redirects non-admins to /events)
+    ├── +page.server.ts        ✓ Home — draft event count, pending invite count
+    ├── +page.svelte           ✓
     ├── events/
-    │   ├── +page.server.ts
-    │   ├── +page.svelte
+    │   ├── +page.server.ts    ✓ All events across all statuses
+    │   ├── +page.svelte       ✓
+    │   ├── new/
+    │   │   ├── +page.server.ts ✓ Create event form action
+    │   │   └── +page.svelte    ✓
     │   └── [id]/
-    │       ├── +page.server.ts
-    │       └── +page.svelte
+    │       ├── +page.server.ts ✓ Edit event, RSVP list; update + delete actions
+    │       └── +page.svelte    ✓
     └── members/
-        ├── +page.server.ts
-        └── +page.svelte
+        ├── +page.server.ts    ✓ Member list + pending invites; suspend, reinstate, revokeInvite actions
+        └── +page.svelte       ✓
 ```
 
-Auth guard lives in the root `+layout.server.ts`. Routes under `/admin/` will have a
-second guard that checks `users.role = 'admin'`.
+Auth guard lives in the root `+layout.server.ts`. Routes under `/admin/` have a second
+guard in `admin/+layout.server.ts` that checks `users.role = 'admin'`. Non-admins are
+redirected silently to `/events` (not 403 — avoids confirming admin routes exist).
 
 ---
 
