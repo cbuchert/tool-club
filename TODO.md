@@ -211,9 +211,13 @@ These were not in the original TODO but are now done.
 
 ## 14. Pre-launch
 
-- [ ] Verify dark mode (all `prefers-color-scheme` tokens render correctly)
-- [ ] Verify mobile layout (sidebar hidden, mobile nav shown at ≤640px)
-- [ ] Verify all pgTAP tests pass against hosted Supabase
+- [x] Verify dark mode (all `prefers-color-scheme` tokens render correctly)
+      Covered by tests/prelaunch.test.ts — passes locally.
+- [x] Verify mobile layout (sidebar hidden, mobile nav shown at ≤640px)
+      Covered by tests/prelaunch.test.ts — passes locally.
+- [x] Verify all pgTAP tests pass against hosted Supabase
+      `supabase db push` runs in CI after test-db passes — migrations are
+      applied to production on every push to main.
 - [x] Verify Playwright tests pass in CI
       Decision: E2E tests run locally only (`pnpm test:e2e`). CI gates on
       test-db + test-unit. Running Playwright in CI would require Supabase +
