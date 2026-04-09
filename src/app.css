@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+	--color-tc-bg: #ffffff;
+	--color-tc-surface: #f5f4f0;
+	--color-tc-border: rgba(0, 0, 0, 0.1);
+	--color-tc-border-mid: rgba(0, 0, 0, 0.2);
+	--color-tc-text: #1a1a18;
+	--color-tc-muted: #5f5e5a;
+	--color-tc-hint: #888780;
+	--color-tc-accent: #3b6d11;
+	--color-tc-accent-bg: #eaf3de;
+	--color-tc-accent-text: #27500a;
+	--color-tc-accent-border: #97c459;
+	--color-tc-danger: #a32d2d;
+	--color-tc-danger-bg: #fcebeb;
+	--color-tc-danger-border: #f09595;
+
+	--font-display: 'Fraunces', serif;
+	--font-mono: 'DM Mono', monospace;
+	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-tc-bg: #1c1c1a;
+		--color-tc-surface: #242422;
+		--color-tc-border: rgba(255, 255, 255, 0.08);
+		--color-tc-border-mid: rgba(255, 255, 255, 0.15);
+		--color-tc-text: #e8e8e4;
+		--color-tc-muted: #9a9993;
+		--color-tc-hint: #6b6a65;
+		--color-tc-accent: #7cb945;
+		--color-tc-accent-bg: #1e2e10;
+		--color-tc-accent-text: #a8d470;
+		--color-tc-accent-border: #4a7a1e;
+		--color-tc-danger: #e05555;
+		--color-tc-danger-bg: #2d1212;
+		--color-tc-danger-border: #8b2a2a;
+	}
+}
