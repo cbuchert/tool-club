@@ -1,6 +1,6 @@
 # TODO.md — Tool Club
 
-Last updated: 2026-04-09 (evening)
+Last updated: 2026-04-09 (night)
 
 Work this list top to bottom unless instructed otherwise. Before starting a task,
 re-read AGENTS.md, ARCHITECTURE.md, and SPEC.md. Mark tasks `[x]` when done.
@@ -189,6 +189,18 @@ Write tests after the feature is built and working locally.
 - [x] Admin: promote suggestion → event created in draft
 - [x] Admin: suspend member → suspended badge shown, auth banned
 - [x] Admin: close/reopen suggestion voting
+
+## 14.5. Prototype alignment (completed 2026-04-09)
+
+Fixes identified by comparing the running app against `docs/prototype.html`.
+These were not in the original TODO but are now done.
+
+- [x] Events list: group events by month/year with section headers
+- [x] Event detail: render address as a Google Maps hyperlink
+- [x] Suggestions list: give `planned` status its own always-visible section
+- [x] Suggestions list: show closed suggestions by default; opt-in to hide
+- [x] Account page: add invite history (joined members + sent dates)
+- [x] Account page: add network section (direct recruits + their recruits, 1 level deep)
 
 ## 14. Pre-launch
 

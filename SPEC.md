@@ -131,6 +131,16 @@ Members who RSVPed are not automatically notified — notification is out of sco
 | Status            | draft / published / past                                                                      |
 | Promoted from     | Optional FK to suggestions. Set when an event is created from a suggestion.                   |
 
+### Event list display
+
+- Events are grouped by month/year (Denver time) with a section header (e.g. "April 2026").
+- Within each month, events are ordered by date ascending.
+- Past events are ordered most-recent-first within their month groups.
+
+### Event detail display
+
+- The address field renders as a Google Maps hyperlink (`maps.google.com/?q=…`).
+
 ### RSVPs
 
 - Members RSVP "Going" or "Can't make it."
@@ -201,6 +211,17 @@ open → planned
 - Members can delete their own comments.
 - Admins can delete any comment.
 - No editing. Delete and re-post.
+
+### List display
+
+The suggestions list renders three sections in order:
+
+1. **Open** — always visible; sorted newest first; labelled "N open · newest first".
+2. **Planned** — always visible; labelled "N planned"; each card includes a
+   "→ view event" link to the resulting event.
+3. **Closed** — visible by default; labelled "N closed" with a "Hide ↑ / Show ↓"
+   toggle. Closed suggestions are shown rather than hidden because they represent
+   institutional memory — members may want to reference why an idea was shelved.
 
 ### Promote to event
 

@@ -158,6 +158,29 @@ else await invalidateAll(); // re-runs load, updates data reactive variable
 - Components use Svelte 5 runes syntax (`$props()`, `$derived()`, `$state()`).
 - No `export let` prop syntax — use `$props()`.
 
+### `$derived` vs `$derived(() => fn)` — Svelte 5 gotcha
+
+Simple expressions use `$derived(expr)`. When you need imperative logic (loops,
+early returns, accumulators), wrap in a function: `$derived(() => { ... return value; })`.
+The result is called as `groupedData()` in the template — it is a getter, not a value.
+
+```typescript
+// ✓ For complex grouped/accumulated data
+const grouped = $derived(() => {
+	const result: Group[] = [];
+	for (const item of items) { ... }
+	return result;
+});
+// In template: {#each grouped() as g}
+
+// ✓ For simple expressions
+const count = $derived(items.filter((i) => i.active).length);
+// In template: {count}
+```
+
+Do not use `$derived(() => fn)` when a simple expression works — the function form
+is only for logic that cannot be expressed as a single expression.
+
 Current components (add to this list when you create a new one):
 
 | Component   | Purpose                                                                             |
