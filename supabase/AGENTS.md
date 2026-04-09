@@ -58,8 +58,10 @@ supabase/
 
 ## Seed conventions
 
-- `seeds/test_users.sql` inserts into both `auth.users` AND `public.users`.
-  Do not change the fixed UUIDs — they are load-bearing in pgTAP assertions:
+- `seeds/test_users.sql` is a **dev convenience seed** for local auth testing
+  (magic link sign-in flow). It is NOT a dependency for pgTAP tests — those are
+  fully self-contained. Do not change the fixed UUIDs; they are used by the dev
+  seed and referenced in comments, but pgTAP tests insert their own fixtures:
   - member: `00000000-0000-0000-0000-000000000001`
   - admin: `00000000-0000-0000-0000-000000000002`
 - `seeds/dev_data.ts` is a Faker-based script for realistic local dev data.
@@ -86,9 +88,10 @@ SUPABASE_ACCESS_TOKEN=sbp_... SUPABASE_PROJECT_ID=itxysfxdkicwkqtsuilv pnpm push
 Never automate this in CI. Email template changes break authentication flows if
 deployed incorrectly and are not easily rolled back.
 
-Go template variables (`{{ .ConfirmationURL }}`, `{{ .Token }}`, `{{ .SiteURL }}`)
-pass through MJML v4 href attributes unchanged — this was a v3 bug, fixed in
-v4.0.0-beta.2 (mjmlio/mjml#664).
+Go template variables (`{{ .ConfirmationURL }}`, `{{ .SiteURL }}`) pass through
+MJML v4 href attributes unchanged — this was a v3 bug, fixed in v4.0.0-beta.2
+(mjmlio/mjml#664). `{{ .Token }}` is intentionally excluded from all templates
+(no `/verify` page exists to enter the code).
 
 ## Auth user seeding — lessons learned
 

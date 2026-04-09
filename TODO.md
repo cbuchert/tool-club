@@ -1,6 +1,6 @@
 # TODO.md — Tool Club
 
-Last updated: 2026-04-09
+Last updated: 2026-04-09 (evening)
 
 Work this list top to bottom unless instructed otherwise. Before starting a task,
 re-read AGENTS.md, ARCHITECTURE.md, and SPEC.md. Mark tasks `[x]` when done.
@@ -42,36 +42,38 @@ Add notes inline when a task reveals decisions that affect other tasks.
   - `test-unit` job: `pnpm test:unit --run`
   - `deploy-vercel` job: `needs: [test-db, test-unit]` → `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod`
 - [x] Verify pipeline runs and gates correctly on a test push
-- [ ] Add `ARCHITECTURE.md` CI diagram notes if pipeline diverges from spec
+- [x] Add `ARCHITECTURE.md` CI diagram notes if pipeline diverges from spec
 
 ## 2. Database schema and RLS
 
-- [ ] Write migration: `users` table
-- [ ] Write migration: `invites` table
-- [ ] Write migration: `events` table
-- [ ] Write migration: `rsvps` table
-- [ ] Write migration: `suggestions` table
-- [ ] Write migration: `votes` table
-- [ ] Write migration: `comments` table
-- [ ] Write migration: `recaps` table
-- [ ] Write migration: `photos` table
-- [ ] Write migration: `feed_tokens` table
-- [ ] Enable RLS on all tables
-- [ ] Write RLS policies (reference permission table in ARCHITECTURE.md)
-- [ ] Create `supabase/seeds/test_users.sql` with fixed UUIDs for pgTAP tests
-- [ ] Create `supabase/seeds/dev_data.sql` with realistic dev seed data
-- [ ] Write pgTAP tests for every RLS policy
-  - [ ] `tests/rls_users.test.sql`
-  - [ ] `tests/rls_events.test.sql`
-  - [ ] `tests/rls_rsvps.test.sql`
-  - [ ] `tests/rls_suggestions.test.sql`
-  - [ ] `tests/rls_votes.test.sql`
-  - [ ] `tests/rls_comments.test.sql`
-  - [ ] `tests/rls_recaps.test.sql`
-  - [ ] `tests/rls_photos.test.sql`
-  - [ ] `tests/rls_invites.test.sql`
-  - [ ] `tests/rls_feed_tokens.test.sql`
-- [ ] Verify all pgTAP tests pass locally
+- [x] Write migration: `users` table
+- [x] Write migration: `invites` table
+- [x] Write migration: `events` table
+- [x] Write migration: `rsvps` table
+- [x] Write migration: `suggestions` table
+- [x] Write migration: `votes` table
+- [x] Write migration: `comments` table
+- [x] Write migration: `recaps` table
+- [x] Write migration: `photos` table
+- [x] Write migration: `feed_tokens` table
+- [x] Enable RLS on all tables
+- [x] Write RLS policies (reference permission table in ARCHITECTURE.md)
+- [x] Create `supabase/seeds/test_users.sql` — dev convenience seed for auth testing
+      (pgTAP tests are self-contained; they do not depend on this seed)
+- [ ] Create `supabase/seeds/dev_data.ts` with realistic Faker dev seed data
+      (stub exists from bootstrap but not updated for current schema — see supabase/AGENTS.md)
+- [x] Write pgTAP tests for every RLS policy (67 tests, all passing)
+  - [x] `tests/rls_users.test.sql`
+  - [x] `tests/rls_events.test.sql`
+  - [x] `tests/rls_rsvps.test.sql`
+  - [x] `tests/rls_suggestions.test.sql`
+  - [x] `tests/rls_votes.test.sql`
+  - [x] `tests/rls_comments.test.sql`
+  - [x] `tests/rls_recaps.test.sql`
+  - [x] `tests/rls_photos.test.sql`
+  - [x] `tests/rls_invites.test.sql`
+  - [x] `tests/rls_feed_tokens.test.sql`
+- [x] Verify all pgTAP tests pass locally
 
 ## 3. SvelteKit foundation
 
@@ -92,18 +94,21 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 4. Auth routes
 
-- [ ] `/signin` — magic link request form and action
-- [ ] `/auth/callback` — Supabase callback handler, new vs. existing user branch
-- [ ] `/join/[token]` — invite validation, account setup form and action
-- [ ] Expired/redeemed invite error states (see SPEC.md)
-- [ ] Sign-out action
+- [x] `/signin` — magic link form; always returns "check your email" to prevent
+      email enumeration regardless of whether the address is registered
+- [x] `/auth/callback` — code exchange, new vs. existing user branch, invite cookie flow
+- [x] `/join/[token]` — invite validation (not_found/expired/redeemed/valid states),
+      email + display name form, sets invite_setup cookie
+- [x] Expired/redeemed invite error states
+- [x] Sign-out action (`/signout` POST endpoint)
 
 ## 5. Events
 
-- [ ] `/events` — list of published events, upcoming/past toggle
-- [ ] `/events/[id]` — event detail, RSVP block, going list
-- [ ] RSVP form action (yes / no, locked when past)
-- [ ] Capacity enforcement (disable "Going" when full, per SPEC.md)
+- [x] `/events` — list with upcoming/past toggle, event cards, avatar stacks, badges
+- [x] `/events/[id]` — detail with formatted date, host, location, links,
+      markdown body (server-rendered via `marked`), RSVP block, going list
+- [x] RSVP form action (yes / no, locked when past)
+- [x] Capacity enforcement (going button disabled when full)
 
 ## 6. Suggestions
 
@@ -156,8 +161,8 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 12. Content pages
 
-- [ ] Create `content/landing.md`
-- [ ] Wire mdsvex to render it at `/`
+- [x] Create `content/landing.md` (moved up — this is the public face of the app)
+- [x] Wire mdsvex to render it at `/` (imported via `$content` alias)
 - [ ] Create `content/about.md` (optional in v1)
 
 ## 13. Playwright E2E tests

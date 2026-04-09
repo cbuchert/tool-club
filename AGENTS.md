@@ -29,6 +29,8 @@ does not need today.
 | DB tests                  | pgTAP (via `supabase test db`)              |
 | Markdown content          | mdsvex                                      |
 | CSS                       | Tailwind CSS v4 with `--tc-*` design tokens |
+| Email templates           | MJML (compiled by custom Vite plugin)       |
+| Feed routing              | Hono (used in `+server.ts` feed endpoints)  |
 
 ---
 

@@ -108,8 +108,10 @@ await applyAction(deserialize(await response.text()));
   Standard Schema integration.
 - **SvelteKit actions** (`+page.server.ts`) handle server-side validation and mutations.
   Always re-validate on the server — never trust client-side validation alone.
-- **Submission flow**: TanStack's `onSubmit` posts via `fetch` to the SvelteKit action,
-  then calls `applyAction(deserialize(await response.text()))` to update page state.
+- **Submission flow**: TanStack's `onSubmit` posts via `fetch('/page-path', ...)`.
+  Handle the response manually in local `$state` — do NOT call `applyAction` or use
+  `fetch('?/actionName', ...)`. See the TanStack Form + SvelteKit known issue section
+  above for the full explanation.
 - **Do not use** `use:enhance` on TanStack-managed forms — they handle submission
   themselves. `use:enhance` is only for forms without TanStack Form.
 - Zod schemas in `src/lib/schemas/` are shared between client validation (TanStack)

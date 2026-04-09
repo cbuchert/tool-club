@@ -56,8 +56,12 @@ Zod via the Standard Schema spec. The pattern is:
 
 - TanStack Form validates fields on the client (onChange/onBlur, before submission)
 - On `handleSubmit`, the validated values are posted to a SvelteKit form action via
-  `fetch` + `deserialize`/`applyAction` from `$app/forms`
+  `fetch('/page-path', ...)`. The response is handled manually in local `$state`.
 - The SvelteKit action re-validates server-side and performs the mutation
+- Do NOT use `fetch('?/actionName', ...)` or call `applyAction` from TanStack's
+  `onSubmit` — both trigger Svelte 5 reactive re-renders that cause
+  `lifecycle_outside_component` due to TanStack Form's use of `onMount` internally.
+  See `src/AGENTS.md` for the full explanation and correct pattern.
 
 This means forms require JavaScript. Progressive enhancement (no-JS fallback) is not
 supported for mutating actions. This is an acceptable trade-off for Tool Club's
@@ -99,8 +103,11 @@ SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_ID=... pnpm push:emails
 This is a deliberate manual step — never automated in CI. Email template
 changes affect authentication flows and are not easily rolled back.
 
-Go template variables (`{{ .ConfirmationURL }}`, `{{ .Token }}`, `{{ .SiteURL }}`)
-pass through MJML v4 href attributes unchanged (MJML bug fixed in v4.0.0-beta.2).
+Go template variables (`{{ .ConfirmationURL }}`, `{{ .SiteURL }}`) pass through
+MJML v4 href attributes unchanged (MJML bug fixed in v4.0.0-beta.2).
+`{{ .Token }}` (OTP code) is intentionally omitted — there is no `/verify` page
+to enter it, and showing an unusable code confuses users. Add it back if a
+`/verify` route is ever built.
 
 ### Tailwind CSS v4
 
@@ -411,7 +418,7 @@ src/routes/
 │   ├── ical/
 │   │   └── +server.ts         Private iCal (token auth)
 │   └── public/
-│       └── +server.ts       ✓ Public RSS stub (titles + dates only)
+│       └── +server.ts       ✓ Public RSS (stub — returns empty channel, built in section 8)
 ├── account/
 │   ├── +page.server.ts        Display name, avatar, invites, feed tokens
 │   └── +page.svelte
