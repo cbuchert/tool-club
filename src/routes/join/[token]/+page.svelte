@@ -163,7 +163,7 @@
 				class="text-[0.8125rem] text-tc-muted leading-[1.7] mb-6 pb-5 [border-bottom:0.5px_solid_var(--tc-border)]"
 			>
 				Tool Club is a small, invite-only group of people who like making things. Events happen a
-				few times a month in Salt Lake City.
+				few times a month in Springville.
 			</p>
 
 			<h1 class="font-display text-xl font-medium tracking-[-0.01em] text-tc-text mb-1.5">

@@ -23,7 +23,7 @@
 	<!-- ── Hero ── -->
 	<main class="mx-auto w-full max-w-[40rem] flex-1 px-10 pb-16 pt-20">
 		<p class="mb-5 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-tc-hint">
-			Salt Lake City · Invite only
+			Springville · Invite only
 		</p>
 		<h1
 			class="mb-7 font-display text-[3rem] font-medium leading-[1.05] tracking-[-0.04em] text-tc-text"

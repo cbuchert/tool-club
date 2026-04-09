@@ -88,7 +88,7 @@ function rssHeader(selfUrl?: string): string {
 		`  <channel>\n` +
 		`    <title>Tool Club</title>\n` +
 		`    <link>https://toolclub.app</link>\n` +
-		`    <description>Upcoming events from Tool Club — Salt Lake City.</description>\n` +
+		`    <description>Upcoming events from Tool Club — Springville.</description>\n` +
 		`    <language>en-us</language>${atom}`
 	);
 }
