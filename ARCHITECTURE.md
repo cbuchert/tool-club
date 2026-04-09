@@ -570,6 +570,15 @@ Cron jobs run as Vercel Functions with cron triggers, configured in `vercel.json
 
 Cron functions use the Supabase service role key. They are not reachable by members.
 
+Cron endpoints are protected by `CRON_SECRET`. Vercel automatically injects
+`Authorization: Bearer <CRON_SECRET>` on scheduled invocations when the env var
+is set in the Vercel project. The handlers validate this header and return 401
+if it does not match. In local development, the check is skipped when `CRON_SECRET`
+is absent from the environment. Set `CRON_SECRET` in the Vercel project env vars
+before going live — without it the endpoints are unauthenticated HTTP GET routes.
+
+Routes: `src/routes/cron/mark-past-events/+server.ts`, `src/routes/cron/expire-invites/+server.ts`
+
 ---
 
 ## File storage
