@@ -41,6 +41,11 @@ export default defineConfig(
 			'no-unused-vars': 'error',
 			'@typescript-eslint/no-explicit-any': 'error',
 			'no-console': 'warn',
+			// SvelteKit manages client-side routing via plain hrefs — resolve() is not needed.
+			'svelte/no-navigation-without-resolve': 'off',
+			// {@html} is used intentionally for server-rendered Markdown (marked output).
+			// Content is generated server-side from trusted input, not user-supplied HTML.
+			'svelte/no-at-html-tags': 'off',
 		},
 	}
 );

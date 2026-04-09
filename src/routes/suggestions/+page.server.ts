@@ -54,7 +54,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		status: s.status as 'open' | 'planned' | 'closed',
 		host_name: s.host_name as string | null,
 		voting_closes_at: s.voting_closes_at as string | null,
-		author_name: (s.users as { display_name: string } | null)?.display_name ?? 'Member',
+		author_name: (s.users as unknown as { display_name: string } | null)?.display_name ?? 'Member',
 		vote_count: voteCountBySuggestion.get(s.id) ?? 0,
 		comment_count: commentCountBySuggestion.get(s.id) ?? 0,
 		voted: myVotedIds.has(s.id),

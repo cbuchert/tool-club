@@ -47,7 +47,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		.order('created_at');
 
 	const goingUsers = (goingRsvps ?? []).map((r) => {
-		const u = r.users as { id: string; display_name: string; avatar_url: string | null } | null;
+		const u = r.users as unknown as {
+			id: string;
+			display_name: string;
+			avatar_url: string | null;
+		} | null;
 		return {
 			id: r.user_id,
 			display_name: u?.display_name ?? 'Member',
@@ -90,7 +94,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		// Resolve photo URLs — public photos via public URL, private via signed URL
 		photos = await Promise.all(
 			(rawPhotos ?? []).map(async (p) => {
-				let url = '';
+				let url: string;
 				if (p.is_public) {
 					const { data } = supabase.storage.from('recap-photos').getPublicUrl(p.storage_path);
 					url = data.publicUrl;
@@ -186,7 +190,7 @@ export const actions: Actions = {
 		const { user, supabase } = locals;
 		const data = await request.formData();
 		const parsed = recapSchema.safeParse({ body_md: data.get('body_md')?.toString() ?? '' });
-		if (!parsed.success) return fail(400, { error: parsed.error.errors[0].message });
+		if (!parsed.success) return fail(400, { error: parsed.error.issues[0].message });
 
 		// Verify the event is past and user is host or admin
 		const { data: event } = await supabase
@@ -238,14 +242,12 @@ export const actions: Actions = {
 
 		if (uploadError) return fail(500, { error: 'Upload failed. Please try again.' });
 
-		const { error: insertError } = await supabase
-			.from('photos')
-			.insert({
-				recap_id: recapId,
-				uploaded_by: user!.id,
-				storage_path: storagePath,
-				is_public: false,
-			});
+		const { error: insertError } = await supabase.from('photos').insert({
+			recap_id: recapId,
+			uploaded_by: user!.id,
+			storage_path: storagePath,
+			is_public: false,
+		});
 
 		if (insertError) {
 			// Clean up the uploaded file if DB insert fails

@@ -44,7 +44,7 @@
 			<span>making things together</span>
 		</div>
 
-		{#each navItems as item}
+		{#each navItems as item (item.href)}
 			<a href={item.href} class="nav-item" class:active={active(item.href)}>
 				<span class="dot"></span>
 				{item.label}
@@ -77,7 +77,7 @@
 	<!-- ── Mobile nav (≤640px) ── -->
 	<nav class="mobile-nav" aria-label="Main navigation">
 		<div class="mobile-nav-inner">
-			{#each navItems as item}
+			{#each navItems as item (item.href)}
 				<a href={item.href} class="mobile-nav-item" class:active={active(item.href)}>
 					{item.label}
 				</a>

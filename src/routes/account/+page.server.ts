@@ -99,7 +99,7 @@ export const actions: Actions = {
 		const parsed = displayNameSchema.safeParse({
 			display_name: data.get('display_name')?.toString().trim(),
 		});
-		if (!parsed.success) return fail(400, { error: parsed.error.errors[0].message });
+		if (!parsed.success) return fail(400, { error: parsed.error.issues[0].message });
 
 		const { error } = await supabase
 			.from('users')

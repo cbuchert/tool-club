@@ -15,9 +15,7 @@
 	// Planned (promoted to event) are excluded — they're now events, not suggestions.
 	// Closed are hidden by default behind a progressive disclosure toggle.
 	const visible = $derived(
-		data.suggestions.filter(
-			(s) => s.status === 'open' || (s.status === 'closed' && showClosed)
-		)
+		data.suggestions.filter((s) => s.status === 'open' || (s.status === 'closed' && showClosed))
 	);
 	const closedCount = $derived(data.suggestions.filter((s) => s.status === 'closed').length);
 

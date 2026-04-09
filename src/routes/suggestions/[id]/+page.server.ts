@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const bodyHtml = s.body_md ? await marked(s.body_md, { async: true }) : null;
 	const votingOpen = isVotingOpen(s.status, s.voting_closes_at as string | null);
 	const closesLabel = formatVotingCloses(s.voting_closes_at as string | null, DEFAULT_TIMEZONE);
-	const author = s.users as { id: string; display_name: string } | null;
+	const author = s.users as unknown as { id: string; display_name: string } | null;
 
 	return {
 		suggestion: {
@@ -71,10 +71,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			body: c.body,
 			created_at: c.created_at,
 			user_id: c.user_id,
-			author_name: (c.users as { display_name: string } | null)?.display_name ?? 'Member',
+			author_name:
+				(c.users as unknown as { display_name: string } | null)?.display_name ?? 'Member',
 			is_mine: c.user_id === user!.id,
 		})),
-		isAdmin: locals.session ? false : false, // populated via layout profile
+		isAdmin:
+			(await supabase.from('users').select('role').eq('id', user!.id).single()).data?.role ===
+			'admin',
 	};
 };
 

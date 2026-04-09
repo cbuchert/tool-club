@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const goingByEvent = new Map<string, GoingUser[]>();
 	for (const r of goingRsvps ?? []) {
 		const users = goingByEvent.get(r.event_id) ?? [];
-		const user = r.users as { display_name: string } | null;
+		const user = r.users as unknown as { display_name: string } | null;
 		if (user) users.push({ id: r.user_id, display_name: user.display_name });
 		goingByEvent.set(r.event_id, users);
 	}

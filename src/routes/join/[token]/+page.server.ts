@@ -18,7 +18,8 @@ export const load: PageServerLoad = async ({ params }) => {
 	}
 
 	const inviterName =
-		(invite.users as { display_name: string } | null)?.display_name ?? 'A Tool Club member';
+		(invite.users as unknown as { display_name: string } | null)?.display_name ??
+		'A Tool Club member';
 
 	if (invite.redeemed_at) {
 		return { state: 'redeemed' as const, inviterName };
@@ -39,7 +40,7 @@ export const actions: Actions = {
 			display_name: data.get('display_name')?.toString().trim() ?? '',
 		});
 		if (!parsed.success) {
-			const first = parsed.error.errors[0];
+			const first = parsed.error.issues[0];
 			return fail(400, { error: first.message });
 		}
 		const { email, display_name } = parsed.data;

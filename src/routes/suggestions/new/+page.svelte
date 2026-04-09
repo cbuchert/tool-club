@@ -84,7 +84,7 @@
 				/>
 				{#if field.state.meta.isTouched && field.state.meta.errors.length}
 					<p class="mb-3 text-xs text-tc-danger">
-						{field.state.meta.errors[0]?.message ?? field.state.meta.errors[0]}
+						{String(field.state.meta.errors[0])}
 					</p>
 				{:else}
 					<div class="mb-4"></div>
@@ -116,7 +116,7 @@
 				></textarea>
 				{#if field.state.meta.isTouched && field.state.meta.errors.length}
 					<p class="mb-3 text-xs text-tc-danger">
-						{field.state.meta.errors[0]?.message ?? field.state.meta.errors[0]}
+						{String(field.state.meta.errors[0])}
 					</p>
 				{:else}
 					<div class="mb-4"></div>

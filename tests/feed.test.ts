@@ -34,9 +34,7 @@ test.beforeAll(async () => {
 		.maybeSingle();
 
 	if (!data?.token) {
-		throw new Error(
-			'No feed token found for the test member. Run `pnpm seed` before E2E tests.'
-		);
+		throw new Error('No feed token found for the test member. Run `pnpm seed` before E2E tests.');
 	}
 
 	validToken = data.token;
@@ -72,9 +70,7 @@ test.describe('GET /feed/public', () => {
 		expect(body).toContain('<pubDate>');
 	});
 
-	test('items do NOT contain location or body (spec: titles + dates only)', async ({
-		request,
-	}) => {
+	test('items do NOT contain location or body (spec: titles + dates only)', async ({ request }) => {
 		const body = await (await request.get('/feed/public')).text();
 		// Slice to only the items section so we exclude the channel <description>
 		const itemsSection = body.includes('<item>') ? body.slice(body.indexOf('<item>')) : '';
@@ -137,7 +133,9 @@ test.describe('GET /feed/ical/toolclub.ics', () => {
 	});
 
 	test('returns 401 with a plausible but non-existent token', async ({ request }) => {
-		expect((await request.get(`/feed/ical/toolclub.ics?token=${'b'.repeat(32)}`)).status()).toBe(401);
+		expect((await request.get(`/feed/ical/toolclub.ics?token=${'b'.repeat(32)}`)).status()).toBe(
+			401
+		);
 	});
 
 	test('returns 200 with a valid token', async ({ request }) => {

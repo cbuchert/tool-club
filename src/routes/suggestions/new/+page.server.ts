@@ -18,7 +18,7 @@ export const actions: Actions = {
 		});
 
 		if (!parsed.success) {
-			const first = parsed.error.errors[0];
+			const first = parsed.error.issues[0];
 			return fail(400, { error: first.message, values: Object.fromEntries(data) });
 		}
 

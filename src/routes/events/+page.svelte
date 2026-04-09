@@ -85,7 +85,7 @@
 						<!-- Avatar stack (up to 3 + overflow) -->
 						{#if event.goingCount > 0}
 							<div class="flex">
-								{#each event.goingUsers.slice(0, 3) as u, i}
+								{#each event.goingUsers.slice(0, 3) as u, i (u.id)}
 									<div class="border-[1.5px] border-tc-bg rounded-full {i > 0 ? '-ml-1.5' : ''}">
 										<Avatar name={u.display_name} size="sm" />
 									</div>

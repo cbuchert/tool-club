@@ -257,7 +257,7 @@
 					People you've invited
 				</p>
 				<div class="space-y-1.5">
-					{#each data.recruited as member}
+					{#each data.recruited as member (member.id)}
 						<div class="flex items-center gap-2 text-sm text-tc-muted">
 							<Avatar name={member.display_name} size="sm" />
 							{member.display_name}
@@ -276,7 +276,7 @@
 
 		{#if data.feedToken}
 			<div class="space-y-2 mb-4">
-				{#each [{ label: 'RSS feed', url: data.rssUrl, type: 'rss' as const }, { label: 'iCal feed', url: data.icalUrl, type: 'ical' as const }] as feed}
+				{#each [{ label: 'RSS feed', url: data.rssUrl, type: 'rss' as const }, { label: 'iCal feed', url: data.icalUrl, type: 'ical' as const }] as feed (feed.type)}
 					{#if feed.url}
 						<div
 							class="flex items-center gap-2 overflow-hidden rounded-md [border:0.5px_solid_var(--tc-border)] bg-tc-surface px-3 py-2"

@@ -141,7 +141,7 @@
 			<div class="flex gap-3 text-[0.8125rem]">
 				<span class="w-20 shrink-0 font-mono text-[0.6875rem] pt-px text-tc-muted">Links</span>
 				<div class="space-y-1">
-					{#each data.event.links as link}
+					{#each data.event.links as link (link.url)}
 						<a
 							href={link.url}
 							target="_blank"
@@ -196,7 +196,7 @@
 
 		{#if data.goingUsers.length > 0}
 			<div class="flex flex-wrap gap-2.5">
-				{#each data.goingUsers as member}
+				{#each data.goingUsers as member (member.id)}
 					<div class="flex items-center gap-1.5 text-xs text-tc-muted">
 						<Avatar name={member.display_name} size="sm" />
 						{member.display_name}
@@ -219,7 +219,7 @@
 			<!-- Photo grid -->
 			{#if data.photos.length > 0 || data.canToggleVisibility}
 				<div class="grid grid-cols-3 gap-1.5 mb-3">
-					{#each data.photos as photo}
+					{#each data.photos as photo (photo.id)}
 						<div
 							class="relative aspect-square overflow-hidden rounded-md bg-tc-surface [border:0.5px_solid_var(--tc-border)]"
 						>
