@@ -1,20 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Topbar from '$lib/components/Topbar.svelte';
+	import Badge from '$lib/components/Badge.svelte';
+	import Avatar from '$lib/components/Avatar.svelte';
 
 	let { data }: { data: PageData } = $props();
 
 	let view = $state<'upcoming' | 'past'>('upcoming');
 
 	const shown = $derived(view === 'upcoming' ? data.upcoming : data.past);
-
-	function initials(name: string): string {
-		return name
-			.split(' ')
-			.map((n) => n[0])
-			.join('')
-			.toUpperCase()
-			.slice(0, 2);
-	}
 </script>
 
 <svelte:head>
@@ -22,29 +16,31 @@
 </svelte:head>
 
 <!-- ── Topbar ── -->
-<div
-	class="sticky top-0 z-10 flex min-h-[3.25rem] items-center justify-between border-b border-[color:var(--tc-border)] bg-tc-bg px-6 [border-width:0.5px]"
->
-	<span class="font-display text-base font-medium text-tc-text">Events</span>
-	<div class="flex overflow-hidden rounded-md border [border:0.5px_solid_var(--tc-border)]">
-		<button
-			onclick={() => (view = 'upcoming')}
-			class="px-2.5 py-1 text-[0.6875rem] font-mono transition-colors {view === 'upcoming'
-				? 'bg-tc-accent-bg text-tc-accent-text'
-				: 'bg-transparent text-tc-muted hover:text-tc-text'}"
-		>
-			Upcoming
-		</button>
-		<button
-			onclick={() => (view = 'past')}
-			class="px-2.5 py-1 text-[0.6875rem] font-mono transition-colors {view === 'past'
-				? 'bg-tc-accent-bg text-tc-accent-text'
-				: 'bg-transparent text-tc-muted hover:text-tc-text'}"
-		>
-			Past
-		</button>
-	</div>
-</div>
+<Topbar>
+	{#snippet left()}
+		<span class="font-display text-base font-medium text-tc-text">Events</span>
+	{/snippet}
+	{#snippet right()}
+		<div class="flex overflow-hidden rounded-md border [border:0.5px_solid_var(--tc-border)]">
+			<button
+				onclick={() => (view = 'upcoming')}
+				class="px-2.5 py-1 text-[0.6875rem] font-mono transition-colors {view === 'upcoming'
+					? 'bg-tc-accent-bg text-tc-accent-text'
+					: 'bg-transparent text-tc-muted hover:text-tc-text'}"
+			>
+				Upcoming
+			</button>
+			<button
+				onclick={() => (view = 'past')}
+				class="px-2.5 py-1 text-[0.6875rem] font-mono transition-colors {view === 'past'
+					? 'bg-tc-accent-bg text-tc-accent-text'
+					: 'bg-transparent text-tc-muted hover:text-tc-text'}"
+			>
+				Past
+			</button>
+		</div>
+	{/snippet}
+</Topbar>
 
 <!-- ── Event list ── -->
 <div class="flex-1 p-6">
@@ -77,38 +73,21 @@
 					<div class="flex flex-wrap items-center gap-2">
 						<!-- RSVP badge -->
 						{#if event.status === 'past'}
-							<span
-								class="rounded-full border bg-tc-surface px-1.5 py-0.5 font-mono text-[0.625rem] text-tc-hint [border:0.5px_solid_var(--tc-border-mid)]"
-								>Past</span
-							>
+							<Badge variant="past" />
 						{:else if event.myRsvp === 'yes'}
-							<span
-								class="rounded-full border bg-tc-accent-bg px-1.5 py-0.5 font-mono text-[0.625rem] text-tc-accent-text [border:0.5px_solid_var(--tc-accent-border)]"
-								>Going</span
-							>
+							<Badge variant="going" />
 						{:else if event.isFull}
-							<span
-								class="rounded-full border bg-tc-warn-bg px-1.5 py-0.5 font-mono text-[0.625rem] text-tc-warn-text [border:0.5px_solid_var(--tc-warn-border)]"
-								>Full</span
-							>
+							<Badge variant="full" />
 						{:else}
-							<span
-								class="rounded-full border bg-tc-info-bg px-1.5 py-0.5 font-mono text-[0.625rem] text-tc-info-text [border:0.5px_solid_var(--tc-info-border)]"
-								>RSVP open</span
-							>
+							<Badge variant="open" />
 						{/if}
 
 						<!-- Avatar stack (up to 3 + overflow) -->
 						{#if event.goingCount > 0}
 							<div class="flex">
 								{#each event.goingUsers.slice(0, 3) as u, i}
-									<div
-										class="flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full border-[1.5px] border-tc-bg bg-tc-accent-bg font-mono text-[0.5625rem] font-medium text-tc-accent-text {i >
-										0
-											? '-ml-1.5'
-											: ''}"
-									>
-										{initials(u.display_name)}
+									<div class="border-[1.5px] border-tc-bg rounded-full {i > 0 ? '-ml-1.5' : ''}">
+										<Avatar name={u.display_name} size="sm" />
 									</div>
 								{/each}
 								{#if event.goingCount > 3}

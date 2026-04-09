@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
 	import type { PageData } from './$types';
-	import { initials } from '$lib/utils/events';
+	import Topbar from '$lib/components/Topbar.svelte';
+	import Avatar from '$lib/components/Avatar.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -72,24 +73,26 @@
 </svelte:head>
 
 <!-- ── Topbar ── -->
-<div
-	class="sticky top-0 z-10 flex min-h-[3.25rem] items-center justify-between [border-bottom:0.5px_solid_var(--tc-border)] bg-tc-bg px-6"
->
-	<a
-		href="/events"
-		class="flex items-center gap-1.5 text-xs text-tc-muted hover:text-tc-text transition-colors"
-	>
-		← Events
-	</a>
-	{#if data.isAdmin}
+<Topbar>
+	{#snippet left()}
 		<a
-			href="/admin/events/{data.event.id}"
-			class="rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-3 py-1.5 text-xs text-tc-accent-text transition-opacity hover:opacity-85 before:content-['Admin_·_'] before:font-mono before:text-[0.625rem] before:opacity-70"
+			href="/events"
+			class="flex items-center gap-1.5 text-xs text-tc-muted hover:text-tc-text transition-colors"
 		>
-			Edit
+			← Events
 		</a>
-	{/if}
-</div>
+	{/snippet}
+	{#snippet right()}
+		{#if data.isAdmin}
+			<a
+				href="/admin/events/{data.event.id}"
+				class="rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-3 py-1.5 text-xs text-tc-accent-text transition-opacity hover:opacity-85 before:content-['Admin_·_'] before:font-mono before:text-[0.625rem] before:opacity-70"
+			>
+				Edit
+			</a>
+		{/if}
+	{/snippet}
+</Topbar>
 
 <div class="p-6 max-w-2xl">
 	<!-- ── Event header ── -->
@@ -194,11 +197,7 @@
 			<div class="flex flex-wrap gap-2.5">
 				{#each data.goingUsers as member}
 					<div class="flex items-center gap-1.5 text-xs text-tc-muted">
-						<div
-							class="flex h-7 w-7 items-center justify-center rounded-full bg-tc-accent-bg font-mono text-[0.625rem] font-medium text-tc-accent-text"
-						>
-							{initials(member.display_name)}
-						</div>
+						<Avatar name={member.display_name} size="sm" />
 						{member.display_name}
 					</div>
 				{/each}
