@@ -67,6 +67,9 @@
 @media (prefers-color-scheme: dark) {
 	html {
 		font-size: 16px;
+		background-color: var(--color-tc-bg);
+		color: var(--color-tc-text);
+		font-family: var(--font-sans);
 	}
 
 	:root {

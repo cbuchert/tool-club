@@ -50,7 +50,8 @@ src/
 - **Always use Tailwind utility classes.** No raw CSS in `app.css` for component
   patterns.
 - **`src/app.css` contains only:** Tailwind import, `@theme` tokens, `:root`
-  `--tc-*` aliases, `html { font-size: 16px; }`.
+  `--tc-*` aliases, and base `html` element styles (font-size, background, color,
+  font-family). No component-level CSS classes.
 - **Scoped `<style>` blocks** are acceptable for styles that cannot be expressed
   cleanly with utilities (transitions, pseudo-elements, third-party overrides).
   All values must use `rem`. Use `--tc-*` aliases for token references.
