@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
@@ -25,7 +26,7 @@
 		const res = await fetch(`/events/${data.event.id}?/rsvp`, { method: 'POST', body: fd });
 		const result = deserialize(await res.text());
 		if (result.type === 'failure') rsvpError = (result.data?.error as string) ?? 'Failed.';
-		else await applyAction(result);
+		else await invalidateAll();
 		rsvpSubmitting = false;
 	}
 
@@ -37,7 +38,7 @@
 		const res = await fetch(`/events/${data.event.id}?/writeRecap`, { method: 'POST', body: fd });
 		const result = deserialize(await res.text());
 		if (result.type === 'failure') recapError = (result.data?.error as string) ?? 'Failed.';
-		else await applyAction(result);
+		else await invalidateAll();
 		recapSubmitting = false;
 	}
 
@@ -53,7 +54,7 @@
 		const res = await fetch(`/events/${data.event.id}?/uploadPhoto`, { method: 'POST', body: fd });
 		const result = deserialize(await res.text());
 		if (result.type === 'failure') photoError = (result.data?.error as string) ?? 'Upload failed.';
-		else await applyAction(result);
+		else await invalidateAll();
 		photoUploading = false;
 		input.value = '';
 	}
@@ -64,7 +65,7 @@
 		fd.set('is_public', String(!isPublic));
 		const res = await fetch(`/events/${data.event.id}?/togglePhoto`, { method: 'POST', body: fd });
 		const result = deserialize(await res.text());
-		if (result.type !== 'failure') await applyAction(result);
+		if (result.type !== 'failure') await invalidateAll();
 	}
 </script>
 
