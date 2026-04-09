@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
 	import { formatVotingCloses } from '$lib/utils/suggestions';
 	import { DEFAULT_TIMEZONE } from '$lib/temporal';
@@ -13,9 +14,9 @@
 	async function toggleVote(id: string) {
 		submitting = id;
 		const fd = new FormData();
-		const res = await fetch(`/suggestions/${id}`, { method: 'POST', body: fd });
+		const res = await fetch(`/suggestions/${id}?/vote`, { method: 'POST', body: fd });
 		const result = deserialize(await res.text());
-		await applyAction(result);
+		if (result.type !== 'failure') await invalidateAll();
 		submitting = null;
 	}
 
