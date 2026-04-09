@@ -145,28 +145,35 @@ export const actions: Actions = {
 			});
 		}
 
+		const userId = user!.id;
 		const admin = createAdminClient();
 
+		// Sign out first — session is gone before any profile data changes,
+		// so there is no window where the user is authenticated as "Former member".
+		await supabase.auth.signOut();
+
 		// Anonymize the public.users row — retain it per spec ("Former member").
-		// We do NOT delete auth.users here because that would cascade-delete
-		// this row (FK: public.users.id → auth.users.id ON DELETE CASCADE).
-		// The row must be retained so attributed content (recaps, comments, etc.)
-		// remains visible under an anonymous name.
-		// If a full hard-delete is needed, it must be done by an admin from the
-		// Supabase dashboard, which will cascade the public.users row.
+		// We do NOT delete auth.users because the FK (public.users.id →
+		// auth.users.id ON DELETE CASCADE) would cascade-delete this row.
+		// Content (recaps, comments, suggestions) remains attributed to the
+		// anonymised record.
 		await admin
 			.from('users')
 			.update({ display_name: 'Former member', email: null, avatar_url: null })
-			.eq('id', user!.id);
+			.eq('id', userId);
+
+		// Sever the auth identity — change the email in auth.users to a
+		// permanently undeliverable address so the original email can never be
+		// used to sign in again. (.invalid is a reserved TLD; no MX record exists.)
+		await admin.auth.admin.updateUserById(userId, {
+			email: `deleted+${userId}@toolclub.invalid`,
+		});
 
 		// Hard-delete pending invites and feed tokens
 		await Promise.all([
-			admin.from('invites').delete().eq('invited_by', user!.id).is('redeemed_by', null),
-			admin.from('feed_tokens').delete().eq('user_id', user!.id),
+			admin.from('invites').delete().eq('invited_by', userId).is('redeemed_by', null),
+			admin.from('feed_tokens').delete().eq('user_id', userId),
 		]);
-
-		// Sign out — the session is now invalid and the profile is anonymized
-		await supabase.auth.signOut();
 
 		redirect(303, '/');
 	},
