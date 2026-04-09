@@ -13,13 +13,18 @@ src/
 │   ├── server/        # Server-only modules — never import in +page.ts or components
 │   │   ├── db.ts      # Supabase clients (createServerClient, createAdminClient)
 │   │   └── env.ts     # Validated env schema (Zod + @t3-oss/env-core)
-│   ├── components/    # Shared Svelte components
-│   └── utils/         # Shared pure utilities (no server imports)
+│   ├── components/    # Shared Svelte components (AuthShell, etc.)
+│   ├── schemas/       # Zod form schemas — shared by TanStack Form + server actions
+│   ├── utils/         # Shared pure utilities with unit tests (no server imports)
+│   └── temporal.ts    # Temporal polyfill re-export + date helpers
 ├── routes/            # SvelteKit file-based routes
-├── app.css            # Tailwind import, @theme tokens, :root aliases only
-├── app.html           # HTML shell — font links live here
+├── app.css            # Tailwind import, @theme tokens, :root --tc-* aliases, html base styles
+├── app.html           # HTML shell — font <link> tags live here
 └── app.d.ts           # TypeScript ambient types for locals, PageData, etc.
 ```
+
+`$content` alias (defined in `svelte.config.js` `kit.alias`) maps to the root
+`content/` directory for mdsvex content files.
 
 ---
 
@@ -29,8 +34,8 @@ src/
   Never query the DB in `+page.ts` or inside a component.
 - `+page.server.ts` form actions for all mutations. No client-side fetch to API
   routes for form submissions.
-- `+server.ts` only for: RSS/iCal feed endpoints, auth callback, webhook receivers,
-  and any endpoint consumed by a non-browser client.
+- `+server.ts` only for: RSS/iCal feed endpoints, auth callback (`/auth/callback`),
+  sign-out (`/signout`), and any endpoint consumed by a non-browser client.
 - `$lib/server/` is server-only. SvelteKit will error if you import it in a
   `+page.ts` or component.
 

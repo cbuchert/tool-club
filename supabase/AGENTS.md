@@ -62,8 +62,10 @@ supabase/
   Do not change the fixed UUIDs — they are load-bearing in pgTAP assertions:
   - member: `00000000-0000-0000-0000-000000000001`
   - admin: `00000000-0000-0000-0000-000000000002`
-- `seeds/dev_data.ts` generates realistic dev data using Faker.
+- `seeds/dev_data.ts` is a Faker-based script for realistic local dev data.
   Run with `pnpm seed`. Uses the Supabase JS client (requires local stack running).
+  **Note:** this file is a stub from the bootstrap phase and has not been updated
+  for the current schema. Update it before relying on it for dev seeding.
 - Seeds load in glob order (`seeds/*.sql`). The test_users seed runs before
   dev_data because SQL files sort before `.ts` — but dev_data.ts is a script,
   not a SQL seed, so there is no conflict.

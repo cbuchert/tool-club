@@ -69,7 +69,13 @@ client-side validation and by the server action for server-side validation.
 ### mdsvex
 
 Markdown content (landing page, about page) is processed by mdsvex at build time.
-Content lives in `content/` as `.md` files. No CMS.
+Content lives in `content/` as `.md` files, imported into pages as Svelte components.
+No CMS. The `$content` alias (`svelte.config.js` → `kit.alias`) maps to the root
+`content/` directory.
+
+Runtime markdown (event bodies, recap bodies, suggestion bodies) is rendered
+server-side using the `marked` library, not mdsvex. mdsvex is for static content
+files only.
 
 ### Tailwind CSS v4
 
@@ -330,57 +336,62 @@ graph TD
 | votes       | none | select all; insert/delete own           | all   |
 | comments    | none | select all; insert own                  | all   |
 | recaps      | none | select all                              | all   |
-| photos      | none | select public; insert own               | all   |
+| photos      | none | select all; insert own                  | all   |
 | invites     | none | insert own; select own                  | all   |
 | feed_tokens | none | select/update own                       | all   |
 
 "no" RSVP responses are readable only by admins and the RSVP owner.
+`photos.is_public` is NOT enforced by RLS — all authenticated members can see all
+photos. The flag is an application-layer filter used only by the public RSS feed
+endpoint to decide which photos to include.
 
 ---
 
 ## Routing structure
 
+Routes marked ✓ are built. Unmarked routes are planned.
+
 ```
 src/routes/
-├── +layout.server.ts        # Loads session, passes to all routes
-├── +layout.svelte           # Shell, nav, auth guard
-├── +page.svelte             # Landing (public)
-├── about/
-│   └── +page.svelte         # About page (mdsvex, public)
+├── +layout.server.ts        ✓ Auth guard, profile fetch
+├── +layout.svelte           ✓ App shell, sidebar nav, mobile nav
+├── +page.svelte             ✓ Landing (public, content from content/landing.md)
 ├── signin/
-│   └── +page.svelte         # Magic link request
+│   ├── +page.server.ts      ✓ Magic link action
+│   └── +page.svelte         ✓
+├── signout/
+│   └── +server.ts           ✓ POST — signs out, redirects to /
 ├── auth/
 │   └── callback/
-│       └── +server.ts       # Supabase auth callback handler
+│       └── +server.ts       ✓ Code exchange, profile creation, invite redemption
 ├── join/
 │   └── [token]/
-│       └── +page.server.ts  # Invite validation + account setup
+│       ├── +page.server.ts  ✓ Invite validation + account setup
+│       └── +page.svelte     ✓
 ├── events/
-│   ├── +page.server.ts      # Load published events
-│   ├── +page.svelte
+│   ├── +page.server.ts      ✓ Load published events
+│   ├── +page.svelte         ✓
 │   └── [id]/
-│       ├── +page.server.ts  # Load event + RSVP state
-│       ├── +page.svelte
-│       └── recap/
-│           └── +page.server.ts  # Recap form action (host only)
+│       ├── +page.server.ts  ✓ Load event + RSVP state, rsvp action
+│       └── +page.svelte     ✓
 ├── suggestions/
-│   ├── +page.server.ts
+│   ├── +page.server.ts        Sorted by votes, status sections
 │   ├── +page.svelte
 │   └── [id]/
-│       ├── +page.server.ts
+│       ├── +page.server.ts    Vote toggle, comment actions
 │       └── +page.svelte
 ├── feed/
 │   ├── rss/
-│   │   └── +server.ts       # Private RSS feed (token auth)
+│   │   └── +server.ts         Private RSS (token auth)
 │   ├── ical/
-│   │   └── +server.ts       # Private iCal feed (token auth)
+│   │   └── +server.ts         Private iCal (token auth)
 │   └── public/
-│       └── +server.ts       # Public RSS (titles + dates only)
+│       └── +server.ts       ✓ Public RSS stub (titles + dates only)
 ├── account/
-│   ├── +page.server.ts
+│   ├── +page.server.ts        Display name, avatar, invites, feed tokens
 │   └── +page.svelte
 └── admin/
-    ├── +layout.server.ts    # Admin role guard
+    ├── +layout.server.ts      Admin role guard
     ├── events/
     │   ├── +page.server.ts
     │   ├── +page.svelte
@@ -392,12 +403,14 @@ src/routes/
         └── +page.svelte
 ```
 
-Auth guard lives in the root `+layout.server.ts`. Routes under `/admin/` have a
-second guard in `admin/+layout.server.ts` that checks `users.role = 'admin'`.
+Auth guard lives in the root `+layout.server.ts`. Routes under `/admin/` will have a
+second guard that checks `users.role = 'admin'`.
 
 ---
 
 ## Auth flow
+
+### Existing member sign-in
 
 ```mermaid
 sequenceDiagram
@@ -406,23 +419,48 @@ sequenceDiagram
   participant SupabaseAuth
 
   Browser->>SvelteKit: POST /signin (email)
-  SvelteKit->>SupabaseAuth: signInWithOtp(email)
+  SvelteKit->>SupabaseAuth: signInWithOtp(email, shouldCreateUser=false)
   SupabaseAuth-->>Browser: Magic link email
 
-  Browser->>SvelteKit: GET /auth/callback?token=...
-  SvelteKit->>SupabaseAuth: exchangeCodeForSession(token)
+  Browser->>SvelteKit: GET /auth/callback?code=...
+  SvelteKit->>SupabaseAuth: exchangeCodeForSession(code)
   SupabaseAuth-->>SvelteKit: session + user
-  SvelteKit->>SvelteKit: Check users table for profile
-  alt New user (invite flow)
-    SvelteKit-->>Browser: Redirect to /join/[invite_token] (setup)
-  else Existing user
+  SvelteKit->>DB: Check public.users for profile
+  alt Profile exists
     SvelteKit-->>Browser: Redirect to /events
+  else No profile, no invite cookie
+    SvelteKit->>SupabaseAuth: signOut()
+    SvelteKit-->>Browser: Redirect to /signin?error=no_account
   end
 ```
 
-Session is set as a cookie in `hooks.server.ts` via Supabase's `setSession`. Every
-request passes through `hooks.server.ts`, which validates the session and sets
-`locals.session` and `locals.user`.
+### New member invite flow
+
+```mermaid
+sequenceDiagram
+  participant NewUser
+  participant SvelteKit
+  participant SupabaseAuth
+
+  NewUser->>SvelteKit: GET /join/[token]
+  SvelteKit->>DB: Validate invite (admin client — visitor unauthenticated)
+  SvelteKit-->>NewUser: Form (email + display_name) or error state
+
+  NewUser->>SvelteKit: POST /join/[token] (email, display_name)
+  SvelteKit->>SvelteKit: Set invite_setup cookie {token, display_name}
+  SvelteKit->>SupabaseAuth: signInWithOtp(email, shouldCreateUser=true)
+  SupabaseAuth-->>NewUser: Magic link email
+
+  NewUser->>SvelteKit: GET /auth/callback?code=...
+  SvelteKit->>SupabaseAuth: exchangeCodeForSession(code)
+  SvelteKit->>SvelteKit: Read invite_setup cookie
+  SvelteKit->>DB: Re-validate invite, create users row, mark redeemed
+  SvelteKit->>SvelteKit: Delete invite_setup cookie
+  SvelteKit-->>NewUser: Redirect to /events
+```
+
+Session is validated in `hooks.server.ts` via `supabase.auth.getUser()` (server-
+verified, not cookie-only). Every request sets `locals.user` and `locals.session`.
 
 ---
 
@@ -622,6 +660,10 @@ Core token reference:
 | `tc-accent`                      | Primary action color (green)      |
 | `tc-accent-bg / -text / -border` | Accent surface variants           |
 | `tc-danger / -bg / -border`      | Destructive action                |
+| `tc-info-bg / -text / -border`   | Informational state (blue)        |
+| `tc-warn-bg / -text / -border`   | Warning state (amber)             |
+| `tc-purple-bg / -text / -border` | Planned/special state (purple)    |
+| `radius-md` / `radius-lg`        | Border radii (0.5rem / 0.75rem)   |
 
 Typography:
 
