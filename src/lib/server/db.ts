@@ -1,7 +1,7 @@
 import { createServerClient as _createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import type { RequestEvent } from '@sveltejs/kit';
-import { env } from '$lib/env';
+import { env } from './env';
 
 /**
  * Creates a Supabase client that respects the user's session cookie.
