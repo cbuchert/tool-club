@@ -241,6 +241,37 @@ Exports:
 locally. Read the magic link from the full message JSON at `/api/v1/message/{id}`
 (`.HTML` field contains the anchor href).
 
+### Ad-hoc browser validation (when Playwright MCP is unavailable)
+
+When the Playwright browser MCP server crashes or is unavailable, use a throwaway
+`npx tsx` script at the project root (where `node_modules` are available):
+
+```typescript
+// validate_something.ts  — delete after use, never commit
+import { chromium } from '@playwright/test';
+import { signInAs, BASE } from './tests/helpers';
+
+async function run() {
+	const browser = await chromium.launch({ headless: true });
+	const ctx = await browser.newContext();
+	const page = await ctx.newPage();
+	await signInAs(page, 'admin@test.toolclub');
+	// ... your checks ...
+	await browser.close();
+}
+run().catch((e) => {
+	console.error('FAIL:', e.message);
+	process.exit(1);
+});
+```
+
+Run with: `npx tsx validate_something.ts`
+
+**Key gotcha — sidebar Sign Out button:** `page.click('button[type="submit"]')` will
+hit the sidebar's Sign Out form before the page's own submit button (it appears first
+in DOM order). Always use `page.getByRole('button', { name: 'Button text' })` or
+`button[data-action="..."]` attributes.
+
 ### Playwright config (`playwright.config.ts`)
 
 Global timeouts are configured once and override all defaults — no inline
