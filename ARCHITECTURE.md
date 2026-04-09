@@ -77,6 +77,31 @@ Runtime markdown (event bodies, recap bodies, suggestion bodies) is rendered
 server-side using the `marked` library, not mdsvex. mdsvex is for static content
 files only.
 
+### MJML (email templates)
+
+Email templates are authored in MJML and compiled to HTML by a custom Vite plugin
+defined in `vite.config.ts`. Compilation runs on every `pnpm dev` and `pnpm build`.
+
+```
+supabase/email-templates/*.mjml   ← source of truth
+supabase/templates/*.html         ← compiled output (committed)
+```
+
+Compiled HTML is committed so `config.toml` template references always resolve
+without a separate build step. Edit only the `.mjml` source files.
+
+To push compiled templates to the production Supabase project:
+
+```bash
+SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_ID=... pnpm push:emails
+```
+
+This is a deliberate manual step — never automated in CI. Email template
+changes affect authentication flows and are not easily rolled back.
+
+Go template variables (`{{ .ConfirmationURL }}`, `{{ .Token }}`, `{{ .SiteURL }}`)
+pass through MJML v4 href attributes unchanged (MJML bug fixed in v4.0.0-beta.2).
+
 ### Tailwind CSS v4
 
 Tailwind v4 is used for styling. The v4 integration model differs significantly from

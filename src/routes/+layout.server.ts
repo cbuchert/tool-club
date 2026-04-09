@@ -11,23 +11,28 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 export const load: LayoutServerLoad = async ({ locals, url }) => {
-	const { user, supabase } = locals;
+	try {
+		const { user, supabase } = locals;
 
-	if (!user && !isPublicRoute(url.pathname)) {
-		redirect(303, '/signin');
+		if (!user && !isPublicRoute(url.pathname)) {
+			redirect(303, '/signin');
+		}
+
+		let profile: { display_name: string; role: string } | null = null;
+		if (user) {
+			const { data } = await supabase
+				.from('users')
+				.select('display_name, role')
+				.eq('id', user.id)
+				.single();
+			profile = data;
+		}
+
+		return { user, profile };
+	} catch (e) {
+		// Re-throw redirects — they must not be swallowed
+		if (e instanceof Error && 'status' in e) throw e;
+		console.error('layout load threw:', e);
+		return { user: null, profile: null };
 	}
-
-	// Fetch the public.users profile for display name and role.
-	// Needed by the layout shell (sidebar display name, admin nav item).
-	let profile: { display_name: string; role: string } | null = null;
-	if (user) {
-		const { data } = await supabase
-			.from('users')
-			.select('display_name, role')
-			.eq('id', user.id)
-			.single();
-		profile = data;
-	}
-
-	return { user, profile };
 };

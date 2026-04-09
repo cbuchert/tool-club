@@ -1,0 +1,72 @@
+<mjml>
+  <mj-head>
+    <mj-title>You've been invited to Tool Club</mj-title>
+    <mj-preview>You've been invited to join Tool Club</mj-preview>
+    <mj-font name="Fraunces" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500&display=swap" />
+    <mj-attributes>
+      <mj-all font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14px" color="#1a1a18" line-height="1.6" />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body background-color="#f5f4f0">
+
+    <!-- Wordmark -->
+    <mj-section padding="40px 0 0">
+      <mj-column>
+        <mj-text align="center" font-family="'Fraunces', Georgia, serif" font-size="22px" font-weight="500" color="#1a1a18" letter-spacing="-0.3px">
+          Tool Club
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Card -->
+    <mj-section background-color="#ffffff" border-radius="12px" border="1px solid rgba(0,0,0,0.08)" padding="28px 28px 24px">
+      <mj-column>
+
+        <mj-text font-family="'Fraunces', Georgia, serif" font-size="20px" font-weight="500" color="#1a1a18" letter-spacing="-0.2px" padding-bottom="6px">
+          You've been invited
+        </mj-text>
+
+        <mj-text color="#5f5e5a" padding-bottom="24px">
+          You've been invited to join Tool Club — a small, invite-only group of people who like making things.
+          Click the button below to accept your invitation.
+        </mj-text>
+
+        <mj-button
+          background-color="#3b6d11"
+          border-radius="8px"
+          color="#ffffff"
+          font-size="14px"
+          font-weight="500"
+          inner-padding="10px 24px"
+          href="{{ .ConfirmationURL }}"
+          align="left">
+          Accept invitation
+        </mj-button>
+
+        <mj-divider border-color="rgba(0,0,0,0.08)" border-width="1px" padding="20px 0 16px" />
+
+        <mj-text color="#888780" font-size="12px" padding-bottom="8px">
+          Or enter this code manually:
+        </mj-text>
+
+        <mj-text font-family="'Courier New', Courier, monospace" font-size="28px" font-weight="700" letter-spacing="6px" color="#1a1a18" padding-bottom="4px">
+          {{ .Token }}
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+    <!-- Footer -->
+    <mj-section padding="20px 0 40px">
+      <mj-column>
+        <mj-text align="center" font-size="11px" color="#888780">
+          This invitation was sent from
+          <a href="{{ .SiteURL }}" style="color: #888780;">toolclub.app</a>.
+          If you weren't expecting this, you can safely ignore it.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

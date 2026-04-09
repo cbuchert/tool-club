@@ -67,6 +67,40 @@ src/
 - The prototype (`docs/prototype.html`) uses `px` and flat CSS classes — treat it
   as visual reference only. Translate design intent into Tailwind utilities.
 
+## TanStack Form + SvelteKit — known issue
+
+**Do not use `fetch('?/default', ...)` for form action submissions.**
+Use `fetch('/page-path', ...)` (the full page path) instead.
+
+The `?/actionName` URL pattern triggers SvelteKit's JavaScript client action
+path, which re-runs load functions and serializes the full page response after
+the action completes. This causes Svelte 5 to re-render the page component
+inside a reactive `branch`. TanStack Form calls `onMount` internally during
+`createForm()`, and `onMount` is forbidden inside a Svelte 5 reactive branch —
+it throws `lifecycle_outside_component`.
+
+The full page path (`POST /signin`) uses SvelteKit's regular form submission
+path, which does not trigger the reactive re-render.
+
+Additionally, **do not call `applyAction`** from inside TanStack Form's
+`onSubmit`. Handle the response manually in local `$state` instead. `applyAction`
+updates `$page`, which triggers reactive re-renders and causes the same issue.
+
+```typescript
+// ✓ Correct
+const response = await fetch('/signin', { method: 'POST', body: formData });
+if (response.ok) {
+	const result = deserialize(await response.text());
+	if (result.type === 'success') {
+		/* handle locally */
+	}
+}
+
+// ✗ Wrong — triggers lifecycle_outside_component
+const response = await fetch('?/default', { method: 'POST', body: formData });
+await applyAction(deserialize(await response.text()));
+```
+
 ## Form conventions
 
 - **TanStack Form** (`@tanstack/svelte-form`) handles client-side field validation and

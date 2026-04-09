@@ -32,44 +32,48 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<!-- Shell chrome rendered conditionally, but children always rendered at the same
+     level to avoid recreating page components (and TanStack Form's onMount) inside
+     a reactive Svelte 5 branch when $page updates after applyAction. -->
+
 {#if isShell}
-	<div class="shell">
-		<!-- ── Sidebar (desktop) ── -->
-		<nav class="sidebar">
-			<div class="logo">
-				Tool Club
-				<span>making things together</span>
-			</div>
+	<!-- ── Sidebar (desktop) ── -->
+	<nav class="sidebar">
+		<div class="logo">
+			Tool Club
+			<span>making things together</span>
+		</div>
 
-			{#each navItems as item}
-				<a href={item.href} class="nav-item" class:active={active(item.href)}>
-					<span class="dot"></span>
-					{item.label}
-				</a>
-			{/each}
+		{#each navItems as item}
+			<a href={item.href} class="nav-item" class:active={active(item.href)}>
+				<span class="dot"></span>
+				{item.label}
+			</a>
+		{/each}
 
-			{#if isAdmin}
-				<a href="/admin" class="nav-item admin-item" class:active={active('/admin')}>
-					<span class="dot"></span>
-					Admin
-				</a>
-			{/if}
+		{#if isAdmin}
+			<a href="/admin" class="nav-item admin-item" class:active={active('/admin')}>
+				<span class="dot"></span>
+				Admin
+			</a>
+		{/if}
 
-			<div class="sidebar-bottom">
-				<div class="user-label">Signed in as</div>
-				<div class="user-name">{data.profile?.display_name ?? '—'}</div>
-				<form method="POST" action="/signout" class="mt-2">
-					<button type="submit" class="sign-out-btn">Sign out</button>
-				</form>
-			</div>
-		</nav>
+		<div class="sidebar-bottom">
+			<div class="user-label">Signed in as</div>
+			<div class="user-name">{data.profile?.display_name ?? '—'}</div>
+			<form method="POST" action="/signout" class="mt-2">
+				<button type="submit" class="sign-out-btn">Sign out</button>
+			</form>
+		</div>
+	</nav>
+{/if}
 
-		<!-- ── Main content ── -->
-		<main class="main">
-			{@render children()}
-		</main>
-	</div>
+<!-- ── Page content (always rendered, never recreated) ── -->
+<main class="main" class:in-shell={isShell}>
+	{@render children()}
+</main>
 
+{#if isShell}
 	<!-- ── Mobile nav (≤640px) ── -->
 	<nav class="mobile-nav" aria-label="Main navigation">
 		<div class="mobile-nav-inner">
@@ -80,13 +84,11 @@
 			{/each}
 		</div>
 	</nav>
-{:else}
-	{@render children()}
 {/if}
 
 <style>
-	/* ── Shell ─────────────────────────────────────────────── */
-	.shell {
+	/* ── Shell: sidebar + main sit side-by-side via body flex ── */
+	:global(body):has(.sidebar) {
 		display: flex;
 		height: 100svh;
 		overflow: hidden;
@@ -209,11 +211,14 @@
 
 	/* ── Main ───────────────────────────────────────────────── */
 	.main {
-		flex: 1;
-		overflow-y: auto;
 		background: var(--tc-bg);
 		display: flex;
 		flex-direction: column;
+	}
+
+	.main.in-shell {
+		flex: 1;
+		overflow-y: auto;
 	}
 
 	/* ── Mobile nav ─────────────────────────────────────────── */
@@ -253,7 +258,7 @@
 
 	/* ── Responsive ─────────────────────────────────────────── */
 	@media (max-width: 40rem) {
-		.shell {
+		:global(body):has(.sidebar) {
 			height: 100svh;
 		}
 

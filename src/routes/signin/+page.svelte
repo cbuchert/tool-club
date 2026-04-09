@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
 	import { createForm } from '@tanstack/svelte-form';
 	import { signinSchema } from '$lib/schemas/forms';
 	import AuthShell from '$lib/components/AuthShell.svelte';
 
 	let { data } = $props();
 
-	// Sent state is managed locally — the action returns { sent, email }
 	let sent = $state<{ email: string } | null>(null);
+	let serverError = $state<string | null>(null);
 
 	const errorMessages: Record<string, string> = {
 		no_account: 'No account found for that email. You need an invite to join Tool Club.',
@@ -18,17 +18,26 @@
 		defaultValues: { email: '' },
 		validators: { onSubmit: signinSchema },
 		onSubmit: async ({ value }) => {
+			serverError = null;
 			const formData = new FormData();
 			formData.set('email', value.email);
 
-			const response = await fetch('?/default', { method: 'POST', body: formData });
+			const response = await fetch('/signin', { method: 'POST', body: formData });
+
+			if (!response.ok) {
+				serverError = 'Something went wrong. Please try again.';
+				return;
+			}
+
 			const result = deserialize(await response.text());
 
 			if (result.type === 'success' && result.data?.sent) {
 				sent = { email: value.email };
-			} else {
-				await applyAction(result);
+			} else if (result.type === 'failure') {
+				serverError = (result.data?.error as string) ?? 'Something went wrong.';
 			}
+			// No applyAction — avoids re-rendering page component in a reactive
+			// branch which breaks TanStack Form's onMount registration in Svelte 5.
 		},
 	}));
 </script>
@@ -71,18 +80,24 @@
 				We sent a sign-in link to <strong class="font-medium text-tc-text">{sent.email}</strong>.
 			</p>
 			<button
-				onclick={() => (sent = null)}
+				onclick={() => {
+					sent = null;
+					serverError = null;
+				}}
 				class="block w-full text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
 			>
 				← Use a different email
 			</button>
 		{:else}
 			<!-- ── Sign-in form ── -->
-			{#if data.error}
+			{#if data.error || serverError}
 				<p
 					class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-[0.75rem] text-tc-danger leading-relaxed"
 				>
-					{errorMessages[data.error] ?? 'Something went wrong. Please try again.'}
+					{serverError ??
+						(data.error
+							? (errorMessages[data.error] ?? 'Something went wrong. Please try again.')
+							: '')}
 				</p>
 			{/if}
 

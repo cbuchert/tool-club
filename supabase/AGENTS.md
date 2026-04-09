@@ -70,6 +70,59 @@ supabase/
   dev_data because SQL files sort before `.ts` — but dev_data.ts is a script,
   not a SQL seed, so there is no conflict.
 
+## Email templates
+
+Source of truth: `supabase/email-templates/*.mjml`
+Compiled output: `supabase/templates/*.html` (committed — always present without a build step)
+
+The Vite plugin in `vite.config.ts` compiles MJML → HTML automatically on
+`pnpm dev` and `pnpm build`. To push compiled templates to the production
+Supabase project, run manually:
+
+```bash
+SUPABASE_ACCESS_TOKEN=sbp_... SUPABASE_PROJECT_ID=itxysfxdkicwkqtsuilv pnpm push:emails
+```
+
+Never automate this in CI. Email template changes break authentication flows if
+deployed incorrectly and are not easily rolled back.
+
+Go template variables (`{{ .ConfirmationURL }}`, `{{ .Token }}`, `{{ .SiteURL }}`)
+pass through MJML v4 href attributes unchanged — this was a v3 bug, fixed in
+v4.0.0-beta.2 (mjmlio/mjml#664).
+
+## Auth user seeding — lessons learned
+
+For GoTrue (Supabase Auth) to accept a seeded user for magic link / OTP:
+
+1. **`instance_id` and `aud` must be set** — GoTrue's `FindUserByEmailAndAudience`
+   query filters by both. NULL values mean the user is never found, returning
+   `otp_disabled` ("Signups not allowed for otp").
+   - `instance_id = '00000000-0000-0000-0000-000000000000'` (all zeros = local instance)
+   - `aud = 'authenticated'`
+
+2. **Token columns must be empty strings, not NULL** — GoTrue's Go scanner
+   cannot convert NULL to string for `confirmation_token`, `recovery_token`,
+   `email_change_token_new`, `email_change`. Produces "Database error finding user".
+   Set all to `''`.
+
+3. **`auth.identities` is required** — Without a matching identity row (`provider = 'email'`,
+   `provider_id = email`), GoTrue cannot process OTP requests.
+
+4. **pgTAP tests do not need any of the above** — pgTAP RLS tests use
+   `set local request.jwt.claims` to simulate authentication and never call GoTrue.
+   pgTAP fixture inserts only need `id` and `email` in `auth.users`.
+
+5. **For application-level testing**, create users via `supabase.auth.admin.createUser()`
+   (the JS admin client), not direct SQL. GoTrue sets up all required fields correctly.
+
+## pgTAP test independence
+
+Every test file is self-contained — fixture users are inserted at the start of
+each `begin;...rollback;` transaction. Tests pass whether or not the dev seed
+has been applied (`on conflict do nothing` handles both cases).
+
+Do not add test fixture setup to seed files. Seeds are for dev convenience only.
+
 ## Running tests locally
 
 ```bash
