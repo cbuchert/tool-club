@@ -19,6 +19,24 @@ supabase/
 
 ---
 
+## Migration inventory
+
+| File                                     | What it creates                                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `20260409000001_create_users.sql`        | `public.users`, `public.set_updated_at()` trigger function, `public.is_admin()` helper, RLS |
+| `20260409000002_create_invites.sql`      | `public.invites`, RLS                                                                       |
+| `20260409000003_create_events.sql`       | `public.events`, RLS                                                                        |
+| `20260409000004_create_rsvps.sql`        | `public.rsvps`, RLS                                                                         |
+| `20260409000005_create_suggestions.sql`  | `public.suggestions`, resolves `events ↔ suggestions` circular FK, RLS                      |
+| `20260409000006_create_votes.sql`        | `public.votes`, unique constraint, RLS                                                      |
+| `20260409000007_create_comments.sql`     | `public.comments`, RLS                                                                      |
+| `20260409000008_create_recaps.sql`       | `public.recaps`, RLS                                                                        |
+| `20260409000009_create_photos.sql`       | `public.photos`, RLS                                                                        |
+| `20260409000010_create_feed_tokens.sql`  | `public.feed_tokens`, RLS                                                                   |
+| `20260409000011_add_user_suspension.sql` | `users.is_suspended boolean` + index (mirrors Supabase Auth ban state for admin UI)         |
+
+---
+
 ## Migration conventions
 
 - **Never edit an existing migration.** Always add a new file.
