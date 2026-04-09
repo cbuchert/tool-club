@@ -1,0 +1,92 @@
+import { fail } from '@sveltejs/kit';
+import { createAdminClient } from '$lib/server/db';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ params }) => {
+	const admin = createAdminClient();
+
+	// Admin client required — visitor is unauthenticated; RLS blocks anon reads.
+	const { data: invite } = await admin
+		.from('invites')
+		.select('id, token, expires_at, redeemed_at, users!invited_by(display_name)')
+		.eq('token', params.token)
+		.maybeSingle();
+
+	if (!invite) {
+		return { state: 'not_found' as const };
+	}
+
+	const inviterName =
+		(invite.users as { display_name: string } | null)?.display_name ?? 'A Tool Club member';
+
+	if (invite.redeemed_at) {
+		return { state: 'redeemed' as const, inviterName };
+	}
+
+	if (new Date(invite.expires_at) < new Date()) {
+		return { state: 'expired' as const, inviterName };
+	}
+
+	return { state: 'valid' as const, inviterName, token: invite.token };
+};
+
+export const actions: Actions = {
+	default: async ({ request, params, url, cookies }) => {
+		const data = await request.formData();
+		const email = data.get('email')?.toString().trim() ?? '';
+		const display_name = data.get('display_name')?.toString().trim() ?? '';
+
+		if (!email) return fail(400, { error: 'Email is required.', email, display_name });
+		if (!display_name)
+			return fail(400, { error: 'Display name is required.', email, display_name });
+
+		const admin = createAdminClient();
+
+		// Re-validate the invite — it may have been redeemed since page load.
+		const { data: invite } = await admin
+			.from('invites')
+			.select('id')
+			.eq('token', params.token)
+			.is('redeemed_by', null)
+			.gt('expires_at', new Date().toISOString())
+			.maybeSingle();
+
+		if (!invite) {
+			return fail(410, { error: 'This invite is no longer valid.', email, display_name });
+		}
+
+		// Store invite context in a short-lived httpOnly cookie so the callback
+		// handler can complete account creation after the magic link is clicked.
+		cookies.set('invite_setup', JSON.stringify({ token: params.token, display_name }), {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'lax',
+			maxAge: 600, // 10 minutes — enough time to check email and click the link
+		});
+
+		// Import supabase client for sending the OTP — we need a server client here.
+		// We can't use locals (no event), so we use the admin client's auth.
+		const { createServerClient } = await import('$lib/server/db');
+
+		// Use a minimal event-like object: OTP doesn't need cookies for anon flow.
+		// We use the admin client here to call signInWithOtp without requiring a session.
+		const { error } = await admin.auth.signInWithOtp({
+			email,
+			options: {
+				emailRedirectTo: `${url.origin}/auth/callback`,
+				shouldCreateUser: true, // create the auth.users row on first click
+			},
+		});
+
+		if (error) {
+			console.error('signInWithOtp error:', error.message);
+			return fail(500, {
+				error: 'Failed to send sign-in link. Please try again.',
+				email,
+				display_name,
+			});
+		}
+
+		return { sent: true, email };
+	},
+};

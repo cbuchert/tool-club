@@ -58,6 +58,9 @@
 			<div class="sidebar-bottom">
 				<div class="user-label">Signed in as</div>
 				<div class="user-name">{data.profile?.display_name ?? '—'}</div>
+				<form method="POST" action="/signout" class="mt-2">
+					<button type="submit" class="sign-out-btn">Sign out</button>
+				</form>
 			</div>
 		</nav>
 
@@ -187,6 +190,21 @@
 		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--tc-text);
+	}
+
+	.sign-out-btn {
+		font-size: 0.6875rem;
+		font-family: var(--font-mono);
+		color: var(--tc-hint);
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		transition: color 0.1s;
+	}
+
+	.sign-out-btn:hover {
+		color: var(--tc-muted);
 	}
 
 	/* ── Main ───────────────────────────────────────────────── */
