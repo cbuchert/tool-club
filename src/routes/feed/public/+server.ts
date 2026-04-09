@@ -1,22 +1,31 @@
-import { createHonoApp } from '$lib/server/hono';
+import { createAdminClient } from '$lib/server/db';
+import { buildPublicRssFeed, type PublicFeedEvent } from '$lib/utils/feeds';
 import type { RequestHandler } from '@sveltejs/kit';
 
-const app = createHonoApp();
+// Public RSS feed — event titles and dates only, no auth required.
+// Admin client used server-side so no auth cookie is needed.
+export const GET: RequestHandler = async ({ url }) => {
+	const admin = createAdminClient();
 
-// SvelteKit has already resolved the route; match any path that reaches here.
-app.get('*', (c) => {
-	return c.body(
-		`<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <title>Tool Club</title>
-    <link>https://toolclub.app</link>
-    <description>Upcoming events from Tool Club.</description>
-  </channel>
-</rss>`,
-		200,
-		{ 'Content-Type': 'application/rss+xml; charset=utf-8' }
-	);
-});
+	const { data: events } = await admin
+		.from('events')
+		.select('id, title, starts_at')
+		.eq('status', 'published')
+		.order('starts_at', { ascending: true });
 
-export const GET: RequestHandler = ({ request }) => app.fetch(request);
+	const items: PublicFeedEvent[] = (events ?? []).map((e) => ({
+		id: e.id,
+		title: e.title,
+		starts_at: e.starts_at,
+		url: `${url.origin}/events/${e.id}`,
+	}));
+
+	const feed = buildPublicRssFeed(items, `${url.origin}/feed/public`);
+
+	return new Response(feed, {
+		headers: {
+			'Content-Type': 'application/rss+xml; charset=utf-8',
+			'Cache-Control': 'public, max-age=900',
+		},
+	});
+};
