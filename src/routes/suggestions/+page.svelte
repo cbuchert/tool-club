@@ -12,9 +12,12 @@
 	let submitting = $state<string | null>(null);
 	let showClosed = $state(false);
 
-	// Closed suggestions are hidden by default — progressive disclosure
+	// Planned (promoted to event) are excluded — they're now events, not suggestions.
+	// Closed are hidden by default behind a progressive disclosure toggle.
 	const visible = $derived(
-		showClosed ? data.suggestions : data.suggestions.filter((s) => s.status !== 'closed')
+		data.suggestions.filter(
+			(s) => s.status === 'open' || (s.status === 'closed' && showClosed)
+		)
 	);
 	const closedCount = $derived(data.suggestions.filter((s) => s.status === 'closed').length);
 
