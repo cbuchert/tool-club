@@ -147,14 +147,17 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 10. Admin
 
-- [ ] `/admin` — home with links to events and members
-- [ ] `/admin/events` — all events (draft, upcoming, past)
-- [ ] `/admin/events/[id]` — event edit form, headcount view, RSVP list
-- [ ] Admin event create/edit/publish/delete actions
-- [ ] Promote suggestion to event action
-- [ ] `/admin/members` — member list, pending invites
-- [ ] Suspend/reinstate member action
-- [ ] Admin invite revoke action
+- [x] `/admin` — home with links to events and members (draft count badge, open suggestions count)
+- [x] `/admin/events` — all events grouped by status (draft / published / past)
+- [x] `/admin/events/new` — event create form (title, start/end, host, venue, capacity, body, links)
+- [x] `/admin/events/[id]` — event edit form (all fields), RSVP list, delete with confirmation
+- [x] Admin event create/edit/publish/delete actions; status selector drives publish flow
+- [x] Promote suggestion to event action (creates draft event, marks suggestion planned, redirects to edit)
+- [x] Suggestion close/reopen voting actions (admin-only)
+- [x] Admin can delete any comment on a suggestion
+- [x] `/admin/members` — member list with role + suspension badges, pending invites
+- [x] Suspend/reinstate member action (Supabase Auth ban + `is_suspended` flag + feed token revocation)
+- [x] Admin invite revoke action
 
 ## 11. Cron jobs
 
@@ -182,8 +185,10 @@ Write tests after the feature is built and working locally.
 - [ ] Suggestions: propose → appears in list
 - [x] Feed: private RSS requires valid token (26 E2E tests)
 - [x] Feed: public RSS returns no member data (26 E2E tests)
-- [ ] Admin: publish a draft event → visible to members
-- [ ] Admin: promote suggestion → event created in draft
+- [x] Admin: publish a draft event → visible to members
+- [x] Admin: promote suggestion → event created in draft
+- [x] Admin: suspend member → suspended badge shown, auth banned
+- [x] Admin: close/reopen suggestion voting
 
 ## 14. Pre-launch
 
