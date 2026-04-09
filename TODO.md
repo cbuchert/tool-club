@@ -164,9 +164,8 @@ Add notes inline when a task reveals decisions that affect other tasks.
 - [x] Configure `vercel.json` with cron schedules
 - [x] `mark-past-events` function (service role, see ARCHITECTURE.md)
 - [x] `expire-invites` function (service role)
-      Note: set `CRON_SECRET` in Vercel project env vars before going live.
-      Vercel injects it as `Authorization: Bearer <secret>` on cron requests;
-      the handlers check it when the env var is present (skipped in local dev).
+      Note: `CRON_SECRET` is set in Vercel project env vars (done 2026-04-09).
+- [x] E2E tests for both cron jobs (tests/cron.test.ts — 8 tests, all passing)
 
 ## 12. Content pages
 
