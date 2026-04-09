@@ -21,7 +21,7 @@ insert into public.users (id, display_name, email, role)
 values
   ('00000000-0000-0000-0000-000000000001', 'Test Member', 'member@test.toolclub', 'member'),
   ('00000000-0000-0000-0000-000000000002', 'Test Admin',  'admin@test.toolclub',  'admin')
-on conflict (id) do nothing;
+on conflict (id) do update set display_name = excluded.display_name, role = excluded.role;
 
 insert into public.events (id, title, status, starts_at, host_name) values
   ('e1000000-0000-0000-0000-000000000001', 'Draft Event',     'draft',     now() + interval '7 days', 'Host A'),

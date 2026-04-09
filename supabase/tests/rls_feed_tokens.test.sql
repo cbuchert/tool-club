@@ -19,8 +19,15 @@ insert into public.users (id, display_name, email, role)
 values
   ('00000000-0000-0000-0000-000000000001', 'Test Member', 'member@test.toolclub', 'member'),
   ('00000000-0000-0000-0000-000000000002', 'Test Admin',  'admin@test.toolclub',  'admin')
-on conflict (id) do nothing;
+on conflict (id) do update set display_name = excluded.display_name, role = excluded.role;
 
+-- Ensure fixture tokens have the expected IDs regardless of seed state.
+-- DELETE + INSERT inside this transaction is safe — rolls back on finish.
+delete from public.feed_tokens
+  where user_id in (
+    '00000000-0000-0000-0000-000000000001',
+    '00000000-0000-0000-0000-000000000002'
+  );
 insert into public.feed_tokens (id, user_id, token) values
   ('af000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'member-feed-abc'),
   ('af000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'admin-feed-xyz');

@@ -62,22 +62,14 @@ supabase/
 
 ## Running pgTAP tests
 
-pgTAP tests **must be run against a clean reset**, not against a seeded DB.
-The `pnpm seed` dev data uses the same UUIDs as the pgTAP fixture users; running
-tests against seeded data causes unique-constraint conflicts.
+pgTAP tests are self-contained and pass against both a clean and a seeded DB:
 
 ```bash
-# Correct workflow
-pnpm exec supabase db reset   # drops + recreates schema + runs test_users.sql only
-pnpm exec supabase test db    # all 67 tests pass
-
-# Restore dev data after testing
-pnpm seed
+pnpm exec supabase test db    # works regardless of whether pnpm seed has run
 ```
 
-Do not run `pnpm exec supabase test db` without the preceding `db reset` — it will
-produce false failures in `rls_feed_tokens` and `rls_users` due to seed data
-conflicts.
+No reset needed. Each test file handles pre-existing seed data in its fixture
+setup (see fixture template below).
 
 ## pgTAP test conventions
 
@@ -92,6 +84,48 @@ conflicts.
 - For "cannot insert/delete" tests that should throw: use `throws_ok()` with
   error code `42501` (RLS violation) or `23505` (unique constraint).
 - Reset to `set local role postgres` before verification reads.
+
+### Fixture template — canonical copy
+
+Every test file starts with this fixture block (after `select plan(N);`).
+**This is the single source of truth for fixture inserts.** When a migration
+adds a column to `auth.users` or `public.users`, update this template AND
+every test file that copies it.
+
+```sql
+set local role postgres;
+
+-- auth.users: need the rows for FK constraints; specific values don't matter.
+-- on conflict do nothing is safe — we don't assert on auth.users fields.
+insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, created_at, updated_at,
+  raw_app_meta_data, raw_user_meta_data, is_super_admin)
+values
+  ('00000000-0000-0000-0000-000000000000',
+   '00000000-0000-0000-0000-000000000001',
+   'authenticated', 'authenticated', 'member@test.toolclub',
+   crypt('t', gen_salt('bf')), now(), now(), now(),
+   '{"provider":"email","providers":["email"]}', '{}', false),
+  ('00000000-0000-0000-0000-000000000000',
+   '00000000-0000-0000-0000-000000000002',
+   'authenticated', 'authenticated', 'admin@test.toolclub',
+   crypt('t', gen_salt('bf')), now(), now(), now(),
+   '{"provider":"email","providers":["email"]}', '{}', false)
+on conflict (id) do nothing;
+
+-- public.users: DO UPDATE SET so fixture values are enforced even when
+-- dev seed data (e.g. "Sam Chen") is already present. Rolls back on finish.
+insert into public.users (id, display_name, email, role)
+values
+  ('00000000-0000-0000-0000-000000000001', 'Test Member', 'member@test.toolclub', 'member'),
+  ('00000000-0000-0000-0000-000000000002', 'Test Admin',  'admin@test.toolclub',  'admin')
+on conflict (id) do update set display_name = excluded.display_name, role = excluded.role;
+```
+
+For tables with a `user_id` FK and a unique constraint (e.g. `feed_tokens`):
+use `delete … where user_id in (…)` followed by a plain `insert` — this
+guarantees fixture IDs are exactly what the tests assert on, regardless of
+what seed rows exist.
 
 ## Seed conventions
 
@@ -157,9 +191,9 @@ For GoTrue (Supabase Auth) to accept a seeded user for magic link / OTP:
 
 ## pgTAP test independence
 
-Every test file is self-contained — fixture users are inserted at the start of
-each `begin;...rollback;` transaction. Tests pass whether or not the dev seed
-has been applied (`on conflict do nothing` handles both cases).
+Every test file is self-contained — fixture data is set up within each
+`begin;...rollback;` transaction and rolled back automatically. Tests pass
+whether or not the dev seed has been applied.
 
 Do not add test fixture setup to seed files. Seeds are for dev convenience only.
 

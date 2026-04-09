@@ -19,7 +19,7 @@ insert into public.users (id, display_name, email, role)
 values
   ('00000000-0000-0000-0000-000000000001', 'Test Member', 'member@test.toolclub', 'member'),
   ('00000000-0000-0000-0000-000000000002', 'Test Admin',  'admin@test.toolclub',  'admin')
-on conflict (id) do nothing;
+on conflict (id) do update set display_name = excluded.display_name, role = excluded.role;
 
 insert into public.invites (id, token, invited_by) values
   ('ad000000-0000-0000-0000-000000000001', 'member-token-abc', '00000000-0000-0000-0000-000000000001'),
