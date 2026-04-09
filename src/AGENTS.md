@@ -50,6 +50,21 @@ src/
   profile (display_name, role) for the shell. Public routes bypass the guard.
 - Public routes: `/`, `/signin`, `/auth/callback`, `/join/[token]`, `/feed/public`.
 
+## Mobile-first
+
+**Always build mobile-first.** Base styles target the smallest viewport. Use `sm:`,
+`md:` etc. to layer in larger-screen behaviour. A "responsive pass" after the fact is
+a code smell — if it needs one, the base styles were written desktop-first.
+
+Practical rules:
+
+- Padding/spacing defaults should be tight (e.g. `p-4`); loosen at `sm:` (`sm:p-6`).
+- Flex layouts that would be crowded at 390px need structural fixes, not breakpoint hacks.
+  Move badges/secondary elements inside the content column rather than as siblings that
+  steal horizontal space from the title.
+- Test at 390px (iPhone SE) and 640px (breakpoint boundary) before calling anything done.
+- The shell breakpoint is 40rem (640px): sidebar shows above, mobile nav shows below.
+
 ## CSS and styling conventions
 
 - **Always use Tailwind utility classes.** No raw CSS in `app.css` for component

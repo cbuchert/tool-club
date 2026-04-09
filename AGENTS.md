@@ -71,6 +71,8 @@ These apply everywhere and override any other guidance:
 - **RLS is the primary security layer.** Server-side checks are a second layer.
 - **Never trust client-supplied user IDs.** Always derive identity from the session.
 - **No separate API server.** SvelteKit form actions and server routes are the backend.
+- **Mobile first, always.** Base styles target 390px. `sm:` adds desktop behaviour.
+  A "responsive pass" after the fact means the base styles were wrong.
 - **No component library.** Tailwind + `$lib/components/` is the UI system.
 - **No client-side state management libraries** beyond what's already adopted.
   Current exceptions: `@tanstack/svelte-form` for form state/validation.

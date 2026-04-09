@@ -259,6 +259,10 @@
 	/* ── Responsive ─────────────────────────────────────────── */
 	@media (max-width: 40rem) {
 		:global(body):has(.sidebar) {
+			/* Switch to column so mobile nav stacks below main rather than
+			   sitting beside it in the row. Without this, main only gets a
+			   fraction of the viewport width (mobile nav eats the rest). */
+			flex-direction: column;
 			height: 100svh;
 		}
 
@@ -266,8 +270,16 @@
 			display: none;
 		}
 
+		.main.in-shell {
+			/* In column flex, main must grow to fill space above the nav */
+			flex: 1;
+			min-height: 0;
+		}
+
 		.mobile-nav {
 			display: block;
+			/* Shrink to content height — does not flex-grow */
+			flex-shrink: 0;
 		}
 	}
 </style>
