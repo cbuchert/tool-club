@@ -16,7 +16,12 @@
 		},
 		"filesystem": {
 			"type": "local",
-			"command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/Users/chris/Development/tool-club"],
+			"command": [
+				"npx",
+				"-y",
+				"@modelcontextprotocol/server-filesystem",
+				"/Users/chris/Development/tool-club"
+			],
 			"enabled": true
 		},
 		"playwright": {

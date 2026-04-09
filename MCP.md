@@ -6,14 +6,14 @@ MCP servers are configured in `.mcp.json` at the repo root.
 
 ## Servers
 
-| Server | Type | Purpose |
-|---|---|---|
-| `supabase` | Remote (OAuth) | Query local and hosted Supabase project |
-| `github` | Local | Create issues, PRs, read repo state |
-| `filesystem` | Local | Read and write files in the repo |
-| `playwright` | Local | Browser automation and E2E test authoring |
-| `vercel` | Local | Deployment status and project management |
-| `fetch` | Local | Make HTTP requests to running services |
+| Server       | Type           | Purpose                                   |
+| ------------ | -------------- | ----------------------------------------- |
+| `supabase`   | Remote (OAuth) | Query local and hosted Supabase project   |
+| `github`     | Local          | Create issues, PRs, read repo state       |
+| `filesystem` | Local          | Read and write files in the repo          |
+| `playwright` | Local          | Browser automation and E2E test authoring |
+| `vercel`     | Local          | Deployment status and project management  |
+| `fetch`      | Local          | Make HTTP requests to running services    |
 
 ---
 

@@ -11,10 +11,7 @@ export const DEFAULT_TIMEZONE = 'America/Denver';
  *
  * This matters because midnight UTC on July 4 is still July 3 in SLC.
  */
-export function toPlainDate(
-	date: Date,
-	timeZone: string = DEFAULT_TIMEZONE
-): Temporal.PlainDate {
+export function toPlainDate(date: Date, timeZone: string = DEFAULT_TIMEZONE): Temporal.PlainDate {
 	return Temporal.Instant.fromEpochMilliseconds(date.getTime())
 		.toZonedDateTimeISO(timeZone)
 		.toPlainDate();
