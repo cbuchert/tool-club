@@ -22,13 +22,18 @@ export const actions: Actions = {
 				email,
 				options: {
 					emailRedirectTo: `${url.origin}/auth/callback`,
+					// Never create new users from the sign-in form. New accounts are
+					// created exclusively through the invite flow (/join/[token]).
 					shouldCreateUser: false,
 				},
 			});
 
-			if (error && error.status !== 200) {
-				console.error('signInWithOtp error:', error.message);
-			}
+			// Intentional: always return { sent: true } regardless of whether the
+			// email is registered. Supabase silently drops the OTP for unknown
+			// addresses when shouldCreateUser=false. Returning an error here would
+			// expose which emails are in the system — email enumeration is a security
+			// anti-pattern and particularly bad for an invite-only community.
+			if (error) console.error('signInWithOtp:', error.message);
 
 			return { sent: true, email };
 		} catch (e) {
