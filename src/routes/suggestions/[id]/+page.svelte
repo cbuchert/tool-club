@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
 	import type { PageData } from './$types';
-	import { initials } from '$lib/utils/events';
+	import Topbar from '$lib/components/Topbar.svelte';
+	import Badge from '$lib/components/Badge.svelte';
+	import Avatar from '$lib/components/Avatar.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -57,13 +59,13 @@
 </svelte:head>
 
 <!-- ── Topbar ── -->
-<div
-	class="sticky top-0 z-10 flex min-h-[3.25rem] items-center justify-between [border-bottom:0.5px_solid_var(--tc-border)] bg-tc-bg px-4 sm:px-6"
->
-	<a href="/suggestions" class="text-xs text-tc-muted hover:text-tc-text transition-colors"
-		>← Suggestions</a
-	>
-</div>
+<Topbar>
+	{#snippet left()}
+		<a href="/suggestions" class="text-xs text-tc-muted hover:text-tc-text transition-colors"
+			>← Suggestions</a
+		>
+	{/snippet}
+</Topbar>
 
 <div class="p-4 sm:p-6 max-w-2xl">
 	<!-- ── Header ── -->
@@ -97,20 +99,11 @@
 
 		<!-- Status badge -->
 		{#if data.suggestion.status === 'planned'}
-			<span
-				class="shrink-0 rounded-full [border:0.5px_solid_var(--tc-purple-border)] bg-tc-purple-bg px-2 py-0.5 font-mono text-[0.625rem] text-tc-purple-text"
-				>planned</span
-			>
+			<Badge variant="planned" />
 		{:else if data.suggestion.status === 'closed'}
-			<span
-				class="shrink-0 rounded-full [border:0.5px_solid_var(--tc-border-mid)] bg-tc-surface px-2 py-0.5 font-mono text-[0.625rem] text-tc-hint"
-				>closed</span
-			>
+			<Badge variant="closed" />
 		{:else}
-			<span
-				class="shrink-0 rounded-full [border:0.5px_solid_var(--tc-info-border)] bg-tc-info-bg px-2 py-0.5 font-mono text-[0.625rem] text-tc-info-text"
-				>open</span
-			>
+			<Badge variant="open" label="open" />
 		{/if}
 	</div>
 
@@ -140,10 +133,8 @@
 
 		{#each data.comments as comment (comment.id)}
 			<div class="mb-4 flex items-start gap-2.5">
-				<div
-					class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-tc-accent-bg font-mono text-[0.625rem] font-medium text-tc-accent-text"
-				>
-					{initials(comment.author_name)}
+				<div class="mt-0.5">
+					<Avatar name={comment.author_name} size="sm" />
 				</div>
 				<div class="min-w-0 flex-1">
 					<div class="mb-0.5 flex items-baseline gap-1.5">

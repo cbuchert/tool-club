@@ -2,6 +2,7 @@
 	import { applyAction, deserialize } from '$app/forms';
 	import { createForm } from '@tanstack/svelte-form';
 	import { proposalSchema } from '$lib/schemas/forms';
+	import Topbar from '$lib/components/Topbar.svelte';
 
 	let serverError = $state<string | null>(null);
 
@@ -31,13 +32,13 @@
 </svelte:head>
 
 <!-- ── Topbar ── -->
-<div
-	class="sticky top-0 z-10 flex min-h-[3.25rem] items-center [border-bottom:0.5px_solid_var(--tc-border)] bg-tc-bg px-4 sm:px-6"
->
-	<a href="/suggestions" class="text-xs text-tc-muted hover:text-tc-text transition-colors"
-		>← Suggestions</a
-	>
-</div>
+<Topbar>
+	{#snippet left()}
+		<a href="/suggestions" class="text-xs text-tc-muted hover:text-tc-text transition-colors"
+			>← Suggestions</a
+		>
+	{/snippet}
+</Topbar>
 
 <div class="p-4 sm:p-6 max-w-xl">
 	<h1 class="font-display text-xl font-medium tracking-[-0.02em] text-tc-text mb-1.5">
@@ -94,7 +95,10 @@
 		<form.Field name="body_md">
 			{#snippet children(field)}
 				<div class="flex items-baseline justify-between mb-1.5">
-					<label for="body_md" class="font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint">
+					<label
+						for="body_md"
+						class="font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint"
+					>
 						Description <span class="text-tc-danger">*</span>
 					</label>
 					<span class="font-mono text-[0.6rem] text-tc-hint">Markdown supported</span>
