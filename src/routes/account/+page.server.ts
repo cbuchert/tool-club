@@ -47,7 +47,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		recruited: recruited ?? [],
 		feedToken: token,
 		rssUrl: token ? `${origin}/feed/rss?token=${token}` : null,
-		icalUrl: token ? `${origin}/feed/ical?token=${token}` : null,
+		// .ics extension in the URL is intentional — calendar apps and curl infer
+		// the file type from the URL path, not just Content-Type/Content-Disposition.
+		icalUrl: token ? `${origin}/feed/ical/toolclub.ics?token=${token}` : null,
 		deletionBlockedBy: hostedEvents?.length ? hostedEvents : null,
 	};
 };

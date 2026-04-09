@@ -127,37 +127,37 @@ test.describe('GET /feed/rss', () => {
 
 // ── Private iCal feed ─────────────────────────────────────────────────────────
 
-test.describe('GET /feed/ical', () => {
+test.describe('GET /feed/ical/toolclub.ics', () => {
 	test('returns 401 with no token', async ({ request }) => {
-		expect((await request.get('/feed/ical')).status()).toBe(401);
+		expect((await request.get('/feed/ical/toolclub.ics')).status()).toBe(401);
 	});
 
 	test('returns 401 with an invalid token', async ({ request }) => {
-		expect((await request.get('/feed/ical?token=bogus')).status()).toBe(401);
+		expect((await request.get('/feed/ical/toolclub.ics?token=bogus')).status()).toBe(401);
 	});
 
 	test('returns 401 with a plausible but non-existent token', async ({ request }) => {
-		expect((await request.get(`/feed/ical?token=${'b'.repeat(32)}`)).status()).toBe(401);
+		expect((await request.get(`/feed/ical/toolclub.ics?token=${'b'.repeat(32)}`)).status()).toBe(401);
 	});
 
 	test('returns 200 with a valid token', async ({ request }) => {
-		expect((await request.get(`/feed/ical?token=${validToken}`)).status()).toBe(200);
+		expect((await request.get(`/feed/ical/toolclub.ics?token=${validToken}`)).status()).toBe(200);
 	});
 
 	test('returns iCal content-type with a valid token', async ({ request }) => {
-		const res = await request.get(`/feed/ical?token=${validToken}`);
+		const res = await request.get(`/feed/ical/toolclub.ics?token=${validToken}`);
 		expect(res.headers()['content-type']).toContain('text/calendar');
 	});
 
 	test('returns a valid VCALENDAR structure', async ({ request }) => {
-		const body = await (await request.get(`/feed/ical?token=${validToken}`)).text();
+		const body = await (await request.get(`/feed/ical/toolclub.ics?token=${validToken}`)).text();
 		expect(body).toContain('BEGIN:VCALENDAR');
 		expect(body).toContain('VERSION:2.0');
 		expect(body).toContain('END:VCALENDAR');
 	});
 
 	test('VEVENT entries contain required iCal fields', async ({ request }) => {
-		const body = await (await request.get(`/feed/ical?token=${validToken}`)).text();
+		const body = await (await request.get(`/feed/ical/toolclub.ics?token=${validToken}`)).text();
 		expect(body).toContain('BEGIN:VEVENT');
 		expect(body).toContain('DTSTART:');
 		expect(body).toContain('SUMMARY:');
@@ -166,14 +166,14 @@ test.describe('GET /feed/ical', () => {
 	});
 
 	test('content-disposition is an attachment with .ics filename', async ({ request }) => {
-		const res = await request.get(`/feed/ical?token=${validToken}`);
+		const res = await request.get(`/feed/ical/toolclub.ics?token=${validToken}`);
 		const disposition = res.headers()['content-disposition'] ?? '';
 		expect(disposition).toContain('attachment');
 		expect(disposition).toContain('.ics');
 	});
 
 	test('Cache-Control is private', async ({ request }) => {
-		const res = await request.get(`/feed/ical?token=${validToken}`);
+		const res = await request.get(`/feed/ical/toolclub.ics?token=${validToken}`);
 		expect(res.headers()['cache-control']).toContain('private');
 	});
 });
@@ -200,7 +200,7 @@ test.describe('feed content contract', () => {
 	});
 
 	test('iCal DTSTART is UTC ISO 8601 formatted', async ({ request }) => {
-		const body = await (await request.get(`/feed/ical?token=${validToken}`)).text();
+		const body = await (await request.get(`/feed/ical/toolclub.ics?token=${validToken}`)).text();
 		expect(body).toMatch(/DTSTART:\d{8}T\d{6}Z/);
 	});
 
