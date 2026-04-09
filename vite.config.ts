@@ -1,9 +1,15 @@
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'url';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
+	resolve: {
+		alias: {
+			$content: fileURLToPath(new URL('./content', import.meta.url)),
+		},
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
