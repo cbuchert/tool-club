@@ -19,7 +19,7 @@ const publicEvent: PublicFeedEvent = {
 	id: 'evt-1',
 	title: "Woad Dyeing at Dana's",
 	starts_at: T,
-	url: 'https://toolclub.app/events/evt-1',
+	url: 'https://example.com/events/evt-1',
 };
 
 const privateEvent: PrivateFeedEvent = {
@@ -30,7 +30,7 @@ const privateEvent: PrivateFeedEvent = {
 	location_name: 'Forge Collective',
 	address: '12 Industrial Way, Salt Lake City, UT',
 	body_html: '<p>Introduction to wood turning.</p>',
-	url: 'https://toolclub.app/events/evt-2',
+	url: 'https://example.com/events/evt-2',
 };
 
 // ── escapeXml ────────────────────────────────────────────────────────────────
@@ -191,43 +191,43 @@ describe('buildPrivateRssFeed', () => {
 
 describe('buildIcalFeed', () => {
 	it('wraps everything in VCALENDAR', () => {
-		const cal = buildIcalFeed([]);
+		const cal = buildIcalFeed([], 'https://example.com');
 		expect(cal).toContain('BEGIN:VCALENDAR');
 		expect(cal).toContain('VERSION:2.0');
 		expect(cal).toContain('END:VCALENDAR');
 	});
 
 	it('includes a VEVENT per event', () => {
-		const cal = buildIcalFeed([privateEvent]);
+		const cal = buildIcalFeed([privateEvent], 'https://example.com');
 		expect(cal).toContain('BEGIN:VEVENT');
 		expect(cal).toContain('END:VEVENT');
 	});
 
 	it('formats DTSTART in UTC', () => {
-		expect(buildIcalFeed([privateEvent])).toContain('DTSTART:20260412T140000Z');
+		expect(buildIcalFeed([privateEvent], 'https://example.com')).toContain('DTSTART:20260412T140000Z');
 	});
 
 	it('formats DTEND when ends_at is provided', () => {
-		expect(buildIcalFeed([privateEvent])).toContain('DTEND:20260412T160000Z');
+		expect(buildIcalFeed([privateEvent], 'https://example.com')).toContain('DTEND:20260412T160000Z');
 	});
 
 	it('includes SUMMARY from the event title', () => {
-		expect(buildIcalFeed([privateEvent])).toContain('SUMMARY:Lathe Night at the Makerspace');
+		expect(buildIcalFeed([privateEvent], 'https://example.com')).toContain('SUMMARY:Lathe Night at the Makerspace');
 	});
 
 	it('includes LOCATION when provided', () => {
-		expect(buildIcalFeed([privateEvent])).toContain('LOCATION:Forge Collective');
+		expect(buildIcalFeed([privateEvent], 'https://example.com')).toContain('LOCATION:Forge Collective');
 	});
 
 	it('omits LOCATION line when null', () => {
-		expect(buildIcalFeed([{ ...privateEvent, location_name: null }])).not.toContain('LOCATION:');
+		expect(buildIcalFeed([{ ...privateEvent, location_name: null }], 'https://example.com')).not.toContain('LOCATION:');
 	});
 
 	it('generates a stable UID per event', () => {
-		expect(buildIcalFeed([privateEvent])).toContain('UID:evt-2@toolclub.app');
+		expect(buildIcalFeed([privateEvent], 'https://example.com')).toContain('UID:evt-2@example.com');
 	});
 
 	it('includes the event URL', () => {
-		expect(buildIcalFeed([privateEvent])).toContain('URL:https://toolclub.app/events/evt-2');
+		expect(buildIcalFeed([privateEvent], 'https://example.com')).toContain('URL:https://example.com/events/evt-2');
 	});
 });

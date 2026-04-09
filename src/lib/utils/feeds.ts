@@ -82,12 +82,15 @@ function rssHeader(selfUrl?: string): string {
 	const atom = selfUrl
 		? `\n    <atom:link href="${selfUrl}" rel="self" type="application/rss+xml"/>`
 		: '';
+	// Derive the site root from selfUrl when available; fall back to empty string
+	// so no domain is assumed. The link element is optional in RSS 2.0.
+	const siteLink = selfUrl ? new URL(selfUrl).origin : '';
 	return (
 		`<?xml version="1.0" encoding="UTF-8"?>\n` +
 		`<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n` +
 		`  <channel>\n` +
 		`    <title>Tool Club</title>\n` +
-		`    <link>https://toolclub.app</link>\n` +
+		(siteLink ? `    <link>${siteLink}</link>\n` : '') +
 		`    <description>Upcoming events from Tool Club — Springville.</description>\n` +
 		`    <language>en-us</language>${atom}`
 	);
@@ -155,7 +158,14 @@ export function buildPrivateRssFeed(events: PrivateFeedEvent[], selfUrl?: string
  * Build a VCALENDAR iCal feed from a list of events.
  * Follows RFC 5545. All times in UTC.
  */
-export function buildIcalFeed(events: PrivateFeedEvent[], calName = 'Tool Club'): string {
+export function buildIcalFeed(
+	events: PrivateFeedEvent[],
+	siteOrigin: string,
+	calName = 'Tool Club'
+): string {
+	// Strip the protocol for the UID — RFC 5545 uses domain only as a uniqueness scope
+	const uidDomain = siteOrigin.replace(/^https?:\/\//, '');
+
 	const vevents = events.map((e) => {
 		const dtstart = formatIcalDate(Temporal.Instant.from(e.starts_at));
 		const dtend = e.ends_at ? formatIcalDate(Temporal.Instant.from(e.ends_at)) : null;
@@ -163,7 +173,7 @@ export function buildIcalFeed(events: PrivateFeedEvent[], calName = 'Tool Club')
 
 		const lines = [
 			'BEGIN:VEVENT',
-			`UID:${e.id}@toolclub.app`,
+			`UID:${e.id}@${uidDomain}`,
 			`DTSTART:${dtstart}`,
 			dtend ? `DTEND:${dtend}` : null,
 			`SUMMARY:${e.title}`,

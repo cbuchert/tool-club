@@ -40,7 +40,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		url: `${url.origin}/events/${e.id}`,
 	}));
 
-	const cal = buildIcalFeed(items);
+	const cal = buildIcalFeed(items, url.origin);
 
 	return new Response(cal, {
 		headers: {
