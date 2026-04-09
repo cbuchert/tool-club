@@ -163,7 +163,7 @@ Current components (add to this list when you create a new one):
 | Component   | Purpose                                                                             |
 | ----------- | ----------------------------------------------------------------------------------- |
 | `AuthShell` | Centered full-height wrapper with "Tool Club" wordmark                              |
-| `Avatar`    | Initials circle — `name` + `size` (sm/md/lg)                                        |
+| `Avatar`    | Profile photo or initials fallback — `name` + `avatarUrl?` + `size` (sm/md/lg)      |
 | `Badge`     | Status pill — `variant` (going/open/full/planned/past/closed/no) + optional `label` |
 | `Topbar`    | Sticky page header — `left` snippet required, `right` optional                      |
 
