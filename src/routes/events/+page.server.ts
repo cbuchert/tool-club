@@ -57,6 +57,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 			cardDay: cardDay(e.starts_at),
 			cardMonth: cardMonth(e.starts_at),
 			cardMeta: cardMeta(e.starts_at, e.location_name),
+			monthLabel: new Date(e.starts_at).toLocaleDateString('en-US', {
+				month: 'long',
+				year: 'numeric',
+				timeZone: 'America/Denver',
+			}),
 			capacity: e.capacity as number | null,
 			goingUsers: going,
 			goingCount: going.length,
