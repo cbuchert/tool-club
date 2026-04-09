@@ -53,6 +53,25 @@
 		const result = deserialize(await res.text());
 		if (result.type !== 'failure') await invalidateAll();
 	}
+
+	// Admin actions
+	let adminSubmitting = $state(false);
+
+	async function adminAction(action: 'close' | 'reopen' | 'promote') {
+		adminSubmitting = true;
+		const res = await fetch(`/suggestions/${data.suggestion.id}?/${action}`, {
+			method: 'POST',
+			body: new FormData(),
+		});
+		const result = deserialize(await res.text());
+		if (result.type === 'redirect') {
+			// promote redirects to /admin/events/[id]
+			window.location.href = result.location;
+		} else if (result.type !== 'failure') {
+			await invalidateAll();
+		}
+		adminSubmitting = false;
+	}
 </script>
 
 <svelte:head>
@@ -112,11 +131,53 @@
 	{#if data.promotedEvent}
 		<a
 			href="/events/{data.promotedEvent.id}"
+			data-testid="promoted-banner"
 			class="mb-5 flex items-center gap-2 rounded-lg [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-4 py-3 text-[0.8125rem] text-tc-accent-text transition-opacity hover:opacity-85"
 		>
 			<span class="font-medium">This became an event →</span>
 			<span class="text-tc-accent-text opacity-80">{data.promotedEvent.title}</span>
 		</a>
+	{/if}
+
+	<!-- ── Admin controls ── -->
+	{#if data.isAdmin && data.suggestion.status !== 'planned'}
+		<div class="mb-5 flex items-center gap-2">
+			{#if data.suggestion.status === 'open'}
+				<button
+					data-action="promote"
+					onclick={() => adminAction('promote')}
+					disabled={adminSubmitting}
+					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+				>
+					Promote to event
+				</button>
+				<button
+					data-action="close"
+					onclick={() => adminAction('close')}
+					disabled={adminSubmitting}
+					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
+				>
+					Close voting
+				</button>
+			{:else if data.suggestion.status === 'closed'}
+				<button
+					data-action="promote"
+					onclick={() => adminAction('promote')}
+					disabled={adminSubmitting}
+					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+				>
+					Promote to event
+				</button>
+				<button
+					data-action="reopen"
+					onclick={() => adminAction('reopen')}
+					disabled={adminSubmitting}
+					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
+				>
+					Reopen
+				</button>
+			{/if}
+		</div>
 	{/if}
 
 	<!-- ── Body ── -->
@@ -146,7 +207,7 @@
 								day: 'numeric',
 							})}
 						</span>
-						{#if comment.is_mine}
+						{#if comment.is_mine || data.isAdmin}
 							<button
 								onclick={() => deleteComment(comment.id)}
 								class="font-mono text-[0.625rem] text-tc-hint underline underline-offset-2 hover:text-tc-danger transition-colors"
