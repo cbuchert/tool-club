@@ -1,0 +1,12 @@
+{
+	"crons": [
+		{
+			"path": "/cron/mark-past-events",
+			"schedule": "0 * * * *"
+		},
+		{
+			"path": "/cron/expire-invites",
+			"schedule": "0 0 * * *"
+		}
+	]
+}
