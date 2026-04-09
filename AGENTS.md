@@ -1,3 +1,11 @@
+## Project Configuration
+
+- **Language**: TypeScript
+- **Package Manager**: pnpm
+- **Add-ons**: prettier, eslint, vitest, playwright, mdsvex, sveltekit-adapter
+
+---
+
 # AGENTS.md — Tool Club
 
 You are a senior full-stack engineer working on **Tool Club**, a private social web app
