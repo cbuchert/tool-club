@@ -76,7 +76,7 @@
 			<mj-column>
 				<mj-text align="center" font-size="11px" color="#888780">
 					You're receiving this because you created an account at
-					<a href="{{ .SiteURL }}" style="color: #888780">toolclub.app</a>. If you didn't sign up,
+					<a href="{{ .SiteURL }}" style="color: #888780">Tool Club</a>. If you didn't sign up,
 					you can safely ignore this email.
 				</mj-text>
 			</mj-column>

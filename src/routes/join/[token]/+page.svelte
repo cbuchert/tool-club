@@ -70,7 +70,7 @@
 			<a
 				href="/"
 				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
-				>← Back to toolclub.app</a
+				>← Back</a
 			>
 		</div>
 	{:else if data.state === 'expired' || data.state === 'redeemed'}
@@ -102,7 +102,7 @@
 			<a
 				href="/"
 				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
-				>← Back to toolclub.app</a
+				>← Back</a
 			>
 		</div>
 	{:else if sent}
@@ -140,7 +140,7 @@
 			<a
 				href="/"
 				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
-				>← Back to toolclub.app</a
+				>← Back</a
 			>
 		</div>
 	{:else}

@@ -77,7 +77,7 @@
 			<mj-column>
 				<mj-text align="center" font-size="11px" color="#888780">
 					This invitation was sent from
-					<a href="{{ .SiteURL }}" style="color: #888780">toolclub.app</a>. If you weren't expecting
+					<a href="{{ .SiteURL }}" style="color: #888780">Tool Club</a>. If you weren't expecting
 					this, you can safely ignore it.
 				</mj-text>
 			</mj-column>

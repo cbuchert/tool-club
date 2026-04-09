@@ -41,17 +41,6 @@
 		<div class="flex flex-wrap gap-10">
 			<div>
 				<p class="mb-1.5 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
-					Get in touch
-				</p>
-				<a
-					href="mailto:hello@toolclub.app"
-					class="text-sm text-tc-accent-text underline underline-offset-[3px]"
-				>
-					hello@toolclub.app
-				</a>
-			</div>
-			<div>
-				<p class="mb-1.5 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 					Follow along
 				</p>
 				<a

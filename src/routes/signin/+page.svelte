@@ -162,7 +162,7 @@
 				href="/"
 				class="mt-4 block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
 			>
-				← Back to toolclub.app
+				← Back
 			</a>
 		{/if}
 	</div>
