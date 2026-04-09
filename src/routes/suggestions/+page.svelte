@@ -10,14 +10,12 @@
 	let { data }: { data: PageData } = $props();
 
 	let submitting = $state<string | null>(null);
-	let showClosed = $state(false);
+	let hideClosed = $state(false);
 
-	// Planned (promoted to event) are excluded — they're now events, not suggestions.
-	// Closed are hidden by default behind a progressive disclosure toggle.
-	const visible = $derived(
-		data.suggestions.filter((s) => s.status === 'open' || (s.status === 'closed' && showClosed))
-	);
-	const closedCount = $derived(data.suggestions.filter((s) => s.status === 'closed').length);
+	const openSuggestions = $derived(data.suggestions.filter((s) => s.status === 'open'));
+	const plannedSuggestions = $derived(data.suggestions.filter((s) => s.status === 'planned'));
+	const closedSuggestions = $derived(data.suggestions.filter((s) => s.status === 'closed'));
+	const closedCount = $derived(closedSuggestions.length);
 
 	async function toggleVote(id: string) {
 		submitting = id;
@@ -58,6 +56,55 @@
 	{/snippet}
 </Topbar>
 
+<!-- Reusable suggestion card snippet -->
+{#snippet suggCard(s: (typeof data.suggestions)[0])}
+	<div
+		class="mb-2.5 flex items-start gap-3 rounded-lg [border:0.5px_solid_var(--tc-border)] bg-tc-bg p-4 transition-colors hover:[border-color:var(--tc-border-mid)]"
+	>
+		<!-- Vote column — fixed width, never shrinks -->
+		<div class="flex w-9 shrink-0 flex-col items-center gap-1">
+			<button
+				onclick={() => toggleVote(s.id)}
+				disabled={!s.voting_open || submitting === s.id}
+				aria-label={s.voted ? 'Remove vote' : 'Vote for this suggestion'}
+				class="flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 [border:0.5px_solid_var(--tc-border-mid)] {s.voted
+					? 'bg-tc-accent-bg [border-color:var(--tc-accent-border)] text-tc-accent-text'
+					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}">▲</button
+			>
+			<span class="font-mono text-xs font-medium text-tc-text">{s.vote_count}</span>
+		</div>
+
+		<!-- Content + badge -->
+		<div class="min-w-0 flex-1">
+			<div class="mb-0.5 flex items-start gap-2">
+				<a
+					href="/suggestions/{s.id}"
+					class="min-w-0 flex-1 text-sm font-medium leading-snug text-tc-text transition-colors hover:text-tc-accent-text"
+				>
+					{s.title}
+				</a>
+				{#if s.status === 'planned'}
+					<span class="mt-0.5"><Badge variant="planned" /></span>
+				{:else if s.status === 'closed'}
+					<span class="mt-0.5"><Badge variant="closed" /></span>
+				{:else}
+					<span class="mt-0.5"><Badge variant="open" label="open" /></span>
+				{/if}
+			</div>
+			<div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+				<p class="text-xs text-tc-muted">{metaLine(s)}</p>
+				{#if s.status === 'planned' && s.promoted_to_event_id}
+					<a
+						href="/events/{s.promoted_to_event_id}"
+						class="text-xs text-tc-accent-text underline underline-offset-2 hover:opacity-80 transition-opacity"
+						>→ view event</a
+					>
+				{/if}
+			</div>
+		</div>
+	</div>
+{/snippet}
+
 <!-- ── List ── -->
 <div class="flex-1 p-4 sm:p-6">
 	{#if data.suggestions.length === 0}
@@ -65,61 +112,55 @@
 			No suggestions yet. Be the first to propose something.
 		</p>
 	{:else}
-		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
-			{data.openCount} open · newest first
-		</p>
+		<!-- Open -->
+		{#if openSuggestions.length > 0}
+			<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+				{openSuggestions.length} open · newest first
+			</p>
+			{#each openSuggestions as s (s.id)}
+				{@render suggCard(s)}
+			{/each}
+		{/if}
 
-		{#each visible as s (s.id)}
-			<div
-				class="mb-2.5 flex items-start gap-3 rounded-lg [border:0.5px_solid_var(--tc-border)] bg-tc-bg p-4 transition-colors hover:[border-color:var(--tc-border-mid)]"
+		<!-- Planned -->
+		{#if plannedSuggestions.length > 0}
+			<p
+				class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint {openSuggestions.length >
+				0
+					? 'mt-6'
+					: ''}"
 			>
-				<!-- Vote column — fixed width, never shrinks -->
-				<div class="flex w-9 shrink-0 flex-col items-center gap-1">
-					<button
-						onclick={() => toggleVote(s.id)}
-						disabled={!s.voting_open || submitting === s.id}
-						aria-label={s.voted ? 'Remove vote' : 'Vote for this suggestion'}
-						class="flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 [border:0.5px_solid_var(--tc-border-mid)] {s.voted
-							? 'bg-tc-accent-bg [border-color:var(--tc-accent-border)] text-tc-accent-text'
-							: 'bg-transparent text-tc-muted hover:bg-tc-surface'}">▲</button
-					>
-					<span class="font-mono text-xs font-medium text-tc-text">{s.vote_count}</span>
-				</div>
+				{plannedSuggestions.length} planned
+			</p>
+			{#each plannedSuggestions as s (s.id)}
+				{@render suggCard(s)}
+			{/each}
+		{/if}
 
-				<!-- Content + badge share this column so the badge never steals title width -->
-				<div class="min-w-0 flex-1">
-					<div class="mb-0.5 flex items-start gap-2">
-						<a
-							href="/suggestions/{s.id}"
-							class="min-w-0 flex-1 text-sm font-medium leading-snug text-tc-text transition-colors hover:text-tc-accent-text"
-						>
-							{s.title}
-						</a>
-						{#if s.status === 'planned'}
-							<span class="mt-0.5"><Badge variant="planned" /></span>
-						{:else if s.status === 'closed'}
-							<span class="mt-0.5"><Badge variant="closed" /></span>
-						{:else}
-							<span class="mt-0.5"><Badge variant="open" label="open" /></span>
-						{/if}
-					</div>
-					<p class="text-xs text-tc-muted">{metaLine(s)}</p>
-				</div>
-			</div>
-		{/each}
-
-		<!-- Progressive disclosure for closed suggestions -->
+		<!-- Closed -->
 		{#if closedCount > 0}
-			<button
-				onclick={() => (showClosed = !showClosed)}
-				class="mt-1 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint transition-colors hover:text-tc-muted"
-			>
-				{#if showClosed}
-					Hide closed
-				{:else}
-					{closedCount} closed {closedCount === 1 ? 'suggestion' : 'suggestions'} ↓
+			<div class={openSuggestions.length > 0 || plannedSuggestions.length > 0 ? 'mt-6' : ''}>
+				<div class="mb-3 flex items-center justify-between">
+					<p class="font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+						{closedCount} closed
+					</p>
+					<button
+						onclick={() => (hideClosed = !hideClosed)}
+						class="font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint transition-colors hover:text-tc-muted"
+					>
+						{hideClosed ? 'Show ↓' : 'Hide ↑'}
+					</button>
+				</div>
+				{#if !hideClosed}
+					{#each closedSuggestions as s (s.id)}
+						{@render suggCard(s)}
+					{/each}
 				{/if}
-			</button>
+			</div>
+		{/if}
+
+		{#if openSuggestions.length === 0 && plannedSuggestions.length === 0 && closedCount === 0}
+			<p class="text-[0.8125rem] text-tc-muted">No suggestions yet.</p>
 		{/if}
 	{/if}
 </div>

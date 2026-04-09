@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const { data: rawSuggestions } = await supabase
 		.from('suggestions')
 		.select(
-			'id, title, status, host_name, voting_closes_at, created_at, author_id, users!author_id(display_name)'
+			'id, title, status, host_name, voting_closes_at, created_at, author_id, promoted_to_event_id, users!author_id(display_name)'
 		)
 		.order('created_at', { ascending: false });
 
@@ -59,6 +59,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		comment_count: commentCountBySuggestion.get(s.id) ?? 0,
 		voted: myVotedIds.has(s.id),
 		voting_open: isVotingOpen(s.status, s.voting_closes_at as string | null),
+		promoted_to_event_id: s.promoted_to_event_id as string | null,
 	}));
 	// Sort by created_at descending (newest first) — stable ordering that doesn't
 	// jump around when vote counts change. Vote count is visible but not the sort key.
