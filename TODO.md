@@ -1,6 +1,6 @@
 # TODO.md — Tool Club
 
-Last updated: 2026-04-08
+Last updated: 2026-04-09
 
 Work this list top to bottom unless instructed otherwise. Before starting a task,
 re-read AGENTS.md, ARCHITECTURE.md, and SPEC.md. Mark tasks `[x]` when done.
@@ -10,35 +10,38 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 ## 0. Repository and tooling
 
-- [ ] Initialize Git repository, push to GitHub (public)
-- [ ] Create SvelteKit project (`pnpm create svelte@latest`)
+- [x] Initialize Git repository, push to GitHub (public)
+- [x] Create SvelteKit project (`pnpm create svelte@latest`)
   - TypeScript: yes
   - ESLint + Prettier: yes
   - Playwright: yes
   - Vitest: yes
-- [ ] Install and configure `@sveltejs/adapter-vercel`
-- [ ] Install and configure Tailwind CSS v4 (`tailwindcss @tailwindcss/vite`)
-- [ ] Install and configure `mdsvex`
-- [ ] Install Zod and `@t3-oss/env-core` for env schema validation
-- [ ] Install `@supabase/supabase-js` and `@supabase/ssr`
-- [ ] Install Hono
-- [ ] Install `@js-temporal/polyfill`
-- [ ] Install `@faker-js/faker` and `tsx` (dev, for seed scripts)
-- [ ] Initialize Supabase project locally (`supabase init`)
-- [ ] Link local project to hosted Supabase project (`supabase link`)
-- [ ] Create `.env.local` with local Supabase keys (gitignored)
-- [ ] Create `.env.example` with variable names and no values (committed)
-- [ ] Configure Vercel project, connect to GitHub repo
-- [ ] Add secrets to GitHub Actions: `SUPABASE_ACCESS_TOKEN`, `PUBLIC_SUPABASE_URL`,
-      `PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`,
-      `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+- [x] Install and configure `@sveltejs/adapter-vercel`
+- [x] Install and configure Tailwind CSS v4 (`tailwindcss @tailwindcss/vite`)
+- [x] Install and configure `mdsvex`
+- [x] Install Zod and `@t3-oss/env-core` for env schema validation
+- [x] Install `@supabase/supabase-js` and `@supabase/ssr`
+- [x] Install Hono
+- [x] Install `@js-temporal/polyfill`
+- [x] Install `@faker-js/faker` and `tsx` (dev, for seed scripts)
+- [x] Initialize Supabase project locally (`supabase init`)
+- [x] Link local project to hosted Supabase project (`supabase link`)
+- [x] Create `.env.local` with local Supabase keys (gitignored)
+- [x] Create `.env.example` with variable names and no values (committed)
+- [x] Configure Vercel project, connect to GitHub repo
+- [x] Add secrets to GitHub Actions: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`,
+      `SUPABASE_PROJECT_ID`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`,
+      `SUPABASE_SERVICE_ROLE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+      Note: `SUPABASE_JWT_SECRET` is not required — the app uses `@supabase/ssr` and
+      never verifies JWTs directly. The project uses ECC P-256 signing keys.
 
 ## 1. CI/CD pipeline
 
-- [ ] Create `.github/workflows/deploy.yml`
-  - `test-db` job: `supabase start` → `supabase test db` → `supabase db push --linked`
-  - `deploy-vercel` job: `needs: test-db` → `vercel --prod`
-- [ ] Verify pipeline runs and gates correctly on a test push
+- [x] Create `.github/workflows/deploy.yml`
+  - `test-db` job: `supabase db start` → `supabase test db` → `supabase link` → `supabase db push`
+  - `test-unit` job: `pnpm test:unit --run`
+  - `deploy-vercel` job: `needs: [test-db, test-unit]` → `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod`
+- [x] Verify pipeline runs and gates correctly on a test push
 - [ ] Add `ARCHITECTURE.md` CI diagram notes if pipeline diverges from spec
 
 ## 2. Database schema and RLS

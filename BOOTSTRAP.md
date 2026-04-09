@@ -154,12 +154,13 @@ Before you begin, read these documents in order. They are authoritative:
   ```
   pnpm add @t3-oss/env-core zod
   ```
-- [ ] Create `src/lib/env.ts` that validates all environment variables at build time
-      using Zod. Required variables (reference `ARCHITECTURE.md` env var table):
+- [ ] Create `src/lib/server/env.ts` that validates all environment variables at build
+      time using Zod. Required variables (reference `ARCHITECTURE.md` env var table):
   - `PUBLIC_SUPABASE_URL` (string, URL)
   - `PUBLIC_SUPABASE_ANON_KEY` (string, min 1)
   - `SUPABASE_SERVICE_ROLE_KEY` (string, min 1) — server only
-  - `SUPABASE_JWT_SECRET` (string, min 1) — server only
+    Note: do NOT include `SUPABASE_JWT_SECRET`. The app uses `@supabase/ssr` and never
+    verifies JWTs directly. The hosted project uses ECC P-256 signing keys.
 - [ ] Create `.env.local` with local Supabase values (from `supabase start` output).
       This file is gitignored.
 - [ ] Create `.env.example` with all variable names and empty values. Commit this file.
@@ -355,6 +356,10 @@ setup in a `MCP.md` file in the repo root.
   jobs:
     test-db:
       runs-on: ubuntu-latest
+      env:
+        SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
       steps:
         - uses: actions/checkout@v4
         - uses: supabase/setup-cli@v1
@@ -362,9 +367,8 @@ setup in a `MCP.md` file in the repo root.
             version: latest
         - run: supabase db start
         - run: supabase test db
-        - run: supabase db push --linked
-          env:
-            SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        - run: supabase link --project-ref $SUPABASE_PROJECT_ID
+        - run: supabase db push
 
     test-unit:
       runs-on: ubuntu-latest
@@ -377,10 +381,17 @@ setup in a `MCP.md` file in the repo root.
             cache: pnpm
         - run: pnpm install
         - run: pnpm test:unit --run
+          env:
+            PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+            PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+            SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
     deploy-vercel:
       needs: [test-db, test-unit]
       runs-on: ubuntu-latest
+      env:
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       steps:
         - uses: actions/checkout@v4
         - uses: pnpm/action-setup@v4
@@ -388,15 +399,17 @@ setup in a `MCP.md` file in the repo root.
           with:
             node-version: 20
             cache: pnpm
-        - run: pnpm install
-        - run: pnpm build
-          env:
-            PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
-            PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
-            SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            SUPABASE_JWT_SECRET: ${{ secrets.SUPABASE_JWT_SECRET }}
-        - run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+        - run: npm install --global vercel@latest
+        - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
   ```
+
+  Required GitHub secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`,
+  `SUPABASE_PROJECT_ID`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`,
+  `SUPABASE_SERVICE_ROLE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+  Env vars for the Vercel build (Supabase URL, keys) are stored in the Vercel project
+  dashboard and pulled via `vercel pull` — do not duplicate them as GitHub secrets.
 
 - [ ] Verify the workflow file is valid YAML (no syntax errors)
 - [ ] Push to main and confirm GitHub Actions runs
