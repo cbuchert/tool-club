@@ -4,6 +4,7 @@
 	import { joinSchema } from '$lib/schemas/forms';
 	import AuthShell from '$lib/components/AuthShell.svelte';
 	import { initials } from '$lib/utils/events';
+	import { page } from '$app/stores';
 
 	let { data } = $props();
 
@@ -18,7 +19,9 @@
 			formData.set('email', value.email);
 			formData.set('display_name', value.display_name);
 
-			const response = await fetch('?/default', { method: 'POST', body: formData });
+			// Use full path — ?/default triggers the lifecycle_outside_component bug
+			// with TanStack Form's onMount in Svelte 5 reactive branches.
+			const response = await fetch($page.url.pathname, { method: 'POST', body: formData });
 			const result = deserialize(await response.text());
 
 			if (result.type === 'success' && result.data?.sent) {

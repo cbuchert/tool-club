@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, url, cookies }) => {
+	default: async ({ request, params, url, cookies, locals }) => {
 		const data = await request.formData();
 		const parsed = joinSchema.safeParse({
 			email: data.get('email')?.toString().trim() ?? '',
@@ -68,13 +68,12 @@ export const actions: Actions = {
 			maxAge: 600, // 10 minutes — enough time to check email and click the link
 		});
 
-		// Import supabase client for sending the OTP — we need a server client here.
-		// We can't use locals (no event), so we use the admin client's auth.
-		const { createServerClient } = await import('$lib/server/db');
-
-		// Use a minimal event-like object: OTP doesn't need cookies for anon flow.
-		// We use the admin client here to call signInWithOtp without requiring a session.
-		const { error } = await admin.auth.signInWithOtp({
+		// Use locals.supabase (the SSR client) for signInWithOtp — it is configured
+		// with flowType: 'pkce' by @supabase/ssr, so the magic link carries a code
+		// parameter that our /auth/callback exchanges. Using the admin client here
+		// falls back to implicit flow (hash fragment), which bypasses the callback
+		// and skips profile creation and invite redemption.
+		const { error } = await locals.supabase.auth.signInWithOtp({
 			email,
 			options: {
 				emailRedirectTo: `${url.origin}/auth/callback`,
