@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
@@ -30,6 +30,26 @@
 			await invalidateAll();
 		}
 		nameSaving = false;
+	}
+
+	// ── Avatar upload ─────────────────────────────────────────────────────────
+	let avatarUploading = $state(false);
+	let avatarError = $state<string | null>(null);
+
+	async function uploadAvatar(e: Event) {
+		const input = e.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (!file) return;
+		avatarUploading = true;
+		avatarError = null;
+		const fd = new FormData();
+		fd.set('avatar', file);
+		const res = await fetch('/account?/uploadAvatar', { method: 'POST', body: fd });
+		const result = deserialize(await res.text());
+		if (result.type === 'failure') avatarError = (result.data?.error as string) ?? 'Upload failed.';
+		else await invalidateAll();
+		avatarUploading = false;
+		input.value = '';
 	}
 
 	// ── Invite actions ────────────────────────────────────────────────────────
@@ -93,7 +113,8 @@
 			deleteError = (result.data?.deleteError as string) ?? 'Failed.';
 			showDeleteConfirm = false;
 		} else {
-			await applyAction(result);
+			// Deletion redirects to / — follow the redirect via a hard navigation
+			window.location.href = '/';
 		}
 		deleting = false;
 	}
@@ -115,7 +136,28 @@
 		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">Identity</p>
 
 		<div class="flex items-center gap-4 mb-4">
-			<Avatar name={data.profile.display_name || '?'} size="lg" />
+			<!-- Clicking the avatar triggers the file input -->
+			<label class="relative cursor-pointer group" title="Change photo">
+				<Avatar
+					name={data.profile.display_name || '?'}
+					avatarUrl={data.profile.avatar_url}
+					size="lg"
+				/>
+				<div
+					class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+				>
+					<span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">
+						{avatarUploading ? '…' : 'Edit'}
+					</span>
+				</div>
+				<input
+					type="file"
+					accept="image/jpeg,image/png,image/webp"
+					class="sr-only"
+					onchange={uploadAvatar}
+					disabled={avatarUploading}
+				/>
+			</label>
 			<div>
 				{#if editing}
 					<div class="flex items-center gap-2">
@@ -153,7 +195,10 @@
 				<p class="text-sm text-tc-muted">{data.profile.email ?? ''}</p>
 			</div>
 		</div>
-		<p class="text-xs text-tc-hint">Click your name to edit it.</p>
+		{#if avatarError}
+			<p class="mt-2 text-xs text-tc-danger">{avatarError}</p>
+		{/if}
+		<p class="text-xs text-tc-hint">Click your avatar to change it · Click your name to edit it.</p>
 	</section>
 
 	<!-- ── Invites ── -->

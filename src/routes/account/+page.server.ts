@@ -55,6 +55,43 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 };
 
 export const actions: Actions = {
+	// ── Upload avatar ─────────────────────────────────────────────────────────
+	uploadAvatar: async ({ request, locals }) => {
+		const { user, supabase } = locals;
+		const data = await request.formData();
+		const file = data.get('avatar') as File | null;
+
+		if (!file || file.size === 0) return fail(400, { error: 'Please select an image.' });
+		if (file.size > 2 * 1024 * 1024) return fail(400, { error: 'Image must be under 2 MB.' });
+		if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
+			return fail(400, { error: 'Only JPEG, PNG, or WebP images are supported.' });
+
+		const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+		const storagePath = `${user!.id}/avatar.${ext}`;
+
+		const admin = createAdminClient();
+
+		// Upsert — overwrite any existing avatar for this user
+		const { error: uploadError } = await admin.storage
+			.from('avatars')
+			.upload(storagePath, file, { contentType: file.type, upsert: true });
+
+		if (uploadError) return fail(500, { error: 'Upload failed. Please try again.' });
+
+		const { data: urlData } = admin.storage.from('avatars').getPublicUrl(storagePath);
+
+		// Cache-bust the URL so browsers pick up the new image immediately
+		const avatarUrl = `${urlData.publicUrl}?v=${Date.now()}`;
+
+		const { error: updateError } = await supabase
+			.from('users')
+			.update({ avatar_url: avatarUrl })
+			.eq('id', user!.id);
+
+		if (updateError) return fail(500, { error: 'Failed to save avatar.' });
+		return { success: true };
+	},
+
 	// ── Update display name ───────────────────────────────────────────────────
 	updateName: async ({ request, locals }) => {
 		const { user, supabase } = locals;
@@ -169,10 +206,13 @@ export const actions: Actions = {
 			email: `deleted+${userId}@toolclub.invalid`,
 		});
 
-		// Hard-delete pending invites and feed tokens
+		// Hard-delete pending invites, feed tokens, and avatar from Storage
 		await Promise.all([
 			admin.from('invites').delete().eq('invited_by', userId).is('redeemed_by', null),
 			admin.from('feed_tokens').delete().eq('user_id', userId),
+			admin.storage
+				.from('avatars')
+				.remove([`${userId}/avatar.jpg`, `${userId}/avatar.png`, `${userId}/avatar.webp`]),
 		]);
 
 		redirect(303, '/');

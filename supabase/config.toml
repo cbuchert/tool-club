@@ -381,6 +381,11 @@ deno_version = 2
 
 # ── Storage buckets ──────────────────────────────────────────────────────────
 
+[storage.buckets.avatars]
+public = true
+file_size_limit = "2MB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+
 [storage.buckets.recap-photos]
 public = false
 file_size_limit = "5MB"

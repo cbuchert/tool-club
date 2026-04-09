@@ -1,14 +1,16 @@
 <script lang="ts">
 	/**
-	 * Initials avatar — derives 1-2 uppercase letters from a display name.
-	 * Used everywhere a member needs a visual identifier without a photo.
+	 * Avatar — shows a profile photo when available, falls back to
+	 * a coloured circle with the user's initials.
 	 */
 	let {
 		name,
+		avatarUrl = null,
 		size = 'sm',
 	}: {
 		name: string;
-		/** sm = 1.75rem (28px), md = 2rem (32px), lg = 3.25rem (52px) */
+		avatarUrl?: string | null;
+		/** sm = 1.75rem, md = 2rem, lg = 3.25rem */
 		size?: 'sm' | 'md' | 'lg';
 	} = $props();
 
@@ -32,11 +34,15 @@
 </script>
 
 <div
-	class="flex shrink-0 items-center justify-center rounded-full bg-tc-accent-bg font-mono font-medium text-tc-accent-text {sizeClasses[
+	class="flex shrink-0 items-center justify-center rounded-full overflow-hidden bg-tc-accent-bg font-mono font-medium text-tc-accent-text {sizeClasses[
 		size
 	]}"
 	aria-label={name}
 	title={name}
 >
-	{initials(name)}
+	{#if avatarUrl}
+		<img src={avatarUrl} alt={name} class="h-full w-full object-cover" />
+	{:else}
+		{initials(name)}
+	{/if}
 </div>
