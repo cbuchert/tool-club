@@ -55,10 +55,11 @@ way or what the original plan was.
 
 ```
 docs/
-├── spec.md        — original feature spec and permission model
-├── todo.md        — MVP task list (all items complete)
-├── bootstrap.md   — project bootstrap checklist (all phases complete)
-└── prototype.html — static HTML prototype showing visual intent
+├── mvp/
+│   ├── spec.md      — original feature spec and permission model
+│   └── todo.md      — MVP task list (all items complete)
+├── bootstrap.md     — project bootstrap checklist (all phases complete)
+└── prototype.html   — static HTML prototype showing visual intent
 ```
 
 **Discovery pattern:** when you need historical context, scan `docs/` first. If a
