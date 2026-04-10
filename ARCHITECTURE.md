@@ -563,10 +563,13 @@ appropriate `Content-Type` headers (`application/rss+xml`, `text/calendar`).
 
 Cron jobs run as Vercel Functions with cron triggers, configured in `vercel.json`.
 
-| Job                | Schedule   | Action                                                                       |
-| ------------------ | ---------- | ---------------------------------------------------------------------------- |
-| `mark-past-events` | Every hour | Set `events.status = 'past'` where `starts_at < now() - interval '24 hours'` |
-| `expire-invites`   | Daily      | Hard-delete invites where `expires_at < now()` and `redeemed_at is null`     |
+| Job                | Schedule | Action                                                                       |
+| ------------------ | -------- | ---------------------------------------------------------------------------- |
+| `mark-past-events` | Daily    | Set `events.status = 'past'` where `starts_at < now() - interval '24 hours'` |
+
+Daily cadence is the maximum allowed on Vercel's Hobby plan. Expired invites are
+not cleaned up by cron — the app rejects them at the route level, so accumulation
+is harmless and a cron is not worth the plan upgrade.
 
 Cron functions use the Supabase service role key. They are not reachable by members.
 
@@ -577,7 +580,7 @@ if it does not match. In local development, the check is skipped when `CRON_SECR
 is absent from the environment. Set `CRON_SECRET` in the Vercel project env vars
 before going live — without it the endpoints are unauthenticated HTTP GET routes.
 
-Routes: `src/routes/cron/mark-past-events/+server.ts`, `src/routes/cron/expire-invites/+server.ts`
+Route: `src/routes/cron/mark-past-events/+server.ts`
 
 ---
 

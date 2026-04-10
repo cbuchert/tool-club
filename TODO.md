@@ -163,9 +163,10 @@ Add notes inline when a task reveals decisions that affect other tasks.
 
 - [x] Configure `vercel.json` with cron schedules
 - [x] `mark-past-events` function (service role, see ARCHITECTURE.md)
-- [x] `expire-invites` function (service role)
-      Note: `CRON_SECRET` is set in Vercel project env vars (done 2026-04-09).
-- [x] E2E tests for both cron jobs (tests/cron.test.ts — 8 tests, all passing)
+- [x] E2E tests for mark-past-events (tests/cron.test.ts — 4 tests)
+      Note: expire-invites cron dropped — Hobby plan limits crons to daily, and
+      expired invite cleanup is pure hygiene (app already rejects them at the
+      route level). `CRON_SECRET` is set in Vercel env vars.
 
 ## 12. Content pages
 

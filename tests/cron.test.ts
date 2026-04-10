@@ -12,7 +12,7 @@
  * Run with: pnpm exec playwright test cron
  */
 import { test, expect } from '@playwright/test';
-import { adminClient, BASE, ADMIN_ID, MEMBER_ID } from './helpers';
+import { adminClient, BASE } from './helpers';
 
 // ── mark-past-events ──────────────────────────────────────────────────────────
 
@@ -108,93 +108,5 @@ test.describe('cron/mark-past-events', () => {
 			.eq('id', draftEventId)
 			.single();
 		expect(data?.status).toBe('draft');
-	});
-});
-
-// ── expire-invites ────────────────────────────────────────────────────────────
-
-test.describe('cron/expire-invites', () => {
-	let expiredId: string; // unredeemed + expires_at yesterday → should be deleted
-	let activeId: string; //  unredeemed + expires_at tomorrow  → should stay
-	let redeemedId: string; // redeemed   + expires_at yesterday → should stay
-
-	test.beforeAll(async () => {
-		const admin = adminClient();
-		const yesterday = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
-		const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-		const [{ data: expired }, { data: active }, { data: redeemed }] = await Promise.all([
-			admin
-				.from('invites')
-				.insert({ invited_by: ADMIN_ID, token: 'cron-test-expired', expires_at: yesterday })
-				.select('id')
-				.single(),
-			admin
-				.from('invites')
-				.insert({ invited_by: ADMIN_ID, token: 'cron-test-active', expires_at: tomorrow })
-				.select('id')
-				.single(),
-			admin
-				.from('invites')
-				.insert({
-					invited_by: ADMIN_ID,
-					token: 'cron-test-redeemed',
-					expires_at: yesterday,
-					redeemed_by: MEMBER_ID,
-					redeemed_at: yesterday,
-				})
-				.select('id')
-				.single(),
-		]);
-
-		if (!expired || !active || !redeemed) throw new Error('Failed to create test invites');
-		expiredId = expired.id;
-		activeId = active.id;
-		redeemedId = redeemed.id;
-
-		// Call the cron endpoint once; all assertions check resulting DB state
-		const res = await fetch(`${BASE}/cron/expire-invites`);
-		if (!res.ok) throw new Error(`Cron returned ${res.status}`);
-	});
-
-	test.afterAll(async () => {
-		// Clean up any rows not deleted by the cron (active + redeemed)
-		await adminClient().from('invites').delete().in('id', [activeId, redeemedId]);
-		// expiredId was deleted by the cron — ignore if missing
-		await adminClient().from('invites').delete().eq('id', expiredId);
-	});
-
-	test('returns 200 with a deleted count', async () => {
-		const res = await fetch(`${BASE}/cron/expire-invites`);
-		expect(res.status).toBe(200);
-		const body = await res.json();
-		expect(typeof body.deleted).toBe('number');
-	});
-
-	test('hard-deletes an unredeemed expired invite', async () => {
-		const { data } = await adminClient()
-			.from('invites')
-			.select('id')
-			.eq('id', expiredId)
-			.maybeSingle();
-		expect(data).toBeNull();
-	});
-
-	test('keeps an unredeemed invite that has not yet expired', async () => {
-		const { data } = await adminClient()
-			.from('invites')
-			.select('id')
-			.eq('id', activeId)
-			.maybeSingle();
-		expect(data).not.toBeNull();
-	});
-
-	test('keeps a redeemed invite even when it is past its expires_at', async () => {
-		const { data } = await adminClient()
-			.from('invites')
-			.select('id')
-			.eq('id', redeemedId)
-			.maybeSingle();
-		expect(data).not.toBeNull();
 	});
 });
