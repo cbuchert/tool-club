@@ -31,3 +31,4 @@ playwright/.auth/
 
 # Supabase
 supabase/.temp/
+.env*.local
