@@ -79,6 +79,11 @@
 					{item.label}
 				</a>
 			{/each}
+			{#if isAdmin}
+				<a href="/admin" class="mobile-nav-item admin-item" class:active={active('/admin')}>
+					Admin
+				</a>
+			{/if}
 		</div>
 	</nav>
 {/if}
@@ -161,6 +166,13 @@
 
 	.admin-item .dot {
 		background: var(--tc-accent-border);
+	}
+
+	/* Mobile nav is horizontal — remove the sidebar vertical separators */
+	.mobile-nav .admin-item {
+		margin-top: 0;
+		border-top: none;
+		padding-top: 0;
 	}
 
 	.sidebar-bottom {
