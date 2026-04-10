@@ -8,21 +8,21 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 	const [
 		{ data: profile },
-		{ data: pendingInvite },
+		{ data: pendingInvites },
 		{ data: recruited },
 		{ data: feedToken },
 		{ data: hostedEvents },
 	] = await Promise.all([
 		supabase.from('users').select('display_name, email, avatar_url').eq('id', user!.id).single(),
 
-		// Pending = unredeemed + not expired
+		// Pending = unredeemed + not expired, all of them
 		supabase
 			.from('invites')
 			.select('id, token, email, expires_at, created_at')
 			.eq('invited_by', user!.id)
 			.is('redeemed_by', null)
 			.gt('expires_at', new Date().toISOString())
-			.maybeSingle(),
+			.order('created_at', { ascending: false }),
 
 		// Members this user directly invited who have joined
 		supabase
@@ -56,8 +56,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 	return {
 		profile: profile ?? { display_name: '', email: '', avatar_url: null },
-		pendingInvite: pendingInvite ?? null,
-		pendingInviteUrl: pendingInvite ? `${origin}/join/${pendingInvite.token}` : null,
+		pendingInvites: (pendingInvites ?? []).map((inv) => ({
+			...inv,
+			url: `${origin}/join/${inv.token}`,
+		})),
 		recruited: recruited ?? [],
 		secondLevel: secondLevel ?? [],
 		feedToken: token,
@@ -128,19 +130,6 @@ export const actions: Actions = {
 	// ── Generate invite ───────────────────────────────────────────────────────
 	generateInvite: async ({ locals, url }) => {
 		const { user, supabase } = locals;
-
-		// Enforce one pending invite maximum
-		const { data: existing } = await supabase
-			.from('invites')
-			.select('id')
-			.eq('invited_by', user!.id)
-			.is('redeemed_by', null)
-			.gt('expires_at', new Date().toISOString())
-			.maybeSingle();
-
-		if (existing) {
-			return fail(400, { error: 'You already have a pending invite. Revoke it first.' });
-		}
 
 		const token = crypto.randomUUID().replace(/-/g, '');
 		const { error } = await supabase.from('invites').insert({

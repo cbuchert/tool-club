@@ -55,7 +55,8 @@
 	// ── Invite actions ────────────────────────────────────────────────────────
 	let inviteGenerating = $state(false);
 	let inviteError = $state<string | null>(null);
-	let inviteCopied = $state(false);
+	// Track copied state per invite ID
+	let copiedInviteId = $state<string | null>(null);
 
 	async function generateInvite() {
 		inviteGenerating = true;
@@ -209,52 +210,56 @@
 			<p class="mb-2 text-xs text-tc-danger">{inviteError}</p>
 		{/if}
 
-		{#if data.pendingInvite}
-			<!-- Pending invite — copy + revoke -->
-			<div
-				class="mb-3 flex items-center justify-between rounded-md [border:0.5px_solid_var(--tc-border)] px-3 py-2.5"
-			>
-				<div class="min-w-0">
-					<p class="font-mono text-[0.6875rem] text-tc-hint mb-0.5">Pending invite</p>
-					<p class="truncate text-tc-text font-mono text-xs">{data.pendingInviteUrl}</p>
-					<p class="text-xs text-tc-muted mt-0.5">
-						Sent {new Date(data.pendingInvite.created_at).toLocaleDateString('en-US', {
-							month: 'short',
-							day: 'numeric',
-						})}
-						· Expires {new Date(data.pendingInvite.expires_at).toLocaleDateString('en-US', {
-							month: 'short',
-							day: 'numeric',
-						})}
-					</p>
-				</div>
-				<div class="flex gap-2 ml-3 shrink-0">
-					<button
-						onclick={async () => {
-							await navigator.clipboard.writeText(data.pendingInviteUrl ?? '');
-							inviteCopied = true;
-							setTimeout(() => (inviteCopied = false), 2000);
-						}}
-						class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-text transition-colors hover:bg-tc-surface {inviteCopied
-							? 'bg-tc-accent-bg text-tc-accent-text [border-color:var(--tc-accent-border)]'
-							: ''}">{inviteCopied ? 'Copied' : 'Copy'}</button
+		<!-- Pending invites list -->
+		{#if data.pendingInvites.length > 0}
+			<div class="mb-3 space-y-2">
+				{#each data.pendingInvites as invite (invite.id)}
+					<div
+						class="flex items-center justify-between rounded-md [border:0.5px_solid_var(--tc-border)] px-3 py-2.5"
 					>
-					<button
-						onclick={() => revokeInvite(data.pendingInvite!.id)}
-						class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg"
-						>Revoke</button
-					>
-				</div>
+						<div class="min-w-0">
+							<p class="truncate text-tc-text font-mono text-xs">{invite.url}</p>
+							<p class="text-xs text-tc-muted mt-0.5">
+								Sent {new Date(invite.created_at).toLocaleDateString('en-US', {
+									month: 'short',
+									day: 'numeric',
+								})}
+								· Expires {new Date(invite.expires_at).toLocaleDateString('en-US', {
+									month: 'short',
+									day: 'numeric',
+								})}
+							</p>
+						</div>
+						<div class="flex gap-2 ml-3 shrink-0">
+							<button
+								onclick={async () => {
+									await navigator.clipboard.writeText(invite.url);
+									copiedInviteId = invite.id;
+									setTimeout(() => (copiedInviteId = null), 2000);
+								}}
+								class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-text transition-colors hover:bg-tc-surface {copiedInviteId ===
+								invite.id
+									? 'bg-tc-accent-bg text-tc-accent-text [border-color:var(--tc-accent-border)]'
+									: ''}">{copiedInviteId === invite.id ? 'Copied' : 'Copy'}</button
+							>
+							<button
+								onclick={() => revokeInvite(invite.id)}
+								class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg"
+								>Revoke</button
+							>
+						</div>
+					</div>
+				{/each}
 			</div>
-		{:else}
-			<button
-				onclick={generateInvite}
-				disabled={inviteGenerating}
-				class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-4 py-2 text-sm text-tc-text transition-colors hover:bg-tc-surface disabled:opacity-50 disabled:cursor-not-allowed"
-			>
-				{inviteGenerating ? 'Creating…' : '+ Send an invite'}
-			</button>
 		{/if}
+
+		<button
+			onclick={generateInvite}
+			disabled={inviteGenerating}
+			class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-4 py-2 text-sm text-tc-text transition-colors hover:bg-tc-surface disabled:opacity-50 disabled:cursor-not-allowed"
+		>
+			{inviteGenerating ? 'Creating…' : '+ Send an invite'}
+		</button>
 
 		<!-- Invite history: members who joined via this user's invites -->
 		{#if data.recruited.length > 0}
