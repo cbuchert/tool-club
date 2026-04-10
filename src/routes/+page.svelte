@@ -1,5 +1,18 @@
 <script lang="ts">
 	import LandingBody from '$content/landing.md';
+	import { onMount } from 'svelte';
+	import { preloadCode } from '$app/navigation';
+
+	// Preload the JS chunks for auth routes 300 ms after the landing page
+	// mounts. By the time a visitor's cursor reaches "Sign in" the code is
+	// already cached — navigation feels immediate.
+	onMount(() => {
+		const t = setTimeout(() => {
+			preloadCode('/signin');
+			preloadCode('/join/[token]');
+		}, 300);
+		return () => clearTimeout(t);
+	});
 </script>
 
 <svelte:head>
