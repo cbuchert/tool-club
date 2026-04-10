@@ -14,7 +14,9 @@ import type { RequestHandler } from './$types';
  * skipped if the var is absent.
  */
 export const GET: RequestHandler = async ({ request }) => {
-	const cronSecret = process.env.CRON_SECRET;
+	// .trim() guards against trailing newlines if the secret was stored via
+	// `echo "..." | vercel env add` (echo appends a newline by default).
+	const cronSecret = process.env.CRON_SECRET?.trim();
 	if (cronSecret) {
 		const auth = request.headers.get('authorization');
 		if (auth !== `Bearer ${cronSecret}`) {
