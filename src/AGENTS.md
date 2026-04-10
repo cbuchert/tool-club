@@ -82,8 +82,6 @@ Practical rules:
   in `$lib/components/` instead.
 - **`px` is only acceptable** for hairline borders (`0.5px solid`) where `rem`
   would not render correctly.
-- The prototype (`docs/prototype.html`) uses `px` and flat CSS classes — treat it
-  as visual reference only. Translate design intent into Tailwind utilities.
 
 ## TanStack Form + SvelteKit — known issue
 

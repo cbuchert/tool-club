@@ -36,21 +36,40 @@ does not need today.
 
 ## Authoritative documents
 
-Before writing any code, read these in order:
+Before writing any code, read this:
 
 1. **ARCHITECTURE.md** — stack decisions, data model, auth patterns, routing, CI/CD.
    Source of truth for how the system is built.
-2. **SPEC.md** — feature definitions, permission model, data rules, edge cases.
-   Source of truth for what the system does.
-3. **TODO.md** — current task list. Work top to bottom unless told otherwise.
 
-**Reference only — do not treat as spec:**
-
-- **docs/prototype.html** — illustrates visual intent and interaction patterns.
-  Where it conflicts with SPEC.md or ARCHITECTURE.md, those documents win.
-
-If any of these documents conflict with each other or with code in the repo,
+If this document conflicts with code in the repo,
 **stop and surface the conflict** rather than resolving it silently.
+
+---
+
+## Archived documents
+
+The documents below were authoritative during the MVP build. The MVP is shipped.
+They live in `docs/` for reference — you do not need to read them before working,
+but they are useful if you need to understand _why_ something was designed a certain
+way or what the original plan was.
+
+```
+docs/
+├── spec.md        — original feature spec and permission model
+├── todo.md        — MVP task list (all items complete)
+├── bootstrap.md   — project bootstrap checklist (all phases complete)
+└── prototype.html — static HTML prototype showing visual intent
+```
+
+**Discovery pattern:** when you need historical context, scan `docs/` first. If a
+question can't be answered by `ARCHITECTURE.md` or the `AGENTS.md` files, the answer
+is probably in one of these archived files.
+
+**The archive rule:** when a phase of work is done and its planning documents are no
+longer needed for active development, move them to `docs/` and strip references to
+them from the `AGENTS.md` files. Agents read `AGENTS.md` files before every task —
+keeping those lean means less noise. Archived docs stay findable without cluttering
+the agent's required reading.
 
 ---
 
