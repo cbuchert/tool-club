@@ -1,6 +1,6 @@
 # Tool Club
 
-An invite-only community app for a small group of makers in Salt Lake City.
+An invite-only community app for a small group of makers in Springville.
 Members RSVP to events, propose and vote on ideas, and read recaps.
 Built with SvelteKit, Supabase, and Tailwind CSS v4. Deployed on Vercel.
 
