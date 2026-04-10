@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 			.eq('invited_by', user!.id)
 			.is('redeemed_by', null)
 			.gt('expires_at', new Date().toISOString())
-			.order('created_at', { ascending: false }),
+			.order('created_at', { ascending: true }),
 
 		// Members this user directly invited who have joined
 		supabase

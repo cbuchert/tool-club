@@ -220,9 +220,11 @@
 						<div class="min-w-0">
 							<p class="truncate text-tc-text font-mono text-xs">{invite.url}</p>
 							<p class="text-xs text-tc-muted mt-0.5">
-								Sent {new Date(invite.created_at).toLocaleDateString('en-US', {
+								Sent {new Date(invite.created_at).toLocaleString('en-US', {
 									month: 'short',
 									day: 'numeric',
+									hour: 'numeric',
+									minute: '2-digit',
 								})}
 								· Expires {new Date(invite.expires_at).toLocaleDateString('en-US', {
 									month: 'short',
