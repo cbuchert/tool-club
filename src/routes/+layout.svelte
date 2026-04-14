@@ -230,31 +230,41 @@
 
 	/* ── Responsive ─────────────────────────────────────────── */
 	@media (max-width: 40rem) {
+		/* On mobile, let the document itself be the scroll container.
+		   The overflow/100svh/flex combo used for the desktop sidebar
+		   hijacks scroll on iOS WebKit: `.main` internal scrolling
+		   silently fails AND pull-to-refresh is disabled. Native document
+		   scroll is robust on every mobile browser. */
 		:global(body):has(.sidebar) {
-			/* Switch to column so mobile nav stacks below main rather than
-			   sitting beside it in the row. Without this, main only gets a
-			   fraction of the viewport width (mobile nav eats the rest). */
-			flex-direction: column;
-			height: 100svh;
+			display: block;
+			height: auto;
+			overflow: visible;
 		}
 
 		.sidebar {
 			display: none;
 		}
 
+		.main,
 		.main.in-shell {
-			/* In column flex, main must grow to fill space above the nav.
-			   padding-bottom gives scrolled content breathing room above
-			   the mobile tab bar instead of bumping right up against it. */
-			flex: 1;
-			min-height: 0;
-			padding-bottom: 2rem;
+			display: block;
+			overflow: visible;
+			flex: initial;
+			min-height: auto;
+			/* Reserve room below for the fixed mobile tab bar so the last
+			   content doesn't sit under it. 3.75rem ≈ nav height + a little
+			   breathing room; safe-area-inset-bottom covers the iOS home
+			   indicator. */
+			padding-bottom: calc(3.75rem + env(safe-area-inset-bottom));
 		}
 
 		.mobile-nav {
 			display: block;
-			/* Shrink to content height — does not flex-grow */
-			flex-shrink: 0;
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding-bottom: env(safe-area-inset-bottom);
 		}
 	}
 </style>
