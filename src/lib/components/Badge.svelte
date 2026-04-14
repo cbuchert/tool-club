@@ -25,7 +25,7 @@
 </script>
 
 <span
-	class="rounded-full [border:0.5px_solid] px-1.5 py-0.5 font-mono text-[0.625rem] whitespace-nowrap flex-shrink-0 {classes[
+	class="rounded-full [border:0.5px_solid] px-2 py-0.5 font-mono text-[0.875rem] md:text-[0.75rem] whitespace-nowrap flex-shrink-0 {classes[
 		variant
 	]}"
 >

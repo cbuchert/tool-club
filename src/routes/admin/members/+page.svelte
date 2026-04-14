@@ -47,14 +47,14 @@
 
 <Topbar>
 	{#snippet left()}
-		<a href="/admin" class="text-xs text-tc-muted transition-colors hover:text-tc-text">← Admin</a>
+		<a href="/admin" class="text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text">← Admin</a>
 	{/snippet}
 </Topbar>
 
 <div class="p-4 sm:p-6 max-w-2xl space-y-8">
 	<!-- ── Member list ── -->
 	<section>
-		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+		<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 			Members ({data.members.length})
 		</p>
 
@@ -68,22 +68,22 @@
 
 					<div class="min-w-0 flex-1">
 						<div class="flex items-center gap-2">
-							<p class="text-sm font-medium text-tc-text">{member.display_name}</p>
+							<p class="text-base md:text-sm font-medium text-tc-text">{member.display_name}</p>
 							{#if member.role === 'admin'}
 								<span
-									class="rounded-full bg-tc-accent-bg [border:0.5px_solid_var(--tc-accent-border)] px-1.5 py-0.5 font-mono text-[0.5625rem] text-tc-accent-text"
+									class="rounded-full bg-tc-accent-bg [border:0.5px_solid_var(--tc-accent-border)] px-1.5 py-0.5 font-mono text-sm md:text-[0.5625rem] text-tc-accent-text"
 									>admin</span
 								>
 							{/if}
 							{#if member.is_suspended}
 								<span
 									data-testid="suspended-badge"
-									class="rounded-full bg-tc-danger-bg [border:0.5px_solid_var(--tc-danger-border)] px-1.5 py-0.5 font-mono text-[0.5625rem] text-tc-danger"
+									class="rounded-full bg-tc-danger-bg [border:0.5px_solid_var(--tc-danger-border)] px-1.5 py-0.5 font-mono text-sm md:text-[0.5625rem] text-tc-danger"
 									>suspended</span
 								>
 							{/if}
 						</div>
-						<p class="text-xs text-tc-muted">{member.email ?? '—'}</p>
+						<p class="text-base md:text-xs text-tc-muted">{member.email ?? '—'}</p>
 					</div>
 
 					<div class="flex shrink-0 gap-2">
@@ -92,7 +92,7 @@
 								data-action="reinstate"
 								onclick={() => reinstate(member.id)}
 								disabled={submitting === member.id}
-								class="rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-2.5 py-1 font-mono text-[0.625rem] text-tc-accent-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+								class="rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-accent-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
 							>
 								Reinstate
 							</button>
@@ -101,7 +101,7 @@
 								data-action="suspend"
 								onclick={() => suspend(member.id)}
 								disabled={submitting === member.id}
-								class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
+								class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
 							>
 								Suspend
 							</button>
@@ -115,7 +115,7 @@
 	<!-- ── Pending invites ── -->
 	{#if data.invites.length > 0}
 		<section>
-			<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+			<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 				Pending invites ({data.invites.length})
 			</p>
 
@@ -125,10 +125,10 @@
 						class="flex items-center justify-between rounded-lg [border:0.5px_solid_var(--tc-border)] bg-tc-bg p-3.5"
 					>
 						<div class="min-w-0 flex-1">
-							<p class="font-mono text-xs text-tc-text">
+							<p class="font-mono text-base md:text-xs text-tc-text">
 								{invite.email ?? 'No email recorded'}
 							</p>
-							<p class="text-xs text-tc-muted">
+							<p class="text-base md:text-xs text-tc-muted">
 								From {invite.inviter_name} · Expires {new Date(
 									invite.expires_at
 								).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -137,7 +137,7 @@
 						<button
 							onclick={() => revokeInvite(invite.id)}
 							disabled={submitting === invite.id}
-							class="ml-3 shrink-0 rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
+							class="ml-3 shrink-0 rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
 						>
 							Revoke
 						</button>
@@ -147,10 +147,10 @@
 		</section>
 	{:else}
 		<section>
-			<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+			<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 				Pending invites
 			</p>
-			<p class="text-sm text-tc-muted">No pending invites.</p>
+			<p class="text-base md:text-sm text-tc-muted">No pending invites.</p>
 		</section>
 	{/if}
 </div>

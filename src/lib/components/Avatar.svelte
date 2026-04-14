@@ -27,8 +27,8 @@
 	}
 
 	const sizeClasses = {
-		sm: 'h-7 w-7 text-[0.625rem]',
-		md: 'h-8 w-8 text-[0.6875rem]',
+		sm: 'h-7 w-7 text-[0.875rem] md:text-[0.75rem]',
+		md: 'h-8 w-8 text-[0.875rem]',
 		lg: 'h-[3.25rem] w-[3.25rem] text-xl',
 	};
 </script>

@@ -40,7 +40,7 @@
 		<div class="flex overflow-hidden rounded-md border [border:0.5px_solid_var(--tc-border)]">
 			<button
 				onclick={() => (view = 'upcoming')}
-				class="px-2.5 py-1 text-[0.6875rem] font-mono transition-colors {view === 'upcoming'
+				class="px-2.5 py-1 text-sm md:text-[0.6875rem] font-mono transition-colors {view === 'upcoming'
 					? 'bg-tc-accent-bg text-tc-accent-text'
 					: 'bg-transparent text-tc-muted hover:text-tc-text'}"
 			>
@@ -48,7 +48,7 @@
 			</button>
 			<button
 				onclick={() => (view = 'past')}
-				class="px-2.5 py-1 text-[0.6875rem] font-mono transition-colors {view === 'past'
+				class="px-2.5 py-1 text-sm md:text-[0.6875rem] font-mono transition-colors {view === 'past'
 					? 'bg-tc-accent-bg text-tc-accent-text'
 					: 'bg-transparent text-tc-muted hover:text-tc-text'}"
 			>
@@ -61,13 +61,13 @@
 <!-- ── Event list ── -->
 <div class="flex-1 p-4 sm:p-6" use:autoAnimate>
 	{#if shown.length === 0}
-		<p class="text-[0.8125rem] text-tc-muted">
+		<p class="text-base md:text-[0.8125rem] text-tc-muted">
 			{view === 'upcoming' ? 'No upcoming events.' : 'No past events yet.'}
 		</p>
 	{:else}
 		{#each grouped() as group (group.label)}
 			<p
-				class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint {group !==
+				class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint {group !==
 				grouped()[0]
 					? 'mt-6'
 					: ''}"
@@ -84,15 +84,15 @@
 						<div class="font-display text-[1.375rem] font-medium leading-none text-tc-text">
 							{event.cardDay}
 						</div>
-						<div class="font-mono text-[0.625rem] uppercase tracking-[0.06em] text-tc-muted">
+						<div class="font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.06em] text-tc-muted">
 							{event.cardMonth}
 						</div>
 					</div>
 
 					<!-- Info -->
 					<div class="min-w-0 flex-1">
-						<div class="mb-0.5 text-sm font-medium text-tc-text">{event.title}</div>
-						<div class="mb-2 text-xs text-tc-muted">{event.cardMeta}</div>
+						<div class="mb-0.5 text-base md:text-sm font-medium text-tc-text">{event.title}</div>
+						<div class="mb-2 text-base md:text-xs text-tc-muted">{event.cardMeta}</div>
 
 						<!-- Footer: badge + avatars + count -->
 						<div class="flex flex-wrap items-center gap-2">
@@ -117,13 +117,13 @@
 									{/each}
 									{#if event.goingCount > 3}
 										<div
-											class="-ml-1.5 flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full border-[1.5px] border-tc-bg bg-tc-accent-bg font-mono text-[0.5rem] text-tc-accent-text"
+											class="-ml-1.5 flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full border-[1.5px] border-tc-bg bg-tc-accent-bg font-mono text-[0.625rem] text-tc-accent-text"
 										>
 											+{event.goingCount - 3}
 										</div>
 									{/if}
 								</div>
-								<span class="text-xs text-tc-muted">
+								<span class="text-base md:text-xs text-tc-muted">
 									{event.goingCount} going{event.capacity
 										? ` · ${event.capacity - event.goingCount} spots left`
 										: ''}

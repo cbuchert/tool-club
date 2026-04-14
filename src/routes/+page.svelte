@@ -27,7 +27,7 @@
 		<span class="font-display text-xl font-medium tracking-[-0.02em] text-tc-text">Tool Club</span>
 		<a
 			href="/signin"
-			class="rounded-md px-4 py-1.5 text-[0.8125rem] text-tc-text transition-colors hover:bg-tc-surface [border:0.5px_solid_var(--tc-border-mid)]"
+			class="rounded-md px-4 py-1.5 text-base md:text-[0.8125rem] text-tc-text transition-colors hover:bg-tc-surface [border:0.5px_solid_var(--tc-border-mid)]"
 		>
 			Sign in
 		</a>
@@ -35,7 +35,7 @@
 
 	<!-- ── Hero ── -->
 	<main class="mx-auto w-full max-w-[40rem] flex-1 px-10 pb-16 pt-20">
-		<p class="mb-5 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-tc-hint">
+		<p class="mb-5 font-mono text-sm md:text-[0.6875rem] uppercase tracking-[0.1em] text-tc-hint">
 			Springville · Invite only
 		</p>
 		<h1
@@ -53,12 +53,12 @@
 
 		<div class="flex flex-wrap gap-10">
 			<div>
-				<p class="mb-1.5 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+				<p class="mb-1.5 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 					Follow along
 				</p>
 				<a
 					href="/feed/public"
-					class="text-sm text-tc-muted underline underline-offset-[3px] transition-colors hover:text-tc-text"
+					class="text-base md:text-sm text-tc-muted underline underline-offset-[3px] transition-colors hover:text-tc-text"
 				>
 					Public RSS feed →
 				</a>
@@ -67,7 +67,7 @@
 	</main>
 
 	<!-- ── Footer ── -->
-	<footer class="mx-auto w-full max-w-[40rem] px-10 pb-12 font-mono text-[0.6875rem] text-tc-hint">
+	<footer class="mx-auto w-full max-w-[40rem] px-10 pb-12 font-mono text-sm md:text-[0.6875rem] text-tc-hint">
 		Already a member?
 		<a
 			href="/signin"
