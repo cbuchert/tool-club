@@ -59,7 +59,7 @@
 </Topbar>
 
 <!-- ── Event list ── -->
-<div class="flex-1 p-4 sm:p-6" use:autoAnimate>
+<div class="p-4 sm:p-6" use:autoAnimate>
 	{#if shown.length === 0}
 		<p class="text-base md:text-[0.8125rem] text-tc-muted">
 			{view === 'upcoming' ? 'No upcoming events.' : 'No past events yet.'}
