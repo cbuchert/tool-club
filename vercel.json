@@ -4,5 +4,6 @@
 			"path": "/cron/mark-past-events",
 			"schedule": "0 0 * * *"
 		}
-	]
+	],
+	"ignoreCommand": "[ \"$VERCEL_ENV\" != \"production\" ]"
 }
