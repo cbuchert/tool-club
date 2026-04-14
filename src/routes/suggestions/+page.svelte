@@ -110,7 +110,7 @@
 {/snippet}
 
 <!-- ── List ── -->
-<div class="flex-1 p-4 sm:p-6" use:autoAnimate>
+<div class="p-4 sm:p-6" use:autoAnimate>
 	{#if data.suggestions.length === 0}
 		<p class="text-base md:text-[0.8125rem] text-tc-muted">
 			No suggestions yet. Be the first to propose something.
