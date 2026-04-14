@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import { autoAnimate } from '$lib/actions/auto-animate';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -57,7 +58,7 @@
 			Members ({data.members.length})
 		</p>
 
-		<div class="space-y-2">
+		<div class="space-y-2" use:autoAnimate>
 			{#each data.members as member (member.id)}
 				<div
 					data-member-id={member.id}
@@ -118,7 +119,7 @@
 				Pending invites ({data.invites.length})
 			</p>
 
-			<div class="space-y-2">
+			<div class="space-y-2" use:autoAnimate>
 				{#each data.invites as invite (invite.id)}
 					<div
 						class="flex items-center justify-between rounded-lg [border:0.5px_solid_var(--tc-border)] bg-tc-bg p-3.5"
