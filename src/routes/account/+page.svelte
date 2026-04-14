@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import { autoAnimate } from '$lib/actions/auto-animate';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -212,7 +213,7 @@
 
 		<!-- Pending invites list -->
 		{#if data.pendingInvites.length > 0}
-			<div class="mb-3 space-y-2">
+			<div class="mb-3 space-y-2" use:autoAnimate>
 				{#each data.pendingInvites as invite (invite.id)}
 					<div
 						class="flex items-center justify-between rounded-md [border:0.5px_solid_var(--tc-border)] px-3 py-2.5"
@@ -272,6 +273,7 @@
 				<div
 					class="rounded-md [border:0.5px_solid_var(--tc-border)] divide-y [--tw-divide-opacity:1]"
 					style="--divide-color: var(--tc-border)"
+					use:autoAnimate
 				>
 					{#each data.recruited as member (member.id)}
 						<div
