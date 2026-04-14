@@ -4,6 +4,7 @@
 	import type { PageData } from './$types';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
 
@@ -224,7 +225,7 @@
 
 			<!-- Photo grid -->
 			{#if data.photos.length > 0 || data.canToggleVisibility}
-				<div class="grid grid-cols-3 gap-1.5 mb-3">
+				<div class="grid grid-cols-3 gap-1.5 mb-3" use:autoAnimate>
 					{#each data.photos as photo (photo.id)}
 						<div
 							class="relative aspect-square overflow-hidden rounded-md bg-tc-surface [border:0.5px_solid_var(--tc-border)]"
