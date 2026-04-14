@@ -5,6 +5,7 @@
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
 
@@ -190,7 +191,7 @@
 	{/if}
 
 	<!-- ── Comments ── -->
-	<div class="[border-top:0.5px_solid_var(--tc-border)] pt-5">
+	<div class="[border-top:0.5px_solid_var(--tc-border)] pt-5" use:autoAnimate>
 		<p class="mb-4 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 			{data.comments.length} comment{data.comments.length === 1 ? '' : 's'}
 		</p>
