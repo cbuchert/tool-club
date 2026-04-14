@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import { autoAnimate } from '$lib/actions/auto-animate';
 	import type { PageData } from './$types';
 
@@ -92,8 +93,9 @@
 								data-action="reinstate"
 								onclick={() => reinstate(member.id)}
 								disabled={submitting === member.id}
-								class="rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-accent-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+								class="inline-flex items-center gap-1.5 rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-accent-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
 							>
+								{#if submitting === member.id}<Spinner size="0.75rem" />{/if}
 								Reinstate
 							</button>
 						{:else}
@@ -101,8 +103,9 @@
 								data-action="suspend"
 								onclick={() => suspend(member.id)}
 								disabled={submitting === member.id}
-								class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
+								class="inline-flex items-center gap-1.5 rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
 							>
+								{#if submitting === member.id}<Spinner size="0.75rem" />{/if}
 								Suspend
 							</button>
 						{/if}
@@ -137,8 +140,9 @@
 						<button
 							onclick={() => revokeInvite(invite.id)}
 							disabled={submitting === invite.id}
-							class="ml-3 shrink-0 rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
+							class="ml-3 shrink-0 inline-flex items-center gap-1.5 rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-50"
 						>
+							{#if submitting === invite.id}<Spinner size="0.75rem" />{/if}
 							Revoke
 						</button>
 					</div>
