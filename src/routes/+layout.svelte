@@ -2,6 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
 	import { page } from '$app/stores';
+	import MobileNavItem from '$lib/components/MobileNavItem.svelte';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: import('svelte').Snippet } = $props();
@@ -75,14 +76,10 @@
 	<nav class="mobile-nav" aria-label="Main navigation">
 		<div class="mobile-nav-inner">
 			{#each navItems as item (item.href)}
-				<a href={item.href} class="mobile-nav-item" class:active={active(item.href)}>
-					{item.label}
-				</a>
+				<MobileNavItem href={item.href} label={item.label} active={active(item.href)} />
 			{/each}
 			{#if isAdmin}
-				<a href="/admin" class="mobile-nav-item admin-item" class:active={active('/admin')}>
-					Admin
-				</a>
+				<MobileNavItem href="/admin" label="Admin" active={active('/admin')} />
 			{/if}
 		</div>
 	</nav>
@@ -168,20 +165,6 @@
 		background: var(--tc-accent-border);
 	}
 
-	/* Mobile nav is horizontal — drop the sidebar's vertical separator
-	   styling and match the standard mobile-nav-item look. :not(.active)
-	   keeps the shared .mobile-nav-item.active rule in charge of the
-	   accent-green current-page treatment. */
-	.mobile-nav .admin-item {
-		margin-top: 0;
-		border-top: 0.125rem solid transparent;
-		padding-top: 0.625rem;
-		font-size: 0.625rem;
-	}
-	.mobile-nav .admin-item:not(.active) {
-		color: var(--tc-muted);
-	}
-
 	.sidebar-bottom {
 		margin-top: auto;
 		padding: 0.875rem 1rem 0.25rem;
@@ -240,27 +223,6 @@
 
 	.mobile-nav-inner {
 		display: flex;
-	}
-
-	.mobile-nav-item {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.625rem 0.25rem 0.5rem;
-		font-size: 0.875rem;
-		font-family: var(--font-mono);
-		color: var(--tc-muted);
-		text-decoration: none;
-		border-top: 0.125rem solid transparent;
-		transition:
-			color 0.1s,
-			border-color 0.1s;
-	}
-
-	.mobile-nav-item.active {
-		color: var(--tc-accent-text);
-		border-top-color: var(--tc-accent);
 	}
 
 	/* ── Responsive ─────────────────────────────────────────── */
