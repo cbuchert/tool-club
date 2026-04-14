@@ -3,6 +3,7 @@
 	import '../app.css';
 	import { page } from '$app/stores';
 	import MobileNavItem from '$lib/components/MobileNavItem.svelte';
+	import NavProgress from '$lib/components/NavProgress.svelte';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: import('svelte').Snippet } = $props();
@@ -32,6 +33,8 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
+
+<NavProgress />
 
 <!-- Shell chrome rendered conditionally, but children always rendered at the same
      level to avoid recreating page components (and TanStack Form's onMount) inside
