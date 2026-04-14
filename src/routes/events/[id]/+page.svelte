@@ -4,12 +4,13 @@
 	import type { PageData } from './$types';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
 
 	let rsvpError = $state<string | null>(null);
-	let rsvpSubmitting = $state(false);
+	let rsvpSubmitting = $state<'yes' | 'no' | null>(null);
 	let recapBody = $state('');
 	let recapError = $state<string | null>(null);
 	let recapSubmitting = $state(false);
@@ -20,7 +21,7 @@
 	const goingFull = $derived(data.isFull && data.myRsvp !== 'yes');
 
 	async function submitRsvp(response: 'yes' | 'no') {
-		rsvpSubmitting = true;
+		rsvpSubmitting = response;
 		rsvpError = null;
 		const fd = new FormData();
 		fd.set('response', response);
@@ -28,7 +29,7 @@
 		const result = deserialize(await res.text());
 		if (result.type === 'failure') rsvpError = (result.data?.error as string) ?? 'Failed.';
 		else await invalidateAll();
-		rsvpSubmitting = false;
+		rsvpSubmitting = null;
 	}
 
 	async function submitRecap() {
@@ -185,20 +186,26 @@
 		<div class="flex gap-2 mb-3.5">
 			<button
 				onclick={() => submitRsvp('yes')}
-				disabled={isLocked || goingFull || rsvpSubmitting}
-				class="flex-1 rounded-md [border:0.5px_solid_var(--tc-border-mid)] py-2 text-base md:text-[0.8125rem] transition-all disabled:opacity-40 disabled:cursor-not-allowed
+				disabled={isLocked || goingFull || rsvpSubmitting !== null}
+				class="flex-1 inline-flex items-center justify-center gap-2 rounded-md [border:0.5px_solid_var(--tc-border-mid)] py-2 text-base md:text-[0.8125rem] transition-all disabled:opacity-40 disabled:cursor-not-allowed
 					{data.myRsvp === 'yes'
 					? 'bg-tc-accent text-white border-transparent hover:opacity-[0.88]'
-					: 'bg-transparent text-tc-text hover:bg-tc-bg'}">Going</button
+					: 'bg-transparent text-tc-text hover:bg-tc-bg'}"
 			>
+				{#if rsvpSubmitting === 'yes'}<Spinner />{/if}
+				Going
+			</button>
 			<button
 				onclick={() => submitRsvp('no')}
-				disabled={isLocked || rsvpSubmitting}
-				class="flex-1 rounded-md [border:0.5px_solid_var(--tc-border-mid)] py-2 text-base md:text-[0.8125rem] transition-all disabled:opacity-40 disabled:cursor-not-allowed
+				disabled={isLocked || rsvpSubmitting !== null}
+				class="flex-1 inline-flex items-center justify-center gap-2 rounded-md [border:0.5px_solid_var(--tc-border-mid)] py-2 text-base md:text-[0.8125rem] transition-all disabled:opacity-40 disabled:cursor-not-allowed
 					{data.myRsvp === 'no'
 					? 'bg-tc-surface font-medium text-tc-text'
-					: 'bg-transparent text-tc-text hover:bg-tc-bg'}">Can't make it</button
+					: 'bg-transparent text-tc-text hover:bg-tc-bg'}"
 			>
+				{#if rsvpSubmitting === 'no'}<Spinner />{/if}
+				Can't make it
+			</button>
 		</div>
 
 		{#if data.goingUsers.length > 0}
