@@ -6,6 +6,7 @@
 	import { DEFAULT_TIMEZONE } from '$lib/temporal';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
@@ -70,8 +71,10 @@
 				aria-label={s.voted ? 'Remove vote' : 'Vote for this suggestion'}
 				class="flex h-8 w-8 items-center justify-center rounded-md text-base md:text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 [border:0.5px_solid_var(--tc-border-mid)] {s.voted
 					? 'bg-tc-accent-bg [border-color:var(--tc-accent-border)] text-tc-accent-text'
-					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}">▲</button
+					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}"
 			>
+				{#if submitting === s.id}<Spinner size="0.75rem" />{:else}▲{/if}
+			</button>
 			<span class="font-mono text-base md:text-xs font-medium text-tc-text">{s.vote_count}</span>
 		</div>
 

@@ -5,6 +5,7 @@
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
@@ -56,10 +57,10 @@
 	}
 
 	// Admin actions
-	let adminSubmitting = $state(false);
+	let adminSubmitting = $state<'close' | 'reopen' | 'promote' | null>(null);
 
 	async function adminAction(action: 'close' | 'reopen' | 'promote') {
-		adminSubmitting = true;
+		adminSubmitting = action;
 		const res = await fetch(`/suggestions/${data.suggestion.id}?/${action}`, {
 			method: 'POST',
 			body: new FormData(),
@@ -71,7 +72,7 @@
 		} else if (result.type !== 'failure') {
 			await invalidateAll();
 		}
-		adminSubmitting = false;
+		adminSubmitting = null;
 	}
 </script>
 
@@ -100,8 +101,10 @@
 				class="flex h-8 w-8 items-center justify-center rounded-md text-base md:text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 [border:0.5px_solid_var(--tc-border-mid)]
 					{data.voted
 					? 'bg-tc-accent-bg [border-color:var(--tc-accent-border)] text-tc-accent-text'
-					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}">▲</button
+					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}"
 			>
+				{#if submitting}<Spinner size="0.75rem" />{:else}▲{/if}
+			</button>
 			<span data-testid="vote-count" class="font-mono text-base md:text-xs font-medium text-tc-text"
 				>{data.voteCount}</span
 			>
@@ -149,34 +152,38 @@
 				<button
 					data-action="promote"
 					onclick={() => adminAction('promote')}
-					disabled={adminSubmitting}
-					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-base md:text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+					disabled={adminSubmitting !== null}
+					class="inline-flex items-center gap-2 rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-base md:text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
 				>
+					{#if adminSubmitting === 'promote'}<Spinner size="0.75rem" />{/if}
 					Promote to event
 				</button>
 				<button
 					data-action="close"
 					onclick={() => adminAction('close')}
-					disabled={adminSubmitting}
-					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
+					disabled={adminSubmitting !== null}
+					class="inline-flex items-center gap-2 rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
 				>
+					{#if adminSubmitting === 'close'}<Spinner size="0.75rem" />{/if}
 					Close voting
 				</button>
 			{:else if data.suggestion.status === 'closed'}
 				<button
 					data-action="promote"
 					onclick={() => adminAction('promote')}
-					disabled={adminSubmitting}
-					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-base md:text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+					disabled={adminSubmitting !== null}
+					class="inline-flex items-center gap-2 rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-base md:text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
 				>
+					{#if adminSubmitting === 'promote'}<Spinner size="0.75rem" />{/if}
 					Promote to event
 				</button>
 				<button
 					data-action="reopen"
 					onclick={() => adminAction('reopen')}
-					disabled={adminSubmitting}
-					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
+					disabled={adminSubmitting !== null}
+					class="inline-flex items-center gap-2 rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
 				>
+					{#if adminSubmitting === 'reopen'}<Spinner size="0.75rem" />{/if}
 					Reopen
 				</button>
 			{/if}
