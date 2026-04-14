@@ -168,11 +168,18 @@
 		background: var(--tc-accent-border);
 	}
 
-	/* Mobile nav is horizontal — remove the sidebar vertical separators */
+	/* Mobile nav is horizontal — drop the sidebar's vertical separator
+	   styling and match the standard mobile-nav-item look. :not(.active)
+	   keeps the shared .mobile-nav-item.active rule in charge of the
+	   accent-green current-page treatment. */
 	.mobile-nav .admin-item {
 		margin-top: 0;
-		border-top: none;
-		padding-top: 0;
+		border-top: 0.125rem solid transparent;
+		padding-top: 0.625rem;
+		font-size: 0.625rem;
+	}
+	.mobile-nav .admin-item:not(.active) {
+		color: var(--tc-muted);
 	}
 
 	.sidebar-bottom {
