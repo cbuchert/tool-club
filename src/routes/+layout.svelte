@@ -243,9 +243,12 @@
 		}
 
 		.main.in-shell {
-			/* In column flex, main must grow to fill space above the nav */
+			/* In column flex, main must grow to fill space above the nav.
+			   padding-bottom gives scrolled content breathing room above
+			   the mobile tab bar instead of bumping right up against it. */
 			flex: 1;
 			min-height: 0;
+			padding-bottom: 2rem;
 		}
 
 		.mobile-nav {
