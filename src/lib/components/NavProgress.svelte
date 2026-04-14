@@ -35,6 +35,11 @@
 		background: var(--tc-accent);
 		z-index: 100;
 		transform-origin: left;
+		/* Purely visual — never intercept touch/click. Without this, iOS
+		   WebKit can hit-test the fixed 2px strip at the top of the viewport
+		   during a swipe that originates near the status bar and block the
+		   gesture from reaching the scroll container below. */
+		pointer-events: none;
 		animation: progress 8s cubic-bezier(0.1, 0.6, 0.3, 1) forwards;
 	}
 
