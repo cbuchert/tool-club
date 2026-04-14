@@ -3,6 +3,7 @@
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Avatar from '$lib/components/Avatar.svelte';
+	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
 
@@ -58,7 +59,7 @@
 </Topbar>
 
 <!-- ── Event list ── -->
-<div class="flex-1 p-4 sm:p-6">
+<div class="flex-1 p-4 sm:p-6" use:autoAnimate>
 	{#if shown.length === 0}
 		<p class="text-[0.8125rem] text-tc-muted">
 			{view === 'upcoming' ? 'No upcoming events.' : 'No past events yet.'}

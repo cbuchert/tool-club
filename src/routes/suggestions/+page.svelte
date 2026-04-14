@@ -6,6 +6,7 @@
 	import { DEFAULT_TIMEZONE } from '$lib/temporal';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
 
@@ -106,7 +107,7 @@
 {/snippet}
 
 <!-- ── List ── -->
-<div class="flex-1 p-4 sm:p-6">
+<div class="flex-1 p-4 sm:p-6" use:autoAnimate>
 	{#if data.suggestions.length === 0}
 		<p class="text-[0.8125rem] text-tc-muted">
 			No suggestions yet. Be the first to propose something.
