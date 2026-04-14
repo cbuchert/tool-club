@@ -12,9 +12,9 @@
 	let showDeleteConfirm = $state(false);
 
 	const inputClass =
-		'w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)]';
+		'w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-base md:text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)]';
 	const labelClass =
-		'block mb-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint';
+		'block mb-1.5 font-mono text-sm md:text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint';
 
 	const goingRsvps = $derived(data.rsvps.filter((r) => r.response === 'yes'));
 	const noRsvps = $derived(data.rsvps.filter((r) => r.response === 'no'));
@@ -26,14 +26,14 @@
 
 <Topbar>
 	{#snippet left()}
-		<a href="/admin/events" class="text-xs text-tc-muted transition-colors hover:text-tc-text"
+		<a href="/admin/events" class="text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text"
 			>← Events</a
 		>
 	{/snippet}
 	{#snippet right()}
 		<a
 			href="/events/{data.event.id}"
-			class="text-xs text-tc-muted transition-colors hover:text-tc-text">View →</a
+			class="text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text">View →</a
 		>
 	{/snippet}
 </Topbar>
@@ -46,7 +46,7 @@
 
 	{#if form?.error}
 		<p
-			class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-xs text-tc-danger"
+			class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-base md:text-xs text-tc-danger"
 		>
 			{form.error}
 		</p>
@@ -55,7 +55,7 @@
 	{#if saveSuccess}
 		<p
 			data-testid="save-success"
-			class="mb-4 rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-3 py-2.5 text-xs text-tc-accent-text"
+			class="mb-4 rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-3 py-2.5 text-base md:text-xs text-tc-accent-text"
 		>
 			Saved.
 		</p>
@@ -215,7 +215,7 @@
 				rows="3"
 				value={data.event.links_text}
 				placeholder="Label | https://example.com"
-				class="{inputClass} resize-y font-mono text-xs leading-relaxed"
+				class="{inputClass} resize-y font-mono text-base md:text-xs leading-relaxed"
 			></textarea>
 			<p class="mt-0.5 font-mono text-[0.6rem] text-tc-hint">One "Label | URL" per line</p>
 		</div>
@@ -225,7 +225,7 @@
 				type="submit"
 				data-action="update"
 				disabled={saving}
-				class="rounded-md bg-tc-accent px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
+				class="rounded-md bg-tc-accent px-5 py-2.5 text-base md:text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
 			>
 				{saving ? 'Saving…' : 'Save'}
 			</button>
@@ -235,22 +235,22 @@
 	<!-- ── RSVP list ── -->
 	{#if data.rsvps.length > 0}
 		<div class="mt-8 [border-top:0.5px_solid_var(--tc-border)] pt-5">
-			<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+			<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 				RSVPs ({data.rsvps.length})
 			</p>
 			{#if goingRsvps.length > 0}
-				<p class="mb-1.5 text-xs font-medium text-tc-text">Going ({goingRsvps.length})</p>
+				<p class="mb-1.5 text-base md:text-xs font-medium text-tc-text">Going ({goingRsvps.length})</p>
 				<div class="mb-3 space-y-1">
 					{#each goingRsvps as r (r.user_id)}
-						<p class="text-sm text-tc-muted">{r.display_name}</p>
+						<p class="text-base md:text-sm text-tc-muted">{r.display_name}</p>
 					{/each}
 				</div>
 			{/if}
 			{#if noRsvps.length > 0}
-				<p class="mb-1.5 text-xs font-medium text-tc-muted">Can't make it ({noRsvps.length})</p>
+				<p class="mb-1.5 text-base md:text-xs font-medium text-tc-muted">Can't make it ({noRsvps.length})</p>
 				<div class="space-y-1">
 					{#each noRsvps as r (r.user_id)}
-						<p class="text-sm text-tc-muted">{r.display_name}</p>
+						<p class="text-base md:text-sm text-tc-muted">{r.display_name}</p>
 					{/each}
 				</div>
 			{/if}
@@ -260,13 +260,13 @@
 	<!-- ── Danger zone ── -->
 	<div class="mt-8 [border-top:0.5px_solid_var(--tc-border)] pt-5">
 		<p
-			class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-danger [border-bottom:0.5px_solid_var(--tc-danger-border)] pb-2"
+			class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-danger [border-bottom:0.5px_solid_var(--tc-danger-border)] pb-2"
 		>
 			Danger zone
 		</p>
 		{#if showDeleteConfirm}
 			<div class="mb-3 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg p-3">
-				<p class="mb-2 text-xs text-tc-danger">
+				<p class="mb-2 text-base md:text-xs text-tc-danger">
 					This permanently deletes the event and all its RSVPs. Cannot be undone.
 				</p>
 				<div class="flex gap-2">
@@ -284,14 +284,14 @@
 						<button
 							type="submit"
 							disabled={deleting}
-							class="rounded-md bg-tc-danger px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
+							class="rounded-md bg-tc-danger px-3 py-1.5 text-base md:text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
 						>
 							{deleting ? 'Deleting…' : 'Yes, delete'}
 						</button>
 					</form>
 					<button
 						onclick={() => (showDeleteConfirm = false)}
-						class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text"
+						class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text"
 					>
 						Cancel
 					</button>
@@ -300,7 +300,7 @@
 		{:else}
 			<button
 				onclick={() => (showDeleteConfirm = true)}
-				class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-4 py-2 text-sm text-tc-danger transition-colors hover:bg-tc-danger-bg"
+				class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-4 py-2 text-base md:text-sm text-tc-danger transition-colors hover:bg-tc-danger-bg"
 			>
 				Delete event
 			</button>

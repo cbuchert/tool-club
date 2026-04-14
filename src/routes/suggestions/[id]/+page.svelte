@@ -82,7 +82,7 @@
 <!-- ── Topbar ── -->
 <Topbar>
 	{#snippet left()}
-		<a href="/suggestions" class="text-xs text-tc-muted hover:text-tc-text transition-colors"
+		<a href="/suggestions" class="text-base md:text-xs text-tc-muted hover:text-tc-text transition-colors"
 			>← Suggestions</a
 		>
 	{/snippet}
@@ -97,12 +97,12 @@
 				onclick={toggleVote}
 				disabled={!data.votingOpen || submitting}
 				aria-label={data.voted ? 'Remove vote' : 'Vote'}
-				class="flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 [border:0.5px_solid_var(--tc-border-mid)]
+				class="flex h-8 w-8 items-center justify-center rounded-md text-base md:text-sm transition-all disabled:cursor-not-allowed disabled:opacity-35 [border:0.5px_solid_var(--tc-border-mid)]
 					{data.voted
 					? 'bg-tc-accent-bg [border-color:var(--tc-accent-border)] text-tc-accent-text'
 					: 'bg-transparent text-tc-muted hover:bg-tc-surface'}">▲</button
 			>
-			<span data-testid="vote-count" class="font-mono text-xs font-medium text-tc-text"
+			<span data-testid="vote-count" class="font-mono text-base md:text-xs font-medium text-tc-text"
 				>{data.voteCount}</span
 			>
 		</div>
@@ -111,7 +111,7 @@
 			<h1 class="font-display text-xl font-medium tracking-[-0.02em] text-tc-text mb-1">
 				{data.suggestion.title}
 			</h1>
-			<p class="text-xs text-tc-muted">
+			<p class="text-base md:text-xs text-tc-muted">
 				{data.author.name}
 				{#if data.suggestion.host_name}
 					· Host: {data.suggestion.host_name}{/if}
@@ -135,7 +135,7 @@
 		<a
 			href="/events/{data.promotedEvent.id}"
 			data-testid="promoted-banner"
-			class="mb-5 flex items-center gap-2 rounded-lg [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-4 py-3 text-[0.8125rem] text-tc-accent-text transition-opacity hover:opacity-85"
+			class="mb-5 flex items-center gap-2 rounded-lg [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-4 py-3 text-base md:text-[0.8125rem] text-tc-accent-text transition-opacity hover:opacity-85"
 		>
 			<span class="font-medium">This became an event →</span>
 			<span class="text-tc-accent-text opacity-80">{data.promotedEvent.title}</span>
@@ -150,7 +150,7 @@
 					data-action="promote"
 					onclick={() => adminAction('promote')}
 					disabled={adminSubmitting}
-					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-base md:text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
 				>
 					Promote to event
 				</button>
@@ -158,7 +158,7 @@
 					data-action="close"
 					onclick={() => adminAction('close')}
 					disabled={adminSubmitting}
-					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
+					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
 				>
 					Close voting
 				</button>
@@ -167,7 +167,7 @@
 					data-action="promote"
 					onclick={() => adminAction('promote')}
 					disabled={adminSubmitting}
-					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
+					class="rounded-md bg-tc-purple-bg [border:0.5px_solid_var(--tc-purple-border)] px-3 py-1.5 text-base md:text-xs font-medium text-tc-purple-text transition-colors hover:opacity-[0.88] disabled:opacity-50"
 				>
 					Promote to event
 				</button>
@@ -175,7 +175,7 @@
 					data-action="reopen"
 					onclick={() => adminAction('reopen')}
 					disabled={adminSubmitting}
-					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
+					class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text disabled:opacity-50"
 				>
 					Reopen
 				</button>
@@ -192,7 +192,7 @@
 
 	<!-- ── Comments ── -->
 	<div class="[border-top:0.5px_solid_var(--tc-border)] pt-5" use:autoAnimate>
-		<p class="mb-4 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+		<p class="mb-4 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 			{data.comments.length} comment{data.comments.length === 1 ? '' : 's'}
 		</p>
 
@@ -203,8 +203,8 @@
 				</div>
 				<div class="min-w-0 flex-1">
 					<div class="mb-0.5 flex items-baseline gap-1.5">
-						<span class="text-xs font-medium text-tc-text">{comment.author_name}</span>
-						<span class="font-mono text-[0.625rem] text-tc-hint">
+						<span class="text-base md:text-xs font-medium text-tc-text">{comment.author_name}</span>
+						<span class="font-mono text-sm md:text-[0.625rem] text-tc-hint">
 							{new Date(comment.created_at).toLocaleDateString('en-US', {
 								month: 'short',
 								day: 'numeric',
@@ -213,12 +213,12 @@
 						{#if comment.is_mine || data.isAdmin}
 							<button
 								onclick={() => deleteComment(comment.id)}
-								class="font-mono text-[0.625rem] text-tc-hint underline underline-offset-2 hover:text-tc-danger transition-colors"
+								class="font-mono text-sm md:text-[0.625rem] text-tc-hint underline underline-offset-2 hover:text-tc-danger transition-colors"
 								>delete</button
 							>
 						{/if}
 					</div>
-					<p class="text-[0.8125rem] text-tc-muted leading-relaxed">{comment.body}</p>
+					<p class="text-base md:text-[0.8125rem] text-tc-muted leading-relaxed">{comment.body}</p>
 				</div>
 			</div>
 		{/each}
@@ -227,18 +227,18 @@
 		{#if data.suggestion.status !== 'closed'}
 			<div class="mt-4">
 				{#if commentError}
-					<p class="mb-2 text-xs text-tc-danger">{commentError}</p>
+					<p class="mb-2 text-base md:text-xs text-tc-danger">{commentError}</p>
 				{/if}
 				<textarea
 					bind:value={commentBody}
 					placeholder="Add a comment…"
 					rows="3"
-					class="w-full resize-none rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2 text-[0.8125rem] text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-2"
+					class="w-full resize-none rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2 text-base md:text-[0.8125rem] text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-2"
 				></textarea>
 				<button
 					onclick={postComment}
 					disabled={submitting || !commentBody.trim()}
-					class="rounded-md bg-tc-accent px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-40 disabled:cursor-not-allowed"
+					class="rounded-md bg-tc-accent px-3 py-1.5 text-base md:text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-40 disabled:cursor-not-allowed"
 				>
 					{submitting ? 'Posting…' : 'Post comment'}
 				</button>

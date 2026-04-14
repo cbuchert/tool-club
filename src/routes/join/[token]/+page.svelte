@@ -64,12 +64,12 @@
 			>
 				Invite not found
 			</h1>
-			<p class="text-center text-[0.8125rem] text-tc-muted leading-relaxed mb-5">
+			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-5">
 				This invite link isn't valid. Ask the person who invited you to send a new one.
 			</p>
 			<a
 				href="/"
-				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
+				class="block text-center text-base md:text-xs text-tc-muted hover:text-tc-text transition-colors"
 				>← Back</a
 			>
 		</div>
@@ -93,7 +93,7 @@
 			>
 				{data.state === 'expired' ? 'This invite has expired' : 'This invite has already been used'}
 			</h1>
-			<p class="text-center text-[0.8125rem] text-tc-muted leading-relaxed mb-5">
+			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-5">
 				{data.state === 'expired'
 					? 'Invite links expire after 30 days.'
 					: 'This link has already been redeemed.'}
@@ -101,7 +101,7 @@
 			</p>
 			<a
 				href="/"
-				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
+				class="block text-center text-base md:text-xs text-tc-muted hover:text-tc-text transition-colors"
 				>← Back</a
 			>
 		</div>
@@ -133,13 +133,13 @@
 			>
 				Check your email
 			</h1>
-			<p class="text-center text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
+			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
 				We sent a sign-in link to <strong class="font-medium text-tc-text">{sent.email}</strong>.
 				Click it to finish creating your account.
 			</p>
 			<a
 				href="/"
-				class="block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
+				class="block text-center text-base md:text-xs text-tc-muted hover:text-tc-text transition-colors"
 				>← Back</a
 			>
 		</div>
@@ -150,17 +150,17 @@
 				class="flex items-center gap-3 rounded-lg [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg px-4 py-3.5 mb-6"
 			>
 				<div
-					class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-tc-accent-text font-display text-sm font-medium italic text-tc-accent-bg"
+					class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-tc-accent-text font-display text-base md:text-sm font-medium italic text-tc-accent-bg"
 				>
 					{initials(data.inviterName ?? '')}
 				</div>
-				<p class="text-[0.8125rem] text-tc-accent-text leading-snug">
+				<p class="text-base md:text-[0.8125rem] text-tc-accent-text leading-snug">
 					<strong class="font-medium">{data.inviterName}</strong> invited you to join Tool Club.
 				</p>
 			</div>
 
 			<p
-				class="text-[0.8125rem] text-tc-muted leading-[1.7] mb-6 pb-5 [border-bottom:0.5px_solid_var(--tc-border)]"
+				class="text-base md:text-[0.8125rem] text-tc-muted leading-[1.7] mb-6 pb-5 [border-bottom:0.5px_solid_var(--tc-border)]"
 			>
 				Tool Club is a small, invite-only group of people who like making things. Events happen a
 				few times a month in Springville.
@@ -169,13 +169,13 @@
 			<h1 class="font-display text-xl font-medium tracking-[-0.01em] text-tc-text mb-1.5">
 				Create your account
 			</h1>
-			<p class="text-[0.8125rem] text-tc-muted leading-relaxed mb-6">
+			<p class="text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-6">
 				Enter your email and a display name to get started.
 			</p>
 
 			{#if serverError}
 				<p
-					class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-[0.75rem] text-tc-danger leading-relaxed"
+					class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-base md:text-[0.75rem] text-tc-danger leading-relaxed"
 				>
 					{serverError}
 				</p>
@@ -192,7 +192,7 @@
 					{#snippet children(field)}
 						<label
 							for="email"
-							class="block font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
+							class="block font-mono text-sm md:text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
 							>Email address</label
 						>
 						<input
@@ -204,10 +204,10 @@
 							value={field.state.value}
 							oninput={(e) => field.handleChange(e.currentTarget.value)}
 							onblur={field.handleBlur}
-							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
+							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-base md:text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
 						/>
 						{#if field.state.meta.isTouched && field.state.meta.errors.length}
-							<p class="mb-3 text-[0.75rem] text-tc-danger">
+							<p class="mb-3 text-base md:text-[0.75rem] text-tc-danger">
 								{field.state.meta.errors[0]?.message ?? field.state.meta.errors[0]}
 							</p>
 						{:else}
@@ -227,7 +227,7 @@
 					{#snippet children(field)}
 						<label
 							for="display_name"
-							class="block font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
+							class="block font-mono text-sm md:text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
 							>Your name</label
 						>
 						<input
@@ -239,10 +239,10 @@
 							value={field.state.value}
 							oninput={(e) => field.handleChange(e.currentTarget.value)}
 							onblur={field.handleBlur}
-							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
+							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-base md:text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
 						/>
 						{#if field.state.meta.isTouched && field.state.meta.errors.length}
-							<p class="mb-3 text-[0.75rem] text-tc-danger">
+							<p class="mb-3 text-base md:text-[0.75rem] text-tc-danger">
 								{field.state.meta.errors[0]?.message ?? field.state.meta.errors[0]}
 							</p>
 						{:else}
@@ -258,7 +258,7 @@
 						<button
 							type="submit"
 							disabled={!state.canSubmit || state.isSubmitting}
-							class="w-full rounded-md bg-tc-accent px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50 disabled:cursor-not-allowed"
+							class="w-full rounded-md bg-tc-accent px-4 py-2.5 text-base md:text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{state.isSubmitting ? 'Sending…' : 'Send sign-in link'}
 						</button>
@@ -266,7 +266,7 @@
 				</form.Subscribe>
 			</form>
 
-			<p class="mt-4 text-center text-xs text-tc-hint">
+			<p class="mt-4 text-center text-base md:text-xs text-tc-hint">
 				Already a member?
 				<a
 					href="/signin"

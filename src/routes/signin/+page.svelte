@@ -76,7 +76,7 @@
 			>
 				Check your email
 			</h1>
-			<p class="text-center text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
+			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
 				We sent a sign-in link to <strong class="font-medium text-tc-text">{sent.email}</strong>.
 			</p>
 			<button
@@ -84,7 +84,7 @@
 					sent = null;
 					serverError = null;
 				}}
-				class="block w-full text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
+				class="block w-full text-center text-base md:text-xs text-tc-muted hover:text-tc-text transition-colors"
 			>
 				← Use a different email
 			</button>
@@ -92,7 +92,7 @@
 			<!-- ── Sign-in form ── -->
 			{#if data.error || serverError}
 				<p
-					class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-[0.75rem] text-tc-danger leading-relaxed"
+					class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-base md:text-[0.75rem] text-tc-danger leading-relaxed"
 				>
 					{serverError ??
 						(data.error
@@ -104,7 +104,7 @@
 			<h1 class="font-display text-xl font-medium tracking-[-0.01em] text-tc-text mb-1.5">
 				Sign in
 			</h1>
-			<p class="text-[0.8125rem] text-tc-muted leading-relaxed mb-6">
+			<p class="text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-6">
 				Enter your email and we'll send you a sign-in link. No password needed.
 			</p>
 
@@ -118,7 +118,7 @@
 					{#snippet children(field)}
 						<label
 							for="email"
-							class="block font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
+							class="block font-mono text-sm md:text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint mb-1.5"
 						>
 							Email address
 						</label>
@@ -131,10 +131,10 @@
 							value={field.state.value}
 							oninput={(e) => field.handleChange(e.currentTarget.value)}
 							onblur={field.handleBlur}
-							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
+							class="w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-base md:text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)] mb-1.5"
 						/>
 						{#if field.state.meta.isTouched && field.state.meta.errors.length}
-							<p class="mb-3 text-[0.75rem] text-tc-danger">
+							<p class="mb-3 text-base md:text-[0.75rem] text-tc-danger">
 								{field.state.meta.errors[0]?.message ?? field.state.meta.errors[0]}
 							</p>
 						{:else}
@@ -150,7 +150,7 @@
 						<button
 							type="submit"
 							disabled={!state.canSubmit || state.isSubmitting}
-							class="w-full rounded-md bg-tc-accent px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50 disabled:cursor-not-allowed"
+							class="w-full rounded-md bg-tc-accent px-4 py-2.5 text-base md:text-sm font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{state.isSubmitting ? 'Sending…' : 'Send sign-in link'}
 						</button>
@@ -160,7 +160,7 @@
 
 			<a
 				href="/"
-				class="mt-4 block text-center text-xs text-tc-muted hover:text-tc-text transition-colors"
+				class="mt-4 block text-center text-base md:text-xs text-tc-muted hover:text-tc-text transition-colors"
 			>
 				← Back
 			</a>

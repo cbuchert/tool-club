@@ -248,7 +248,7 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0.625rem 0.25rem 0.5rem;
-		font-size: 0.625rem;
+		font-size: 0.875rem;
 		font-family: var(--font-mono);
 		color: var(--tc-muted);
 		text-decoration: none;

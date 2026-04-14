@@ -26,12 +26,12 @@
 
 <Topbar>
 	{#snippet left()}
-		<a href="/admin" class="text-xs text-tc-muted transition-colors hover:text-tc-text">← Admin</a>
+		<a href="/admin" class="text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text">← Admin</a>
 	{/snippet}
 	{#snippet right()}
 		<a
 			href="/admin/events/new"
-			class="rounded-md bg-tc-accent px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-[0.88]"
+			class="rounded-md bg-tc-accent px-3 py-1.5 text-base md:text-xs font-medium text-white transition-opacity hover:opacity-[0.88]"
 		>
 			+ New event
 		</a>
@@ -40,12 +40,12 @@
 
 <div class="p-4 sm:p-6 max-w-2xl">
 	{#if data.events.length === 0}
-		<p class="text-sm text-tc-muted">No events yet.</p>
+		<p class="text-base md:text-sm text-tc-muted">No events yet.</p>
 	{:else}
 		{#each groups as group (group.label)}
 			{#if group.items.length > 0}
 				<p
-					class="mb-2 mt-5 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint first:mt-0"
+					class="mb-2 mt-5 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint first:mt-0"
 				>
 					{group.label}
 				</p>
@@ -58,16 +58,16 @@
 							<div class="font-display text-lg font-medium leading-none text-tc-text">
 								{cardDay(event.starts_at)}
 							</div>
-							<div class="font-mono text-[0.5625rem] uppercase tracking-[0.06em] text-tc-muted">
+							<div class="font-mono text-sm md:text-[0.5625rem] uppercase tracking-[0.06em] text-tc-muted">
 								{cardMonth(event.starts_at)}
 							</div>
 						</div>
 						<div class="min-w-0 flex-1">
-							<p class="truncate text-sm font-medium text-tc-text">{event.title}</p>
-							<p class="text-xs text-tc-muted">{event.host_name}</p>
+							<p class="truncate text-base md:text-sm font-medium text-tc-text">{event.title}</p>
+							<p class="text-base md:text-xs text-tc-muted">{event.host_name}</p>
 						</div>
 						<span
-							class="rounded-full [border:0.5px_solid] px-2 py-0.5 font-mono text-[0.625rem] {statusClasses(
+							class="rounded-full [border:0.5px_solid] px-2 py-0.5 font-mono text-sm md:text-[0.625rem] {statusClasses(
 								event.status
 							)}"
 						>

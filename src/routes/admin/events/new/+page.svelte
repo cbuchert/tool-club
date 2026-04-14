@@ -6,9 +6,9 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const inputClass =
-		'w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)]';
+		'w-full rounded-md [border:0.5px_solid_var(--tc-border-mid)] bg-tc-bg px-3 py-2.5 text-base md:text-sm text-tc-text outline-none transition-colors focus:[border-color:var(--tc-accent-border)]';
 	const labelClass =
-		'block mb-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint';
+		'block mb-1.5 font-mono text-sm md:text-[0.6875rem] uppercase tracking-[0.06em] text-tc-hint';
 </script>
 
 <svelte:head>
@@ -17,7 +17,7 @@
 
 <Topbar>
 	{#snippet left()}
-		<a href="/admin/events" class="text-xs text-tc-muted transition-colors hover:text-tc-text"
+		<a href="/admin/events" class="text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text"
 			>← Events</a
 		>
 	{/snippet}
@@ -28,7 +28,7 @@
 
 	{#if form?.error}
 		<p
-			class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-xs text-tc-danger"
+			class="mb-4 rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg px-3 py-2.5 text-base md:text-xs text-tc-danger"
 		>
 			{form.error}
 		</p>
@@ -116,7 +116,7 @@
 				name="links"
 				rows="3"
 				placeholder="Label | https://example.com"
-				class="{inputClass} resize-y font-mono text-xs leading-relaxed"
+				class="{inputClass} resize-y font-mono text-base md:text-xs leading-relaxed"
 			></textarea>
 			<p class="mt-0.5 font-mono text-[0.6rem] text-tc-hint">One "Label | URL" per line</p>
 		</div>
@@ -124,7 +124,7 @@
 		<div class="pt-2">
 			<button
 				type="submit"
-				class="rounded-md bg-tc-accent px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-[0.88]"
+				class="rounded-md bg-tc-accent px-5 py-2.5 text-base md:text-sm font-medium text-white transition-opacity hover:opacity-[0.88]"
 			>
 				Create draft
 			</button>

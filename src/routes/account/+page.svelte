@@ -135,7 +135,7 @@
 <div class="p-4 sm:p-6 max-w-xl space-y-8">
 	<!-- ── Identity ── -->
 	<section>
-		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">Identity</p>
+		<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">Identity</p>
 
 		<div class="flex items-center gap-4 mb-4">
 			<!-- Clicking the avatar triggers the file input -->
@@ -148,7 +148,7 @@
 				<div
 					class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
 				>
-					<span class="font-mono text-[0.5rem] text-white uppercase tracking-widest">
+					<span class="font-mono text-sm md:text-[0.5rem] text-white uppercase tracking-widest">
 						{avatarUploading ? '…' : 'Edit'}
 					</span>
 				</div>
@@ -178,11 +178,11 @@
 						<button
 							onclick={saveName}
 							disabled={nameSaving}
-							class="flex h-6 w-6 items-center justify-center rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg text-tc-accent-text text-xs transition-colors hover:bg-tc-accent hover:text-white disabled:opacity-50"
+							class="flex h-6 w-6 items-center justify-center rounded-md [border:0.5px_solid_var(--tc-accent-border)] bg-tc-accent-bg text-tc-accent-text text-base md:text-xs transition-colors hover:bg-tc-accent hover:text-white disabled:opacity-50"
 							>✓</button
 						>
 					</div>
-					{#if nameError}<p class="mt-1 text-xs text-tc-danger">{nameError}</p>{/if}
+					{#if nameError}<p class="mt-1 text-base md:text-xs text-tc-danger">{nameError}</p>{/if}
 				{:else}
 					<button
 						onclick={() => {
@@ -194,21 +194,21 @@
 						{data.profile.display_name}
 					</button>
 				{/if}
-				<p class="text-sm text-tc-muted">{data.profile.email ?? ''}</p>
+				<p class="text-base md:text-sm text-tc-muted">{data.profile.email ?? ''}</p>
 			</div>
 		</div>
 		{#if avatarError}
-			<p class="mt-2 text-xs text-tc-danger">{avatarError}</p>
+			<p class="mt-2 text-base md:text-xs text-tc-danger">{avatarError}</p>
 		{/if}
-		<p class="text-xs text-tc-hint">Click your avatar to change it · Click your name to edit it.</p>
+		<p class="text-base md:text-xs text-tc-hint">Click your avatar to change it · Click your name to edit it.</p>
 	</section>
 
 	<!-- ── Invites ── -->
 	<section>
-		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">Invites</p>
+		<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">Invites</p>
 
 		{#if inviteError}
-			<p class="mb-2 text-xs text-tc-danger">{inviteError}</p>
+			<p class="mb-2 text-base md:text-xs text-tc-danger">{inviteError}</p>
 		{/if}
 
 		<!-- Pending invites list -->
@@ -219,8 +219,8 @@
 						class="flex items-center justify-between rounded-md [border:0.5px_solid_var(--tc-border)] px-3 py-2.5"
 					>
 						<div class="min-w-0">
-							<p class="truncate text-tc-text font-mono text-xs">{invite.url}</p>
-							<p class="text-xs text-tc-muted mt-0.5">
+							<p class="truncate text-tc-text font-mono text-base md:text-xs">{invite.url}</p>
+							<p class="text-base md:text-xs text-tc-muted mt-0.5">
 								Sent {new Date(invite.created_at).toLocaleString('en-US', {
 									month: 'short',
 									day: 'numeric',
@@ -240,14 +240,14 @@
 									copiedInviteId = invite.id;
 									setTimeout(() => (copiedInviteId = null), 2000);
 								}}
-								class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-text transition-colors hover:bg-tc-surface {copiedInviteId ===
+								class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-text transition-colors hover:bg-tc-surface {copiedInviteId ===
 								invite.id
 									? 'bg-tc-accent-bg text-tc-accent-text [border-color:var(--tc-accent-border)]'
 									: ''}">{copiedInviteId === invite.id ? 'Copied' : 'Copy'}</button
 							>
 							<button
 								onclick={() => revokeInvite(invite.id)}
-								class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg"
+								class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-2.5 py-1 font-mono text-sm md:text-[0.625rem] text-tc-danger transition-colors hover:bg-tc-danger-bg"
 								>Revoke</button
 							>
 						</div>
@@ -259,7 +259,7 @@
 		<button
 			onclick={generateInvite}
 			disabled={inviteGenerating}
-			class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-4 py-2 text-sm text-tc-text transition-colors hover:bg-tc-surface disabled:opacity-50 disabled:cursor-not-allowed"
+			class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-4 py-2 text-base md:text-sm text-tc-text transition-colors hover:bg-tc-surface disabled:opacity-50 disabled:cursor-not-allowed"
 		>
 			{inviteGenerating ? 'Creating…' : '+ Send an invite'}
 		</button>
@@ -267,7 +267,7 @@
 		<!-- Invite history: members who joined via this user's invites -->
 		{#if data.recruited.length > 0}
 			<div class="mt-5">
-				<p class="mb-2 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+				<p class="mb-2 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 					Your invite history
 				</p>
 				<div
@@ -281,10 +281,10 @@
 						>
 							<div class="flex items-center gap-2">
 								<Avatar name={member.display_name} size="sm" />
-								<span class="text-sm text-tc-text">{member.display_name}</span>
+								<span class="text-base md:text-sm text-tc-text">{member.display_name}</span>
 							</div>
 							<span
-								class="font-mono text-[0.625rem] rounded-full px-2 py-0.5 bg-tc-accent-bg text-tc-accent-text [border:0.5px_solid_var(--tc-accent-border)]"
+								class="font-mono text-sm md:text-[0.625rem] rounded-full px-2 py-0.5 bg-tc-accent-bg text-tc-accent-text [border:0.5px_solid_var(--tc-accent-border)]"
 							>
 								Joined {new Date(member.created_at).toLocaleDateString('en-US', {
 									month: 'short',
@@ -301,7 +301,7 @@
 	<!-- ── Network ── -->
 	{#if data.recruited.length > 0}
 		<section>
-			<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+			<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 				Your network
 			</p>
 			<div class="space-y-4">
@@ -310,7 +310,7 @@
 					<div>
 						<div class="flex items-center gap-2 mb-1.5">
 							<Avatar name={member.display_name} size="sm" />
-							<span class="text-sm font-medium text-tc-text">{member.display_name}</span>
+							<span class="text-base md:text-sm font-medium text-tc-text">{member.display_name}</span>
 						</div>
 						<div class="ml-5 pl-3 [border-left:0.5px_solid_var(--tc-border)]">
 							{#if theirRecruits.length > 0}
@@ -318,12 +318,12 @@
 									{#each theirRecruits as recruit (recruit.id)}
 										<div class="flex items-center gap-2">
 											<Avatar name={recruit.display_name} size="sm" />
-											<span class="text-xs text-tc-muted">{recruit.display_name}</span>
+											<span class="text-base md:text-xs text-tc-muted">{recruit.display_name}</span>
 										</div>
 									{/each}
 								</div>
 							{:else}
-								<p class="text-xs text-tc-hint">Nobody invited yet</p>
+								<p class="text-base md:text-xs text-tc-hint">Nobody invited yet</p>
 							{/if}
 						</div>
 					</div>
@@ -334,7 +334,7 @@
 
 	<!-- ── Feed ── -->
 	<section>
-		<p class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
+		<p class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-hint">
 			Feed &amp; calendar
 		</p>
 
@@ -345,13 +345,13 @@
 						<div
 							class="flex items-center gap-2 overflow-hidden rounded-md [border:0.5px_solid_var(--tc-border)] bg-tc-surface px-3 py-2"
 						>
-							<p class="font-mono text-[0.6875rem] shrink-0 text-tc-hint w-16">{feed.label}</p>
-							<p class="min-w-0 flex-1 truncate font-mono text-[0.6875rem] text-tc-muted">
+							<p class="font-mono text-sm md:text-[0.6875rem] shrink-0 text-tc-hint w-16">{feed.label}</p>
+							<p class="min-w-0 flex-1 truncate font-mono text-sm md:text-[0.6875rem] text-tc-muted">
 								{feed.url}
 							</p>
 							<button
 								onclick={() => copyUrl(feed.type, feed.url!)}
-								class="shrink-0 rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-2 py-0.5 font-mono text-[0.625rem] text-tc-text transition-colors hover:bg-tc-bg {tokenCopied ===
+								class="shrink-0 rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-2 py-0.5 font-mono text-sm md:text-[0.625rem] text-tc-text transition-colors hover:bg-tc-bg {tokenCopied ===
 								feed.type
 									? 'bg-tc-accent-bg text-tc-accent-text [border-color:var(--tc-accent-border)]'
 									: ''}">{tokenCopied === feed.type ? 'Copied!' : 'Copy'}</button
@@ -363,7 +363,7 @@
 
 			{#if showRegenerateConfirm}
 				<div class="rounded-md [border:0.5px_solid_var(--tc-warn-border)] bg-tc-warn-bg p-3 mb-3">
-					<p class="text-[0.8125rem] text-tc-warn-text mb-2">
+					<p class="text-base md:text-[0.8125rem] text-tc-warn-text mb-2">
 						Regenerating your token will immediately break any existing RSS or calendar
 						subscriptions. Continue?
 					</p>
@@ -371,13 +371,13 @@
 						<button
 							onclick={regenerateToken}
 							disabled={regenerating}
-							class="rounded-md bg-tc-warn-text px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
+							class="rounded-md bg-tc-warn-text px-3 py-1.5 text-base md:text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
 						>
 							{regenerating ? 'Regenerating…' : 'Yes, regenerate'}
 						</button>
 						<button
 							onclick={() => (showRegenerateConfirm = false)}
-							class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text"
+							class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text"
 						>
 							Cancel
 						</button>
@@ -386,23 +386,23 @@
 			{:else}
 				<button
 					onclick={() => (showRegenerateConfirm = true)}
-					class="text-xs font-mono text-tc-muted underline underline-offset-2 hover:text-tc-text transition-colors"
+					class="text-base md:text-xs font-mono text-tc-muted underline underline-offset-2 hover:text-tc-text transition-colors"
 				>
 					Regenerate token
 				</button>
 			{/if}
 		{:else}
-			<p class="text-sm text-tc-muted">
+			<p class="text-base md:text-sm text-tc-muted">
 				No feed token. Generate one to get your personal RSS and iCal links.
 			</p>
 			<button
 				onclick={regenerateToken}
-				class="mt-2 rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-4 py-2 text-sm text-tc-text transition-colors hover:bg-tc-surface"
+				class="mt-2 rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-4 py-2 text-base md:text-sm text-tc-text transition-colors hover:bg-tc-surface"
 				>Generate feed token</button
 			>
 		{/if}
 
-		<p class="mt-3 rounded-md bg-tc-surface p-3 text-xs text-tc-muted leading-relaxed">
+		<p class="mt-3 rounded-md bg-tc-surface p-3 text-base md:text-xs text-tc-muted leading-relaxed">
 			Your private feed URL contains a secret token. Anyone with the URL can see your full event
 			calendar. Keep it private. Regenerating creates a new token and immediately breaks any
 			existing subscriptions.
@@ -412,13 +412,13 @@
 	<!-- ── Danger zone ── -->
 	<section>
 		<p
-			class="mb-3 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-tc-danger [border-bottom:0.5px_solid_var(--tc-danger-border)] pb-2.5"
+			class="mb-3 font-mono text-sm md:text-[0.625rem] uppercase tracking-[0.08em] text-tc-danger [border-bottom:0.5px_solid_var(--tc-danger-border)] pb-2.5"
 		>
 			Danger zone
 		</p>
 
 		{#if data.deletionBlockedBy?.length}
-			<p class="mb-3 text-sm text-tc-muted">
+			<p class="mb-3 text-base md:text-sm text-tc-muted">
 				You are the designated host of
 				<strong class="font-medium text-tc-text">{data.deletionBlockedBy[0].title}</strong>{data
 					.deletionBlockedBy.length > 1
@@ -428,12 +428,12 @@
 		{/if}
 
 		{#if deleteError}
-			<p class="mb-3 text-sm text-tc-danger">{deleteError}</p>
+			<p class="mb-3 text-base md:text-sm text-tc-danger">{deleteError}</p>
 		{/if}
 
 		{#if showDeleteConfirm}
 			<div class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] bg-tc-danger-bg p-3 mb-3">
-				<p class="text-[0.8125rem] text-tc-danger mb-2">
+				<p class="text-base md:text-[0.8125rem] text-tc-danger mb-2">
 					This will anonymise your profile ("Former member") and sign you out. Your content stays
 					attributed to the anonymised account. This cannot be undone.
 				</p>
@@ -441,13 +441,13 @@
 					<button
 						onclick={deleteAccount}
 						disabled={deleting || !!data.deletionBlockedBy?.length}
-						class="rounded-md bg-tc-danger px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
+						class="rounded-md bg-tc-danger px-3 py-1.5 text-base md:text-xs font-medium text-white transition-opacity hover:opacity-[0.88] disabled:opacity-50"
 					>
 						{deleting ? 'Deleting…' : 'Yes, delete my account'}
 					</button>
 					<button
 						onclick={() => (showDeleteConfirm = false)}
-						class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-xs text-tc-muted transition-colors hover:text-tc-text"
+						class="rounded-md [border:0.5px_solid_var(--tc-border-mid)] px-3 py-1.5 text-base md:text-xs text-tc-muted transition-colors hover:text-tc-text"
 					>
 						Cancel
 					</button>
@@ -457,7 +457,7 @@
 			<button
 				onclick={() => (showDeleteConfirm = true)}
 				disabled={!!data.deletionBlockedBy?.length}
-				class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-4 py-2 text-sm text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-40 disabled:cursor-not-allowed"
+				class="rounded-md [border:0.5px_solid_var(--tc-danger-border)] px-4 py-2 text-base md:text-sm text-tc-danger transition-colors hover:bg-tc-danger-bg disabled:opacity-40 disabled:cursor-not-allowed"
 				>Delete account</button
 			>
 		{/if}
