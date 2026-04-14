@@ -7,7 +7,6 @@
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { autoAnimate } from '$lib/actions/auto-animate';
 
 	let { data }: { data: PageData } = $props();
 
@@ -110,7 +109,7 @@
 {/snippet}
 
 <!-- ── List ── -->
-<div class="p-4 sm:p-6" use:autoAnimate>
+<div class="p-4 sm:p-6">
 	{#if data.suggestions.length === 0}
 		<p class="text-base md:text-[0.8125rem] text-tc-muted">
 			No suggestions yet. Be the first to propose something.
