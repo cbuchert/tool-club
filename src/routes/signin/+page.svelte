@@ -76,8 +76,11 @@
 			>
 				Check your email
 			</h1>
-			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
+			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-2">
 				We sent a sign-in link to <strong class="font-medium text-tc-text">{sent.email}</strong>.
+			</p>
+			<p class="text-center text-base md:text-[0.8125rem] text-tc-muted leading-relaxed mb-4">
+				You must open the link on the same computer on which you are reading this message.
 			</p>
 			<button
 				onclick={() => {
